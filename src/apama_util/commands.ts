@@ -13,10 +13,10 @@ export class ApamaCommandProvider {
 
   public constructor(private logger: OutputChannel, private apamaEnv: ApamaEnvironment,
     private context: ExtensionContext) {
-    this.injectCmd = new ApamaRunner("engine_inject", apamaEnv.getInjectCmdline(), logger);
-    this.sendCmd = new ApamaRunner("engine_send", apamaEnv.getSendCmdLine(), logger);
-    this.deleteCmd = new ApamaRunner("engine_delete", apamaEnv.getDeleteCmdLine(), logger);
-    this.engineWatchCmd = new ApamaAsyncRunner("engine_watch", apamaEnv.getEngineWatchCmdline(), logger);
+    this.injectCmd = new ApamaRunner("engine_inject", apamaEnv.getInjectCmdline().singleCmdLine(), logger);
+    this.sendCmd = new ApamaRunner("engine_send", apamaEnv.getSendCmdLine().singleCmdLine(), logger);
+    this.deleteCmd = new ApamaRunner("engine_delete", apamaEnv.getDeleteCmdLine().singleCmdLine(), logger);
+    this.engineWatchCmd = new ApamaAsyncRunner("engine_watch", apamaEnv.getEngineWatchCmdline().singleCmdLine(), logger);
     this.registerCommands();
   }
 
@@ -67,7 +67,7 @@ export class ApamaCommandProvider {
                 });
                 if (userInput !== undefined) {
                   // Specify engine_send command with NO evt files (but specify port) 
-                  const childProcess = spawn(this.apamaEnv.getSendCmdLine() + ' -p ' + userInput.toString(), {
+                  const childProcess = spawn(this.apamaEnv.getSendCmdLine().singleCmdLine() + ' -p ' + userInput.toString(), {
                     shell: true,
                     stdio: ['pipe', 'pipe', 'pipe']
                   });

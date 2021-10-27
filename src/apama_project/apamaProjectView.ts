@@ -28,8 +28,8 @@ export class ApamaProjectView implements TreeDataProvider<string | ApamaTreeItem
 	constructor(private apamaEnv: ApamaEnvironment, private logger: OutputChannel, private workspaces: WorkspaceFolder[], private context: ExtensionContext) {
 		const subscriptions: Disposable[] = [];
 		
-		this.apama_project = new ApamaRunner('apama_project', apamaEnv.getApamaProjectCmdline(), logger);
-		this.apama_deploy = new ApamaRunner('apama_deploy', apamaEnv.getDeployCmdline(), logger);
+		this.apama_project = new ApamaRunner('apama_project', apamaEnv.getApamaProjectCmdline().singleCmdLine(), logger);
+		this.apama_deploy = new ApamaRunner('apama_deploy', apamaEnv.getDeployCmdline().singleCmdLine(), logger);
 		let ws: WorkspaceFolder;
 		workspaces.forEach( 
 			ws => this.workspaceList.push(new ApamaProjectWorkspace(logger,ws.name,ws.uri.fsPath,ws,this.apama_project,context.asAbsolutePath('resources') ) )

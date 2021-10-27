@@ -13,7 +13,7 @@ import { DebugProtocol } from 'vscode-debugprotocol';
 import { CorrelatorHttpInterface, CorrelatorBreakpoint, CorrelatorPaused } from './correlatorHttpInterface';
 import { basename } from 'path';
 import * as vscode from 'vscode';
-import { ApamaEnvironment } from '../apama_util/apamaenvironment';
+import { ApamaCommand, ApamaEnvironment } from '../apama_util/apamaenvironment';
 import { ApamaRunner } from '../apama_util/apamarunner';
 
 const MAX_STACK_SIZE = 1000;
@@ -48,10 +48,10 @@ export class CorrelatorDebugSession extends DebugSession {
 	public constructor(private logger: vscode.OutputChannel, private apamaEnv: ApamaEnvironment, private config: CorrelatorConfig) {
 		super();
 
-		this.manager = new ApamaRunner("engine_management", apamaEnv.getManagerCmdline(), logger);
-		this.deployCmd = new ApamaRunner("engine_deploy", apamaEnv.getDeployCmdline(), logger);
-		this.injectCmd = new ApamaRunner("engine_inject", apamaEnv.getInjectCmdline(), logger);
-		console.log("Correlator interface host: " + config.host.toString() + " port " + config.port.toString());
+		this.manager = new ApamaRunner("engine_management", apamaEnv.getManagerCmdline().singleCmdLine(), logger);
+		this.deployCmd = new ApamaRunner("engine_deploy", apamaEnv.getDeployCmdline().singleCmdLine(), logger);
+		this.injectCmd = new ApamaRunner("engine_inject", apamaEnv.getInjectCmdline().singleCmdLine(), logger);
+		console.log("Correlator Debug Session: Correlator interface host: " + config.host.toString() + " port " + config.port.toString());
 		this.correlatorHttp = new CorrelatorHttpInterface(logger, config.host, config.port);
 		this.correlatorBreakPoints = {} as { [key: string]: string };
 
@@ -62,7 +62,7 @@ export class CorrelatorDebugSession extends DebugSession {
 	 * to interrogate the features the debug adapter provides.
 	 */
 	protected initializeRequest(response: DebugProtocol.InitializeResponse, _args: DebugProtocol.InitializeRequestArguments): void {
-		console.log("Initialize called");
+		console.log("Correlator Debug Session: Initializing Request:");
 
 		if (!response.body) {
 			response.body = {};
@@ -78,31 +78,38 @@ export class CorrelatorDebugSession extends DebugSession {
 			}
 		];
 
+		console.log(response);
 		this.sendResponse(response);
 	}
 
 
 	private runCorrelator(extraargs: string[]): vscode.Task {
+		console.log("Correlator Debug Session: Starting Correlator:");
+		const correlatorCmd: ApamaCommand = this.apamaEnv.getCorrelatorCmdline();
 		let localargs: string[] = this.config.args.concat(['-p', this.config.port.toString()]);
+		localargs.unshift(correlatorCmd.command);
 		//console.log(extraargs);
 		if (extraargs) {
 			localargs = localargs.concat(extraargs);
 		}
+	
 		//console.log(localargs);
 		const correlator = new vscode.Task(
 			{ type: "shell", task: "" },
 			"DebugCorrelator",
 			"correlator",
-			new vscode.ShellExecution(this.apamaEnv.getCorrelatorCmdline(), localargs),
+			new vscode.ShellExecution(correlatorCmd.apamaEnv, localargs),
 			[]
 		);
 		correlator.group = 'test';
+		console.log(correlator);
 		return correlator;
 	}
 	/**
 	 * Frontend requested that the application be launched
 	 */
 	protected async launchRequest(response: DebugProtocol.LaunchResponse, _args: LaunchRequestArguments) : Promise<void>{
+		console.log("Correlator Debug Session: Launching Request");
 
 		let folder = undefined;
 		//check for a single workspace 
@@ -233,8 +240,8 @@ export class CorrelatorDebugSession extends DebugSession {
 				}
 			});
 		}
-
 	}
+
 
 	/**
 	 * Frontend requested that breakpoints be set
@@ -320,7 +327,7 @@ export class CorrelatorDebugSession extends DebugSession {
 	 * Indication that the frontend is done setting breakpoints etc
 	 */
 	protected configurationDoneRequest(response: DebugProtocol.ConfigurationDoneResponse, _args: DebugProtocol.ConfigurationDoneArguments): void {
-		console.log('Configuration done');
+		console.log('Correlator Debug Session: Configuration Done Request');
 		this.correlatorHttp.resume()
 			.then(() => this.sendResponse(response))
 			.then(() => this.waitForCorrelatorPause());
@@ -346,7 +353,7 @@ export class CorrelatorDebugSession extends DebugSession {
 	 */
 	protected async disconnectRequest(response: DebugProtocol.DisconnectResponse, _args: DebugProtocol.DisconnectArguments): Promise<void> {
 		try {
-			console.log("Stop requested to port " + this.config.port.toString());
+			console.log("Correlator Debug Session: Disconnect Request: to port " + this.config.port.toString());
 			this.manager.run('.', ['-s', 'debug_stop', '-p', this.config.port.toString()]);
 			await this.waitUntilTaskEnds("DebugCorrelator");
 			//console.log("STOPPED " + this.config.port.toString());
@@ -354,6 +361,7 @@ export class CorrelatorDebugSession extends DebugSession {
 		catch (e) {
 			//ignore
 		}
+		console.log(response);
 		this.sendResponse(response);
 	}
 

@@ -9,7 +9,7 @@ import {
 } from 'vscode-languageclient';
 
 
-import { ApamaEnvironment } from './apama_util/apamaenvironment';
+import { ApamaCommand, ApamaEnvironment } from './apama_util/apamaenvironment';
 import { ApamaTaskProvider } from './apama_util/apamataskprovider';
 import { ApamaDebugConfigurationProvider } from './apama_debug/apamadebugconfig';
 import { ApamaProjectView } from './apama_project/apamaProjectView';
@@ -27,7 +27,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
 	const logger = window.createOutputChannel('Apama Extension');
 	logger.show();
-	logger.appendLine('Started EPL Extension');
+	logger.appendLine('Started Apama EPL Extension');
 
 	const apamaEnv: ApamaEnvironment = new ApamaEnvironment(logger);
 	const taskprov = new ApamaTaskProvider(logger, apamaEnv);
@@ -64,7 +64,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
 	//If correlator version is >= 10.5.3 start with the connection to the server
 	let corrVersion = "";
-	const versionCmd = new ApamaRunner("version", apamaEnv.getCorrelatorCmdline(), logger);
+
+	const versionCmd = new ApamaRunner("version", apamaEnv.getCorrelatorCmdline().singleCmdLine(), logger);
 	const version = await versionCmd.run(".", ["--version"]);
 	const versionlines = version.stdout.split('\n');
 	const pat = new RegExp(/correlator\sv(\d+\.\d+\.\d+)\.\d+\.\d+/);
@@ -76,9 +77,10 @@ export async function activate(context: ExtensionContext): Promise<void> {
 	}
 
 	if (semver.lt(corrVersion, '10.5.3')) {
-		logger.appendLine(`Version: ${corrVersion} doesn't support the Apama Language Server - Skipping`);
+		logger.appendLine(`Correlator Version: ${corrVersion} doesn't support the Apama Language Server - Skipping`);
 	}
 	else {
+		logger.appendLine(`Correlator Version: ${corrVersion}`);
 		const config = workspace.getConfiguration("softwareag.apama.langserver");
 		createLangServerTCP(apamaEnv, config, logger)
 			.then((ls) => {
@@ -98,11 +100,14 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
 
 function runLangServer(apamaEnv: ApamaEnvironment, config: WorkspaceConfiguration): Task {
+	const eplBuddy: ApamaCommand = apamaEnv.getEplBuddyCmdline();
+	const args: string[] = [eplBuddy.command, '-l', '-p', config.port.toString()];
+	
 	const correlator = new Task(
 		{ type: "shell", task: "" },
 		"Apama Language Server",
-		"ApamaLanguageServer",
-		new ShellExecution(apamaEnv.getEplBuddyCmdline(), ['-l', '-p', config.port.toString()]),
+		"ApamaLanguageServer",		
+		new ShellExecution(eplBuddy.apamaEnv, args),
 		[]
 	);
 	correlator.group = 'test';

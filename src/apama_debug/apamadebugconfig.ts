@@ -3,7 +3,7 @@ import { WorkspaceFolder, DebugConfiguration, ProviderResult, CancellationToken,
 import * as Net from 'net';
 import { execFileSync } from 'child_process';
 import { CorrelatorDebugSession, normalizeCorrelatorFilePath } from './correlatorDebugSession';
-import { ApamaEnvironment } from '../apama_util/apamaenvironment';
+import { ApamaCommand, ApamaEnvironment } from '../apama_util/apamaenvironment';
 
 export class ApamaDebugConfigurationProvider implements DebugConfigurationProvider {
 
@@ -90,8 +90,9 @@ export class ApamaDebugConfigurationProvider implements DebugConfigurationProvid
 
 function getInjectionList(apamaEnv: ApamaEnvironment, workspaceFolderPath: string) : string[] {
 
-    const cmd : string = apamaEnv.getDeployCmdline();
-    const output: string = execFileSync(cmd , ['--outputList', 'stdout', workspaceFolderPath], {
+    const deploy: ApamaCommand = apamaEnv.getDeployCmdline();
+    const args: string[] = [deploy.command, '--outputList', 'stdout', workspaceFolderPath];
+    const output: string = execFileSync(deploy.apamaEnv, args, {
         encoding: 'utf8'
     });
 

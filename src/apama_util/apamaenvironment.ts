@@ -1,6 +1,7 @@
 import { workspace, WorkspaceConfiguration, OutputChannel, env } from 'vscode';
 import { platform } from 'os';
 import { join } from 'path';
+import { setFlagsFromString } from 'v8';
 
 
 
@@ -32,6 +33,20 @@ const default_windows_inspect = 'engine_inspect.exe';
 const default_linux_source = '. ';
 const default_windows_source = '';
 
+
+export class ApamaCommand {
+  apamaEnv: string;
+  command: string;
+
+  constructor(apamaEnv: string, command: string) {
+    this.apamaEnv = apamaEnv;
+    this.command = command;
+  }
+
+  singleCmdLine(): string {
+    return this.apamaEnv + " " + this.command;
+  }
+}
 
 export class ApamaEnvironment {
 
@@ -85,8 +100,7 @@ export class ApamaEnvironment {
     if (this.workspaceConfig.has('apamahome')) {
       //shouldn't be undefined here because has checks, but for linting need to cover
       this.apamaHome = this.workspaceConfig.get('apamahome') || this.apamaHome;
-    }
-    else {
+    } else {
       //otherwise set default in config
       this.workspaceConfig.update('apamaHome', this.apamaHome, true);
     }
@@ -108,8 +122,7 @@ export class ApamaEnvironment {
       this.cmd_watch = join(this.apamaHome, 'bin', default_linux_watch);
       this.cmd_receive = join(this.apamaHome, 'bin', default_linux_receive);
       this.cmd_inspect = join(this.apamaHome, 'bin', default_linux_inspect);
-    }
-    else {
+    } else {
       this.cmd_source = default_windows_source;
       this.cmd_env = join(this.apamaHome, 'bin', default_windows_env);
       this.cmd_correlator = join(this.apamaHome, 'bin', default_windows_correlator);
@@ -124,95 +137,55 @@ export class ApamaEnvironment {
       this.cmd_receive = join(this.apamaHome, 'bin', default_windows_receive);
       this.cmd_inspect = join(this.apamaHome, 'bin', default_windows_inspect);
     }
-
-
   }
 
   sourceEnv(): string {
     this.updateCommands();
-    let cmd : string = this.cmd_source + this.cmd_env + ' && ';
-    const envType = env.remoteName || "local";
-    if (['dev-container'].includes(envType)) {
-      cmd = '';
-    }
-    return cmd;
+    return this.cmd_source + this.cmd_env;
   }
 
-  getCorrelatorCmdline(): string {
-    this.updateCommands();
-    const r = this.sourceEnv()  + this.cmd_correlator + ' '; 
-    //this.logger.appendLine('startCorrelator ' + r);
-    return r;
+  getCorrelatorCmdline(): ApamaCommand {
+    return new ApamaCommand(this.sourceEnv(), this.cmd_correlator);
   }
 
   //doesn't need environment
-  getDeployCmdline(): string {
-    this.updateCommands();
-    const r = this.cmd_deploy + ' '; 
-    //this.logger.appendLine('startDeploy ' + r);
-    return r;
+  getDeployCmdline(): ApamaCommand {
+    return new ApamaCommand(this.sourceEnv(), this.cmd_deploy);
   }
 
-  getInjectCmdline(): string {
-    this.updateCommands();
-    const r = this.sourceEnv()  + this.cmd_inject + ' '; 
-    //this.logger.appendLine('startInject ' + r);
-    return r;
+  getInjectCmdline(): ApamaCommand {
+   return new ApamaCommand(this.sourceEnv(), this.cmd_inject);
   }
 
-  getSendCmdLine(): string {
-    this.updateCommands();
-    const r = this.sourceEnv()  + this.cmd_send + ' '; 
-    //this.logger.appendLine('startSend ' + r);
-    return r;
-
+  getSendCmdLine(): ApamaCommand {
+    return new ApamaCommand(this.sourceEnv(), this.cmd_send);
   }
 
-  getDeleteCmdLine(): string {
-    this.updateCommands();
-    const r = this.sourceEnv()  + this.cmd_delete + ' '; 
-    //this.logger.appendLine('startDelete ' + r);
-    return r;
+  getDeleteCmdLine(): ApamaCommand {
+    return new ApamaCommand(this.sourceEnv(), this.cmd_delete);
   }
 
-  getApamaProjectCmdline(): string {
-    this.updateCommands();
-    const r = this.sourceEnv()  + this.cmd_project + ' '; 
-    //this.logger.appendLine('startProject ' + r);
-    return r;
+  getApamaProjectCmdline(): ApamaCommand {
+    return new ApamaCommand(this.sourceEnv(), this.cmd_project);
   }
 
-  getManagerCmdline(): string {
-    this.updateCommands();
-    const r = this.sourceEnv()  + this.cmd_management + ' '; 
-    //this.logger.appendLine('startManager ' + r);
-    return r;
+  getManagerCmdline(): ApamaCommand {
+    return new ApamaCommand(this.sourceEnv(), this.cmd_management);
   }
 
-  getEplBuddyCmdline(): string {
-    this.updateCommands();
-    const r = this.sourceEnv()  + this.cmd_eplbuddy + ' '; 
-    //this.logger.appendLine('starteplBuddy ' + r);
-    return r;
+  getEplBuddyCmdline(): ApamaCommand {
+    return new ApamaCommand(this.sourceEnv(), this.cmd_eplbuddy);
   }
 
-  getEngineWatchCmdline(): string {
-    this.updateCommands();
-    const r = this.sourceEnv()  + this.cmd_watch + ' '; 
-    //this.logger.appendLine('startWatch ' + r);
-    return r;
+  getEngineWatchCmdline(): ApamaCommand {
+    return new ApamaCommand(this.sourceEnv(), this.cmd_watch);
   }
 
-  getEngineReceiveCmdline(): string {
-    this.updateCommands();
-    const r = this.sourceEnv()  + this.cmd_receive + ' '; 
-    return r;
+  getEngineReceiveCmdline(): ApamaCommand {
+    return new ApamaCommand(this.sourceEnv(), this.cmd_receive);
   }
 
-  getEngineInspectCmdline(): string {
-    this.updateCommands();
-    const r = this.sourceEnv()  + this.cmd_inspect + ' '; 
-    return r;
+  getEngineInspectCmdline(): ApamaCommand {
+    return new ApamaCommand(this.sourceEnv(), this.cmd_inspect);
   }
-
 }

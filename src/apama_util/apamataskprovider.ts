@@ -1,5 +1,6 @@
+import { watch } from 'fs';
 import { TaskProvider, CancellationToken, ProviderResult, Task, TaskDefinition, ShellExecution, OutputChannel } from 'vscode';
-import { ApamaEnvironment } from './apamaenvironment';
+import { ApamaCommand, ApamaEnvironment } from './apamaenvironment';
 
 interface ApamaTaskDefinition extends TaskDefinition {
   task: string;
@@ -52,11 +53,12 @@ export class ApamaTaskProvider implements TaskProvider {
   private runCorrelator(): Task {
 
     //default options for running
+    const correlatorCmd: ApamaCommand = this.apamaEnv.getCorrelatorCmdline();
     const correlator = new Task(
-      {"type":"apama","task":"correlator","port":"15903","cmdline":this.apamaEnv.getCorrelatorCmdline()},
+      {"type":"apama", "task":"correlator", "port":"15903", "cmdline":correlatorCmd.singleCmdLine()},
       "correlator",
       "apama",
-      new ShellExecution(this.apamaEnv.getCorrelatorCmdline()),
+      new ShellExecution(correlatorCmd.apamaEnv, [correlatorCmd.command]),
       []
     );
     correlator.group = 'correlator';
@@ -66,29 +68,30 @@ export class ApamaTaskProvider implements TaskProvider {
   private runReceive(): Task {
 
     //default options for running
-    const correlator = new Task(
-      {"type":"apama","task":"engine_receive","port":"15903","cmdline":this.apamaEnv.getEngineReceiveCmdline()},
+    const receiveCmd: ApamaCommand = this.apamaEnv.getEngineReceiveCmdline();
+    const receive = new Task(
+      {"type":"apama", "task":"engine_receive", "port":"15903", "cmdline":receiveCmd.singleCmdLine()},
       "engine_receive",
       "apama",
-      new ShellExecution(this.apamaEnv.getEngineReceiveCmdline()),
+      new ShellExecution(receiveCmd.apamaEnv, [receiveCmd.command]),
       []
     );
-    correlator.group = 'correlator';
-    return correlator;
+    receive.group = 'correlator';
+    return receive;
   }
 
-   runEngineWatch(): Task {
-     //TODO: get user defined options?
-     //let options = windows.showInputBox(...etc...);
-    const engine_watch = new Task(
-      {"type":"apama","task":"engine_watch","port":"15903","cmdline":this.apamaEnv.getEngineWatchCmdline()},
+  runEngineWatch(): Task {
+    //TODO: get user defined options?
+    //let options = windows.showInputBox(...etc...);
+    const watcheCmd: ApamaCommand = this.apamaEnv.getEngineWatchCmdline();
+    const watch = new Task(
+      {"type":"apama", "task":"engine_watch", "port":"15903", "cmdline":watcheCmd.singleCmdLine()},
       "engine_watch",
       "apama",
-      new ShellExecution(this.apamaEnv.getEngineWatchCmdline()/* + options */),
+      new ShellExecution(watcheCmd.apamaEnv, [watcheCmd.command]/* + options */),
       []
     );
-    engine_watch.group = 'tools';
-    return engine_watch;
+    watch.group = 'tools';
+    return watch;
   }
-
 }

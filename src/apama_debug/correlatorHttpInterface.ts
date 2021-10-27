@@ -4,6 +4,7 @@ const axios = require('axios').default;
 import { DOMParser } from 'xmldom';
 import * as xpath from 'xpath';
 import { OutputChannel } from 'vscode';
+import { AxiosResponse, AxiosError } from 'axios'
 
 export interface CorrelatorBreakpoint {
     filename: string;
@@ -113,15 +114,23 @@ export class CorrelatorHttpInterface {
     }
 
     public async enableDebugging(): Promise<void> {
-        console.log("enableDebugging");
-        const body = '<map name="apama-request"></map>';
-        const response:any = await axios.put(`${this.url}/correlator/debug/state`, body);
-        ////console.log(response);
-        return response.data;
+        console.log("Correlator Http Interface: Enabling Debugging");
+        try {
+            const body = '<map name="apama-request"></map>';
+            const response: AxiosResponse = await axios.put(`${this.url}/correlator/debug/state`, body);
+            console.log(response);
+            return response.data;
+        } catch (e) {
+            if ((e as AxiosError).isAxiosError !== undefined) {
+                console.log("Correlator Http Interface: Enabling Debugging encountered an error:");
+                console.log((e as AxiosError).toJSON());
+            }
+            throw e;
+        }
     }
 
     public async disableDebugging(): Promise<void> {
-        console.log("disableDebugging");
+        console.log("Correlator Http Interface: Disabling Debugging");
         await axios.delete(`${this.url}/correlator/debug/state`);
         //console.log(response);
         return;
@@ -130,7 +139,7 @@ export class CorrelatorHttpInterface {
     public async pause(): Promise<void> {
         console.log("pause");
         const body = '<map name="apama-request"></map>';
-        const response:any = await axios.put(`${this.url}/correlator/debug/progress/stop`, body );
+        const response: AxiosResponse = await axios.put(`${this.url}/correlator/debug/progress/stop`, body );
         //console.log(response);
         return response.data;
     }
@@ -138,7 +147,7 @@ export class CorrelatorHttpInterface {
     public async resume(): Promise<void> {
         console.log("resume");
         const body = '<map name="apama-request"></map>';
-        const response:any = await axios.put(`${this.url}/correlator/debug/progress/run`, body );
+        const response: AxiosResponse = await axios.put(`${this.url}/correlator/debug/progress/run`, body );
         //console.log(response);
         return response.data;
     }
@@ -146,7 +155,7 @@ export class CorrelatorHttpInterface {
     public async stepIn(): Promise<void> {
         console.log("stepIn");
         const body = '<map name="apama-request"></map>';
-        const response:any = await axios.put(`${this.url}/correlator/debug/progress/step`, body);
+        const response: AxiosResponse = await axios.put(`${this.url}/correlator/debug/progress/step`, body);
         //console.log(response);
         return response.data;
     }
@@ -154,7 +163,7 @@ export class CorrelatorHttpInterface {
     public async stepOver(): Promise<void> {
         console.log("stepOver");
         const body = '<map name="apama-request"></map>';
-        const response:any = await axios.put(`${this.url}/correlator/debug/progress/stepover`, body);
+        const response: AxiosResponse = await axios.put(`${this.url}/correlator/debug/progress/stepover`, body);
         //console.log(response);
         return response.data;
     }
@@ -168,10 +177,10 @@ export class CorrelatorHttpInterface {
     }
 
     public async awaitPause(): Promise<CorrelatorPaused> {
-        console.log("awaitPause");
+        console.log("Correlator Http Interface: awaitPause");
         
         try {
-            const response:any = await axios.get(`${this.url}/correlator/debug/progress/wait`, { timeout: 15000 });
+            const response: AxiosResponse = await axios.get(`${this.url}/correlator/debug/progress/wait`, { timeout: 15000 });
             console.log("await pause returned");
             //console.log(response);
             const dom = new DOMParser().parseFromString(response.data, 'text/xml');
@@ -192,14 +201,18 @@ export class CorrelatorHttpInterface {
             //console.log(retVal);
             return retVal;
         }
-        catch(e ) {
+        catch (e) {
             // If the await timed out (but not during connection) then just recreate it
-            if (e.code === 'ECONNABORTED' && e.message.indexOf("timeout") >= 0 ) {
-                return this.awaitPause();
-            } else {
-                console.log("await pause encounterd an error");
-                throw e;
+            if ((e as AxiosError).isAxiosError !== undefined) {
+                if ((e as AxiosError).code === 'ECONNABORTED' && (e as AxiosError).message.indexOf("timeout") >= 0 ) {
+                    return this.awaitPause();
+                } else {
+                    console.log("Correlator Http Interface: awaitPause encounterd an error:");
+                    console.log(e);
+                    throw e;
+                }
             }
+            throw e;
         }
     }
 
