@@ -5,6 +5,19 @@ import { ApamaEnvironment } from '../apama_util/apamaenvironment';
 import { ChildProcess, spawn } from 'child_process';
 import { Writable } from 'stream';
 
+//NOTE: We can eliminate so many variables and write a better generic solution using path & _dir module
+let fs = require('fs');
+let fse = require('fs-extra')
+let dir1 = 'C:/dev/dir1/';
+let dir2 = 'C:/dev/dir1/files'
+let srcDir="C:/dev/IW/vs2/";
+let destDir="C:/dev/dir1/files";
+var zl = require("zip-lib");
+let axios = require('axios');
+var FormData = require('form-data');
+
+
+
 export class ApamaCommandProvider {
   private injectCmd: ApamaRunner;
   private sendCmd: ApamaRunner;
@@ -20,12 +33,82 @@ export class ApamaCommandProvider {
     this.registerCommands();
   }
 
+  
+
   registerCommands(): void {
 
     if (this.context !== undefined) {
       const port: any = workspace.getConfiguration("softwareag.apama").get("debugport");
       this.context.subscriptions.push.apply(this.context.subscriptions,
         [
+
+          commands.registerCommand('extension.c8y.uploadProject', async () => {
+            try {
+//NOTE: Currently apama_project is default value in prompt but the context menu should be on right click apama project folder            
+              const projectName = await window.showInputBox({  
+                value: "apama_project",
+                placeHolder: "Enter project name"
+                });                
+                if (!fs.existsSync(dir1)){
+                 fs.mkdirSync(dir1);
+                }
+                if (!fs.existsSync(dir2)){
+                 fs.mkdirSync(dir2);
+                }
+              try {
+               await fse.copy(srcDir, destDir, { overwrite: true })
+                console.log('success!')
+              } catch (err) {
+                console.error(err)
+              }
+//NOTE: A generic solution is required to exclude all the unwanted files.          
+              fs.unlinkSync("C:/dev/dir1/files/apama_project/.project",function(err:any){
+                if(err) return console.log(err);
+                console.log('file1 deleted successfully')});
+
+              fs.unlinkSync("C:/dev/dir1/files/apama_project/.dependencies",function(err:any){
+                if(err) return console.log(err);
+                console.log('file2 deleted successfully')});
+                //path of your workspace
+              await zl.archiveFolder("C:/dev/dir1", "C:/dev/target.zip").then(function () {
+                  console.log("done");
+              }, function (err:any) {
+                  console.log(err);
+              });
+              
+              try{
+                var data = new FormData();
+               await data.append('object', '{"name":"Foo","type":"application/zip","pas_extension":"Foo"}');
+               await data.append('filesize', '12');
+//NOTE: The target directory should be generic something like apama_home and should not be C:/dev               
+               await data.append('file', fs.createReadStream('C:/dev/target.zip'));
+
+                var config = {
+                method: 'post',
+                url: 'https://apamannat.latest.stage.c8y.io//inventory/binaries',
+                headers: { 
+                    'Authorization': 'Basic YXBhbWFibGQ6MjB0cnl0cnlhZ2Fpbj4+MjBBTkRIT1BF', 
+                    'Content-Type': 'multipart/form-data; boundary=----PASExtension3XtDFfhJ8XLIrkPw', 
+                    'Accept': '*/*', 
+                    ...data.getHeaders()
+                },
+                  data : data
+                };
+                axios(config)
+                .then(function (response:any) {
+                  console.log(JSON.stringify(response.data));
+                })
+                .catch(function (error:any) {
+                  console.log(error);
+                });
+              }
+              catch(error){
+              }
+              // TODO: show errors/warnings
+            } catch (error) {
+              // window.showErrorMessage("Error uploading " + uri.path +":\n" + error.error.message);
+            }
+          }),
           //
           // engine_inject command
           //
@@ -159,6 +242,7 @@ export class ApamaCommandProvider {
       });
     });
   }
+  
 
 }
 
