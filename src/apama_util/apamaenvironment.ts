@@ -55,6 +55,7 @@ export class ApamaEnvironment {
   private cmd_watch: string;
   private cmd_receive: string;
   private cmd_inspect: string;
+  private cmd_separator: string;
 
   constructor( private logger:OutputChannel ) { 
     this.workspaceConfig = workspace.getConfiguration(confignode);
@@ -76,6 +77,7 @@ export class ApamaEnvironment {
       this.cmd_watch = '';
       this.cmd_receive = '';
       this.cmd_inspect = '';
+      this.cmd_separator = '';
       this.updateCommands();
   }
 
@@ -96,6 +98,7 @@ export class ApamaEnvironment {
     //make sure separators correct for paths 
     if (this.isLinux) {
       this.cmd_source = default_linux_source;
+      this.cmd_separator = ' && ';
       this.cmd_env = join(this.apamaHome, 'bin', default_linux_env);
       this.cmd_correlator = join(this.apamaHome, 'bin', default_linux_correlator);
       this.cmd_deploy = join(this.apamaHome, 'bin', default_linux_deploy);
@@ -111,6 +114,7 @@ export class ApamaEnvironment {
     }
     else {
       this.cmd_source = default_windows_source;
+      this.cmd_separator = '  ';
       this.cmd_env = join(this.apamaHome, 'bin', default_windows_env);
       this.cmd_correlator = join(this.apamaHome, 'bin', default_windows_correlator);
       this.cmd_deploy = join(this.apamaHome, 'bin', default_windows_deploy);
@@ -130,7 +134,7 @@ export class ApamaEnvironment {
 
   sourceEnv(): string {
     this.updateCommands();
-    let cmd : string = this.cmd_source + this.cmd_env + ' && ';
+    let cmd : string = this.cmd_source + this.cmd_env + this.cmd_separator;
     const envType = env.remoteName || "local";
     if (['dev-container'].includes(envType)) {
       cmd = '';

@@ -2,7 +2,7 @@
 
 import * as net from 'net';
 
-import { ExtensionContext, Disposable, window, tasks, debug, workspace, WorkspaceConfiguration, Task, ShellExecution, OutputChannel } from 'vscode';
+import { ExtensionContext, Disposable, window, tasks, debug, workspace, WorkspaceConfiguration, Task, ShellExecution, OutputChannel, TaskScope, ShellQuoting } from 'vscode';
 
 import {
 	LanguageClient, LanguageClientOptions, ServerOptions
@@ -98,13 +98,20 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
 
 function runLangServer(apamaEnv: ApamaEnvironment, config: WorkspaceConfiguration): Task {
+
+	let shellExecution = new ShellExecution({value: apamaEnv.getEplBuddyCmdline(), quoting: ShellQuoting.Weak },['-l', '-p', config.port.toString()]);
+
 	const correlator = new Task(
-		{ type: "shell", task: "" },
+		{ type: "shell"},
+		TaskScope.Workspace,
 		"Apama Language Server",
 		"ApamaLanguageServer",
-		new ShellExecution(apamaEnv.getEplBuddyCmdline(), ['-l', '-p', config.port.toString()]),
+		//new ShellExecution(apamaEnv.getEplBuddyCmdline(), ['-l', '-p', config.port.toString()]),
+		shellExecution,
 		[]
 	);
+
+	
 	correlator.group = 'test';
 	return correlator;
 }

@@ -26,7 +26,7 @@
       "properties": {
         "softwareag.apama.apamahome": {
           "type": "string",
-          "default": "c:\\softwareag\\apama",
+          "default": "C:\\dev\\PAB\\apama-in-c8y\\installs\\full\\Apama",
           "description": "Home directory for the Apama installation."
         },
         "softwareag.apama.debugport": {
