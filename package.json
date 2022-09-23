@@ -343,7 +343,7 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "@c8y/client": "^1005.12.0",
+    "@c8y/client": "^1015.165.0",
     "@types/axios": "^0.14.0",
     "@types/glob": "^7.1.2",
     "@types/js-yaml": "^3.12.4",
