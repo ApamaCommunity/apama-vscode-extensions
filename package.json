@@ -235,6 +235,10 @@
       {
         "command": "extension.c8y.openEplApp",
         "title": "open EPL Application"
+      },
+      {
+        "command": "extension.apama.deploy_epl",
+        "title": "Upload as EPL App"
       }
     ],
     "menus": {
@@ -246,6 +250,10 @@
         {
           "when": "resourceExtname == .evt",
           "command": "extension.apama.engine_send"
+        },
+        {
+          "when": "resourceExtname == .mon",
+          "command": "extension.apama.deploy_epl"
         }
       ],
       "view/title": [
@@ -364,6 +372,7 @@
     "vscode-languageclient": "^5.2.1",
     "vscode-languageserver": "^5.3.0-next.10",
     "xmldom": "^0.6.0",
-    "xpath": "0.0.27"
+    "xpath": "0.0.27",
+    "js-base64": "3.7.2"
   }
 }
