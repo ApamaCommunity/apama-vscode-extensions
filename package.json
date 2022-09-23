@@ -24,9 +24,20 @@
     "configuration": {
       "title": "Apama",
       "properties": {
+        "eplLanguageServer.trace.server": {
+					"scope": "window",
+					"type": "string",
+					"enum": [
+						"off",
+						"messages",
+						"verbose"
+					],
+					"default": "verbose",
+					"description": "Traces the communication between VS Code and the language server."
+				},
         "softwareag.apama.apamahome": {
           "type": "string",
-          "default": "c:\\softwareag\\apama",
+          "default": "C:\\dev\\PAB\\apama-in-c8y\\installs\\full\\Apama",
           "description": "Home directory for the Apama installation."
         },
         "softwareag.apama.debugport": {
@@ -46,7 +57,7 @@
             "remote",
             "disabled"
           ],
-          "default": "local",
+          "default": "remote",
           "description": "Whether vscode should start the language server locally."
         },
         "softwareag.apama.langserver.port": {

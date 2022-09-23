@@ -114,8 +114,8 @@ export class CorrelatorHttpInterface {
 
     public async enableDebugging(): Promise<void> {
         console.log("enableDebugging");
-        const body = '<map name="apama-request"></map>';
-        const response:any = await axios.put(`${this.url}/correlator/debug/state`, body);
+        //const body = '<map name="apama-request"></map>';
+        const response:any = await axios.put(`${this.url}/correlator/debug/state`);
         ////console.log(response);
         return response.data;
     }

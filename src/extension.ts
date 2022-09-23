@@ -2,7 +2,7 @@
 
 import * as net from 'net';
 
-import { ExtensionContext, Disposable, window, tasks, debug, workspace, WorkspaceConfiguration, Task, ShellExecution, OutputChannel } from 'vscode';
+import { ExtensionContext, Disposable, window, tasks, debug, workspace, WorkspaceConfiguration, Task, ShellExecution, OutputChannel, TaskScope, ShellQuoting } from 'vscode';
 
 import {
 	LanguageClient, LanguageClientOptions, ServerOptions
@@ -79,12 +79,15 @@ export async function activate(context: ExtensionContext): Promise<void> {
 		logger.appendLine(`Version: ${corrVersion} doesn't support the Apama Language Server - Skipping`);
 	}
 	else {
+		
 		const config = workspace.getConfiguration("softwareag.apama.langserver");
 		createLangServerTCP(apamaEnv, config, logger)
 			.then((ls) => {
 				context.subscriptions.push(ls.start());
 			})
-			.catch(err => logger.appendLine(err));
+			.catch(err => {
+				logger.appendLine(err)
+			});
 	}
 
 
@@ -98,13 +101,20 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
 
 function runLangServer(apamaEnv: ApamaEnvironment, config: WorkspaceConfiguration): Task {
+
+	const shellExecution = new ShellExecution({value: apamaEnv.getEplBuddyCmdline(), quoting: ShellQuoting.Weak },['-l', '-p', config.port.toString()]);
+
 	const correlator = new Task(
-		{ type: "shell", task: "" },
+		{ type: "shell"},
+		TaskScope.Workspace,
 		"Apama Language Server",
 		"ApamaLanguageServer",
-		new ShellExecution(apamaEnv.getEplBuddyCmdline(), ['-l', '-p', config.port.toString()]),
+		//new ShellExecution(apamaEnv.getEplBuddyCmdline(), ['-l', '-p', config.port.toString()]),
+		shellExecution,
 		[]
 	);
+
+	
 	correlator.group = 'test';
 	return correlator;
 }
@@ -134,19 +144,23 @@ async function createLangServerTCP(apamaEnv: ApamaEnvironment, config: Workspace
 					writer: clientSocket,
 				});
 			});
+
+			clientSocket.addListener('error', (err) => {
+				console.log(err);
+			});
 		});
 	};
 
 	// Options of the language client
 	const clientOptions: LanguageClientOptions = {
 		// Activate the server for epl files
-		documentSelector: ['epl'],
+		documentSelector: [{ scheme: 'file', language: 'epl' }],
 		synchronize: {
 			// Synchronize the section 'eplLanguageServer' of the settings to the server
 			configurationSection: 'eplLanguageServer',
 			// Notify the server about file changes to epl files contained in the workspace
 			// need to think about this
-			// fileEvents: workspace.createFileSystemWatcher('**/.epl')
+			fileEvents: workspace.createFileSystemWatcher('**/.epl')
 		}
 	};
 

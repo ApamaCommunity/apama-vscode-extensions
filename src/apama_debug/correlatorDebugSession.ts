@@ -89,11 +89,14 @@ export class CorrelatorDebugSession extends DebugSession {
 			localargs = localargs.concat(extraargs);
 		}
 		//console.log(localargs);
+
+		const shellExecution = new vscode.ShellExecution({value: this.apamaEnv.getCorrelatorCmdline(), quoting: vscode.ShellQuoting.Weak }, localargs);
+
 		const correlator = new vscode.Task(
 			{ type: "shell", task: "" },
 			"DebugCorrelator",
 			"correlator",
-			new vscode.ShellExecution(this.apamaEnv.getCorrelatorCmdline(), localargs),
+			shellExecution,
 			[]
 		);
 		correlator.group = 'test';
