@@ -4,12 +4,16 @@ import { OutputChannel,ExtensionContext, workspace, commands, window } from 'vsc
 import { ApamaEnvironment } from '../apama_util/apamaenvironment';
 import { ChildProcess, spawn } from 'child_process';
 import { Writable } from 'stream';
+const axios = require('axios').default;
+import * as fs from 'fs';
+import { Base64 } from 'js-base64';
 
 export class ApamaCommandProvider {
   private injectCmd: ApamaRunner;
   private sendCmd: ApamaRunner;
   private deleteCmd: ApamaRunner;
   private engineWatchCmd: ApamaAsyncRunner;
+  authorization: string | undefined;
 
   public constructor(private logger: OutputChannel, private apamaEnv: ApamaEnvironment,
     private context: ExtensionContext) {
@@ -24,6 +28,10 @@ export class ApamaCommandProvider {
 
     if (this.context !== undefined) {
       const port: any = workspace.getConfiguration("softwareag.apama").get("debugport");
+      let tenantUrl: any = workspace.getConfiguration("softwareag.c8y").get("url");
+      const tenantUserName: any = workspace.getConfiguration("softwareag.c8y").get("user");
+      const tenantPassword: any = workspace.getConfiguration("softwareag.c8y").get("password");
+      
       this.context.subscriptions.push.apply(this.context.subscriptions,
         [
           //
@@ -102,6 +110,56 @@ export class ApamaCommandProvider {
                 this.deleteCmd.run('.', ['-p', port.toString()].concat(userInput));
               }
             }
+          }),
+
+          /**
+           * Uploading monitor file as EPL App command
+           */
+           commands.registerCommand('extension.apama.deploy_epl', async (uri) => {
+
+            var axios = require('axios');
+            let credsb64: string;
+            credsb64 = Base64.encode(tenantUserName + ':' + tenantPassword);
+            this.authorization = 'Basic ' + credsb64;
+
+            // Display prompt to provide tenant URL.
+            const userInput_tenant = await window.showInputBox({
+              value: tenantUrl.toString(),
+              placeHolder: "What is the tenant url"
+            });
+
+            let appname = uri.path;
+						const lastPathSepIndex = appname.lastIndexOf('/');
+						if (lastPathSepIndex >= 0) {
+							appname = appname.slice(lastPathSepIndex + 1);
+						}
+
+						if (appname.endsWith(".mon")) {
+							appname = appname.slice(0, -4);
+						}
+            
+            var data = {
+              name: appname,
+              description: 'Uploaded from VS Code',
+              state: 'active',
+              contents: fs.readFileSync(uri.fsPath).toString()
+            };
+            
+            var config = {
+              method: 'post',
+              url: userInput_tenant + '/service/cep/eplfiles',
+              headers: { 
+                'Authorization': this.authorization, 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+              },
+              data : data
+            };
+            
+            axios(config)
+            .then( response => window.showInformationMessage('Success: ' + appname + '.mon is uploaded as an EPL app.'))
+            .catch( error => window.showErrorMessage('Failure: ' + error.message));
+
           })
         ]
       );
