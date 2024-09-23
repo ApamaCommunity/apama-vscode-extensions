@@ -316,10 +316,9 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "npm run submodules && webpack --mode production && npm run lint",
+    "vscode:prepublish": "webpack --mode production && npm run lint",
     "lint": "eslint src --ext ts",
-    "submodules": "cd resources && git submodule init && git submodule update && cd ..",
-    "pretest": "npm run submodules && npm run webpack && npm run lint",
+    "pretest": "npm run webpack && npm run lint",
     "webpack": "webpack --mode development",
     "webpack-watch": "webpack --mode development --watch"
   },
