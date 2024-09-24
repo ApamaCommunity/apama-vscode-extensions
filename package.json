@@ -330,7 +330,6 @@
     "esbuild": "^0.24.0",
     "eslint": "^7.6.0",
     "typescript": "^3.9.5",
-    "@types/glob": "^7.1.2",
     "@types/js-yaml": "^3.12.4",
     "@types/semver": "^7.3.1",
     "@types/shelljs": "^0.8.8",
@@ -340,7 +339,7 @@
   "dependencies": {
     "@c8y/client": "^1020.26.2",
     "axios": "^1.7.7",
-    "glob": "^7.1.6",
+    "glob": "^11.0.0",
     "js-yaml": "^3.14.0",
     "jsonschema": "^1.2.6",
     "semver": "^7.3.2",
