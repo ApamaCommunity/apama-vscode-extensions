@@ -2,11 +2,11 @@
 
 import * as net from 'net';
 
-import { ExtensionContext, Disposable, window, tasks, debug, workspace, WorkspaceConfiguration, Task, ShellExecution, OutputChannel} from 'vscode';
+import { ExtensionContext, Disposable, window, tasks, debug, workspace, WorkspaceConfiguration, Task, ShellExecution, OutputChannel, TaskGroup} from 'vscode';
 
 import {
 	LanguageClient, LanguageClientOptions, ServerOptions
-} from 'vscode-languageclient';
+} from 'vscode-languageclient/node';
 
 
 import { ApamaEnvironment } from './apama_util/apamaenvironment';
@@ -83,7 +83,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
 				const config = workspace.getConfiguration("softwareag.apama.langserver");
 				createLangServerTCP(apamaEnv, config, logger)
 					.then((ls) => {
-						context.subscriptions.push(ls.start());
+						ls.start();
+						context.subscriptions.push(ls);
 					})
 					.catch(err => logger.appendLine(err));
 			}
@@ -110,7 +111,7 @@ function runLangServer(apamaEnv: ApamaEnvironment, config: WorkspaceConfiguratio
 		new ShellExecution(apamaEnv.getEplBuddyCmdline(), ['-l', '-p', config.port.toString()]),
 		[]
 	);
-	correlator.group = 'test';
+	correlator.group = TaskGroup.Test;
 	return correlator;
 }
 
