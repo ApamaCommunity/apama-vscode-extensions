@@ -2,7 +2,7 @@
 
 import * as net from 'net';
 
-import { ExtensionContext, Disposable, window, tasks, debug, workspace, WorkspaceConfiguration, Task, ShellExecution, OutputChannel, ExtensionMode } from 'vscode';
+import { ExtensionContext, Disposable, window, tasks, debug, workspace, WorkspaceConfiguration, Task, ShellExecution, OutputChannel} from 'vscode';
 
 import {
 	LanguageClient, LanguageClientOptions, ServerOptions
@@ -27,10 +27,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
 	const logger = window.createOutputChannel('Apama Extension');
 
-	if (context.extensionMode != ExtensionMode.Production) {
-		logger.show();
-		logger.appendLine('DEBUG: Started EPL Extension');
-	}
+	logger.appendLine('Started EPL Extension');
 	
 	const apamaEnv: ApamaEnvironment = new ApamaEnvironment(logger);
 	const taskprov = new ApamaTaskProvider(logger, apamaEnv);
