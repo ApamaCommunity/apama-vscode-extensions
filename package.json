@@ -318,7 +318,7 @@
   "scripts": {
     "vscode:prepublish": "node esbuild.js --production && npm run lint",
     "lint": "eslint src --ext ts",
-    "prebuild": "npm run esbuild && npm run lint",
+    "build": "npm run esbuild && npm run lint",
     "esbuild": "node esbuild.js",
     "esbuild-watch": "node esbuild.js --watch",
     "compile-tests": "tsc -p . --outDir out",
