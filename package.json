@@ -318,9 +318,13 @@
   "scripts": {
     "vscode:prepublish": "node esbuild.js --production && npm run lint",
     "lint": "eslint src --ext ts",
-    "pretest": "npm run esbuild && npm run lint",
+    "prebuild": "npm run esbuild && npm run lint",
     "esbuild": "node esbuild.js",
-    "esbuild-watch": "node esbuild.js --watch"
+    "esbuild-watch": "node esbuild.js --watch",
+    "compile-tests": "tsc -p . --outDir out",
+    "pretest": "npm run compile-tests",
+    "test": "vscode-test",
+    "version": "tsc --version"
   },
   "dependencies": {
     "@c8y/client": "^1020.26.2",
@@ -343,6 +347,8 @@
     "@types/xmldom": "^0.1.34",
     "@typescript-eslint/eslint-plugin": "^3.8.0",
     "@typescript-eslint/parser": "^3.8.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
     "esbuild": "^0.24.0",
     "eslint": "^7.6.0",
     "typescript": "^3.9.5"
