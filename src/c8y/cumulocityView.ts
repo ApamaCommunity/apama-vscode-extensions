@@ -130,7 +130,11 @@ export class CumulocityView implements vscode.TreeDataProvider<EPLApplication> {
 						console.log(JSON.stringify(result));
 						// TODO: show errors/warnings
 					} catch (error) {
-						vscode.window.showErrorMessage("Error uploading " + uri.path +":\n" + error.error.message);
+						let errorMessage = "Failed to register EPL App command, unknown error";
+						if (error instanceof Error) {
+							errorMessage = error.message;
+						}
+						vscode.window.showErrorMessage("Error uploading " + uri.path +":\n" + errorMessage);
 					}
 				}),
 
