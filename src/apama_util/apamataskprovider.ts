@@ -1,4 +1,4 @@
-import { TaskProvider, CancellationToken, ProviderResult, Task, TaskDefinition, ShellExecution, OutputChannel } from 'vscode';
+import { TaskProvider, CancellationToken, ProviderResult, Task, TaskDefinition, ShellExecution, OutputChannel, TaskGroup } from 'vscode';
 import { ApamaEnvironment } from './apamaenvironment';
 
 interface ApamaTaskDefinition extends TaskDefinition {
@@ -59,7 +59,7 @@ export class ApamaTaskProvider implements TaskProvider {
       new ShellExecution(this.apamaEnv.getCorrelatorCmdline()),
       []
     );
-    correlator.group = 'correlator';
+    correlator.group = TaskGroup.Test;
     return correlator;
   }
 
@@ -73,7 +73,7 @@ export class ApamaTaskProvider implements TaskProvider {
       new ShellExecution(this.apamaEnv.getEngineReceiveCmdline()),
       []
     );
-    correlator.group = 'correlator';
+    correlator.group = TaskGroup.Test;
     return correlator;
   }
 
@@ -87,7 +87,7 @@ export class ApamaTaskProvider implements TaskProvider {
       new ShellExecution(this.apamaEnv.getEngineWatchCmdline()/* + options */),
       []
     );
-    engine_watch.group = 'tools';
+    engine_watch.group = TaskGroup.Test;
     return engine_watch;
   }
 
