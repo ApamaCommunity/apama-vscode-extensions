@@ -1,10 +1,6 @@
-# epl-syntax-highlighting README
+# apama-vscode-extensions
 
-CI takes place on the Azure Platform building on Linux, Windows and Mac platforms.
-
-[![Build Status](https://dev.azure.com/CaribouJohnDevOps/CaribouJohn-github-vscode-extensions/_apis/build/status/CaribouJohn.apama-vscode-extensions?branchName=master)](https://dev.azure.com/CaribouJohnDevOps/CaribouJohn-github-vscode-extensions/_build/latest?definitionId=2&branchName=master)
-
-This is a community developed VSCode extension to support development of Apama Streaming Analytics applications.  Initially it offered syntax highlighting for EPL (Event Programming Language) files. EPL files are used by the Apama Streaming Analytics product to define applications that are executed within a runtime process called the 'correlator'. The language is a domain specific language centered around events and event processing.  As the extension has grown, additional capabilities are being added beyond only syntax highlighting, such as launching the correlator runtime with files from your project.
+A community developed VSCode extension to support the development of Apama Streaming Analytics applications.
 
 For more information about Apama and EPL please visit the [Apama Community](http://www.apamacommunity.com/) website.
 
@@ -12,7 +8,7 @@ For more information about Apama and EPL please visit the [Apama Community](http
 * [Apama Community - downloads](http://www.apamacommunity.com/downloads/)
 * [Apama Community - documentation](http://www.apamacommunity.com/docs/)
 
-Users of this extension may also find the early-stage new [vscode extension for PySys testing](https://marketplace.visualstudio.com/items?itemName=CaribouJohn.pysys-vscode-extension) helpful, as [PySys](https://pypi.org/project/PySys/) is the primary framework for testing Apama applications.
+Also available is a [VSCode extension for PySys testing](https://marketplace.visualstudio.com/items?itemName=ApamaCommunity.pysys-vscode-extension) .
 
 ## Features of the epl-syntax-highlighting extension
 
@@ -122,16 +118,13 @@ Debugging the application also follows the standard vscode patterns.
 
 To use the diagnostics capability you must have version 10.5.3 or later of Apama installed.
 
-## Known Issues
-
-There are a number of issues that will be fixed, but please do raise issues via GitHub if you come accross things.
-Pull requests are also very welcome!
-
 ## Development
 
-Users are welcome to make pull requests with fixes and enhancements but I reserve the right to control what and when goes into released versions of the extention.
-
 ## Release Notes
+
+## v2.0.0
+
+* Stops the extension startup from stealing application focus.
 
 ## v1.2.1
 
