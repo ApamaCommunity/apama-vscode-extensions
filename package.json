@@ -316,11 +316,11 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "node esbuild.js --mode production && npm run lint",
+    "vscode:prepublish": "node esbuild.js --production && npm run lint",
     "lint": "eslint src --ext ts",
     "pretest": "npm run esbuild && npm run lint",
-    "esbuild": "node esbuild.js --mode development",
-    "esbuild-watch": "node esbuild.js --mode development --watch"
+    "esbuild": "node esbuild.js",
+    "esbuild-watch": "node esbuild.js --watch"
   },
   "dependencies": {
     "@c8y/client": "^1020.26.2",
