@@ -329,17 +329,17 @@
     "@typescript-eslint/parser": "^3.8.0",
     "esbuild": "^0.24.0",
     "eslint": "^7.6.0",
-    "typescript": "^3.9.5"
-  },
-  "dependencies": {
-    "@c8y/client": "^1005.12.0",
+    "typescript": "^3.9.5",
     "@types/axios": "^0.14.0",
     "@types/glob": "^7.1.2",
     "@types/js-yaml": "^3.12.4",
     "@types/semver": "^7.3.1",
     "@types/shelljs": "^0.8.8",
     "@types/vscode": "^1.45.1",
-    "@types/xmldom": "^0.1.29",
+    "@types/xmldom": "^0.1.29"
+  },
+  "dependencies": {
+    "@c8y/client": "^1005.12.0",
     "axios": "^0.21.2",
     "glob": "^7.1.6",
     "js-yaml": "^3.14.0",
