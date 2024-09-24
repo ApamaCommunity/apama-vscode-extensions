@@ -80,8 +80,8 @@ export class ApamaAsyncRunner {
     );
 
     if( defaultHandlers ) {
-      this.child.stdout.setEncoding('utf8');
-      this.child.stdout.on('data', (data: string) => {
+      this.child.stdout?.setEncoding('utf8');
+      this.child.stdout?.on('data', (data: string) => {
         if (this.logger) {
           this.logger.append(data);
         }
