@@ -341,7 +341,6 @@
     "axios": "^1.7.7",
     "glob": "^11.0.0",
     "js-yaml": "^3.14.0",
-    "jsonschema": "^1.2.6",
     "semver": "^7.3.2",
     "shelljs": "^0.8.5",
     "@vscode/debugadapter": "^1.67.0",
