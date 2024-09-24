@@ -339,7 +339,7 @@
     "@types/xmldom": "^0.1.29"
   },
   "dependencies": {
-    "@c8y/client": "^1005.12.0",
+    "@c8y/client": "^1020.26.2",
     "axios": "^0.21.2",
     "glob": "^7.1.6",
     "js-yaml": "^3.14.0",
