@@ -9,7 +9,7 @@ import {
 	Scope,
 	Variable,
 } from '@vscode/debugadapter';
-import { DebugProtocol } from 'vscode-debugprotocol';
+import { DebugProtocol } from '@vscode/debugprotocol';
 import { CorrelatorHttpInterface, CorrelatorBreakpoint, CorrelatorPaused } from './correlatorHttpInterface';
 import { basename } from 'path';
 import * as vscode from 'vscode';
@@ -96,7 +96,7 @@ export class CorrelatorDebugSession extends DebugSession {
 			new vscode.ShellExecution(this.apamaEnv.getCorrelatorCmdline(), localargs),
 			[]
 		);
-		correlator.group = 'test';
+		// correlator.group = 'test';
 		return correlator;
 	}
 	/**
