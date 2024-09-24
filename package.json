@@ -322,28 +322,28 @@
     "esbuild": "node esbuild.js --mode development",
     "esbuild-watch": "node esbuild.js --mode development --watch"
   },
-  "devDependencies": {
-    "@types/node": "^22.6.1",
-    "@typescript-eslint/eslint-plugin": "^3.8.0",
-    "@typescript-eslint/parser": "^3.8.0",
-    "esbuild": "^0.24.0",
-    "eslint": "^7.6.0",
-    "typescript": "^3.9.5",
-    "@types/semver": "^7.5.8",
-    "@types/shelljs": "^0.8.8",
-    "@types/vscode": "^1.93.0",
-    "@types/xmldom": "^0.1.34"
-  },
   "dependencies": {
     "@c8y/client": "^1020.26.2",
+    "@vscode/debugadapter": "^1.67.0",
+    "@xmldom/xmldom": "^0.9.3",
     "axios": "^1.7.7",
     "glob": "^11.0.0",
     "semver": "^7.6.3",
     "shelljs": "^0.8.5",
-    "@vscode/debugadapter": "^1.67.0",
     "vscode-languageclient": "^9.0.1",
     "vscode-languageserver": "^9.0.1",
-    "@xmldom/xmldom": "^0.9.3",
     "xpath": "0.0.34"
+  },
+  "devDependencies": {
+    "@types/node": "^22.6.1",
+    "@types/semver": "^7.5.8",
+    "@types/shelljs": "^0.8.8",
+    "@types/vscode": "^1.93.0",
+    "@types/xmldom": "^0.1.34",
+    "@typescript-eslint/eslint-plugin": "^3.8.0",
+    "@typescript-eslint/parser": "^3.8.0",
+    "esbuild": "^0.24.0",
+    "eslint": "^7.6.0",
+    "typescript": "^3.9.5"
   }
 }
