@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const axios = require('axios').default;
-import { DOMParser } from 'xmldom';
+import { DOMParser } from '@xmldom/xmldom';
 import * as xpath from 'xpath';
 import { OutputChannel } from 'vscode';
 
