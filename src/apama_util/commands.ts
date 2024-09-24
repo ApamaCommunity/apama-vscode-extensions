@@ -114,7 +114,7 @@ export class ApamaCommandProvider {
   }
 
   //https://2ality.com/2018/05/child-process-streams.html
-  streamWrite(stream: Writable, chunk: string | Buffer | Uint8Array, encoding = 'utf8'): Promise<void> {
+  streamWrite(stream: Writable, chunk: string | Buffer | Uint8Array, encoding: BufferEncoding = "utf-8"): Promise<void> {
     return new Promise((resolve, reject) => {
       const errListener = (err: Error) => {
         stream.removeListener('error', errListener);
