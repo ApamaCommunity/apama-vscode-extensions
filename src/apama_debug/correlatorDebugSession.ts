@@ -8,7 +8,7 @@ import {
 	Source,
 	Scope,
 	Variable,
-} from 'vscode-debugadapter';
+} from '@vscode/debugadapter';
 import { DebugProtocol } from 'vscode-debugprotocol';
 import { CorrelatorHttpInterface, CorrelatorBreakpoint, CorrelatorPaused } from './correlatorHttpInterface';
 import { basename } from 'path';
