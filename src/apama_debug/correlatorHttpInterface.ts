@@ -72,7 +72,7 @@ export class CorrelatorHttpInterface {
         const url = `${this.url}/correlator/debug/breakpoint/location`;
         const response = await axios.put(url , body);
         const dom = new DOMParser().parseFromString(response.data, 'text/xml');
-        return xpath.select1('string(/map[@name="apama-response"]/list[@name="ids"]/prop[@name="id"]//text())', dom);
+        return xpath.select1('string(/map[@name="apama-response"]/list[@name="ids"]/prop[@name="id"]//text())', dom)!.toString();
     }
 
     public async deleteBreakpoint(id: string): Promise<void> {
