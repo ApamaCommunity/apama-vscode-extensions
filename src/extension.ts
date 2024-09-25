@@ -17,7 +17,7 @@ import { ApamaCommandProvider } from './apama_util/commands';//MY CHANGES
 import { ApamaRunner } from './apama_util/apamarunner';
 //import { CumulocityView } from './c8y/cumulocityView';
 
-import semver = require('semver');
+import * as semver from 'semver';
 
 //
 // client activation function, this is the entrypoint for the client

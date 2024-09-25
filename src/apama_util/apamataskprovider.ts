@@ -1,12 +1,12 @@
-import { TaskProvider, CancellationToken, ProviderResult, Task, TaskDefinition, ShellExecution, OutputChannel, TaskGroup } from 'vscode';
+import { TaskProvider, CancellationToken, ProviderResult, Task, ShellExecution, OutputChannel, TaskGroup } from 'vscode';
 import { ApamaEnvironment } from './apamaenvironment';
 
-interface ApamaTaskDefinition extends TaskDefinition {
-  task: string;
-  port: number;
-  project: string;
-  cmdline: string;
-}
+// interface ApamaTaskDefinition extends TaskDefinition {
+//   task: string;
+//   port: number;
+//   project: string;
+//   cmdline: string;
+// }
 
 
 export class ApamaTaskProvider implements TaskProvider {

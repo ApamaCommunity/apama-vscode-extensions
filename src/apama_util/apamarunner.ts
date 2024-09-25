@@ -1,10 +1,12 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+ 
 import { OutputChannel, window } from 'vscode';
-import { promisify } from 'util';
 import { ChildProcess, spawn } from 'child_process';
 
-const exec = promisify(require('child_process').exec);
-const fs = require('fs');
+import { exec as execCallback } from 'child_process';
+import { promisify } from 'util';
+import * as fs from 'fs/promises';
+
+const exec = promisify(execCallback);
 
 export class ApamaRunner {
 
@@ -20,7 +22,7 @@ export class ApamaRunner {
     return await exec(this.command + ' ' + args.join(' '), { cwd: workingDir });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   async exists(workingDir: string): Promise<void> {
     const file = `${workingDir}/${this.command}`;
 
@@ -30,7 +32,7 @@ export class ApamaRunner {
       return Promise.resolve();
     } catch (error) {
       // If it fails, the file does not exist.
-      return Promise.reject(`Couldn't find file at ${file}`);
+      return Promise.reject(`Couldn't find file at ${file}, ${error}`);
     }
   }
   

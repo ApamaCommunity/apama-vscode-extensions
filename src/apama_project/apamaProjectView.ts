@@ -13,7 +13,7 @@ export class ApamaProjectView implements TreeDataProvider<string | ApamaTreeItem
 	
 	private projects: ApamaProject[] = [];
 
-	// eslint-disable-next-line @typescript-eslint/ban-types
+	// eslint-disable-next-line
 	private treeView: TreeView<{}>;
 
 	private fsWatcher: FileSystemWatcher;
