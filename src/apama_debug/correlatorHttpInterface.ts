@@ -105,7 +105,7 @@ export class CorrelatorHttpInterface {
                     filehash: xpath.select1('string(/map/prop[@name="filehash"])', breakpointDom),
                     action: xpath.select1('string(/map/prop[@name="action"])', breakpointDom),
                     owner: xpath.select1('string(/map/prop[@name="owner"])', breakpointDom),
-                    line: parseInt(xpath.select1('string(/map/prop[@name="line"])', breakpointDom)),
+                    line: parseInt(xpath.select1('string(/map/prop[@name="line"])', breakpointDom)!.toString()),
                     id: xpath.select1('string(/map/prop[@name="id"])', breakpointDom),
                     breakonce: xpath.select1('string(/map/prop[@name="breakonce"])', breakpointDom) === 'true'}));
         //console.log(corrbps); 
@@ -177,17 +177,17 @@ export class CorrelatorHttpInterface {
             const dom = new DOMParser().parseFromString(response.data, 'text/xml');
             const retVal = {
                 context: xpath.select1('string(/map[@name="apama-response"]/map[@name="contextprogress"]/prop[@name="context"]//text())', dom),
-                contextid: parseInt(xpath.select1('string(/map[@name="apama-response"]/map[@name="contextprogress"]/prop[@name="contextid"]//text())', dom)),
+                contextid: parseInt(xpath.select1('string(/map[@name="apama-response"]/map[@name="contextprogress"]/prop[@name="contextid"]//text())', dom)!.toString()),
                 paused: xpath.select1('string(/map[@name="apama-response"]/map[@name="contextprogress"]/prop[@name="paused"]//text())', dom) === 'true',
                 owner: xpath.select1('string(/map[@name="apama-response"]/map[@name="contextprogress"]/prop[@name="owner"]//text())', dom),
                 type: xpath.select1('string(/map[@name="apama-response"]/map[@name="contextprogress"]/prop[@name="type"]//text())', dom),
                 action: xpath.select1('string(/map[@name="apama-response"]/map[@name="contextprogress"]/prop[@name="action"]//text())', dom),
-                instance: parseInt(xpath.select1('string(/map[@name="apama-response"]/map[@name="contextprogress"]/prop[@name="instance"]//text())', dom)),
+                instance: parseInt(xpath.select1('string(/map[@name="apama-response"]/map[@name="contextprogress"]/prop[@name="instance"]//text())', dom)!.toString()),
                 monitor: xpath.select1('string(/map[@name="apama-response"]/map[@name="contextprogress"]/prop[@name="monitor"]//text())', dom),
                 filename: xpath.select1('string(/map[@name="apama-response"]/map[@name="contextprogress"]/prop[@name="filename"]//text())', dom),
                 filehash: xpath.select1('string(/map[@name="apama-response"]/map[@name="contextprogress"]/prop[@name="filehash"]//text())', dom),
                 reason: xpath.select1('string(/map[@name="apama-response"]/map[@name="contextprogress"]/prop[@name="reason"]//text())', dom),
-                line: parseInt(xpath.select1('string(/map[@name="apama-response"]/map[@name="contextprogress"]/prop[@name="line"]//text())', dom))
+                line: parseInt(xpath.select1('string(/map[@name="apama-response"]/map[@name="contextprogress"]/prop[@name="line"]//text())', dom)!.toString())
             };
             //console.log(retVal);
             return retVal;
@@ -219,22 +219,22 @@ export class CorrelatorHttpInterface {
                 if (paused) {
                     return {
                         context: xpath.select1('string(/map/prop[@name="context"]//text())', dom),
-                        contextid: parseInt(xpath.select1('string(/map/prop[@name="contextid"]//text())', dom)),
+                        contextid: parseInt(xpath.select1('string(/map/prop[@name="contextid"]//text())', dom)!.toString()),
                         paused,
                         owner: xpath.select1('string(/map/prop[@name="owner"]//text())', dom),
                         type: xpath.select1('string(/map/prop[@name="type"]//text())', dom),
                         action: xpath.select1('string(/map/prop[@name="action"]//text())', dom),
-                        instance: parseInt(xpath.select1('string(/map/prop[@name="instance"]//text())', dom)),
+                        instance: parseInt(xpath.select1('string(/map/prop[@name="instance"]//text())', dom)!.toString()),
                         monitor: xpath.select1('string(/map/prop[@name="monitor"]//text())', dom),
                         filename: xpath.select1('string(/map/prop[@name="filename"]//text())', dom),
                         filehash: xpath.select1('string(/map/prop[@name="filehash"]//text())', dom),
                         reason: xpath.select1('string(/map/prop[@name="reason"]//text())', dom),
-                        line: parseInt(xpath.select1('string(/map/prop[@name="line"]//text())', dom))
+                        line: parseInt(xpath.select1('string(/map/prop[@name="line"]//text())', dom)!.toString())
                     };
                 } else {
                     return {
                         context: xpath.select1('string(/map/prop[@name="context"]//text())', dom),
-                        contextid: parseInt(xpath.select1('string(/map/prop[@name="contextid"]//text())', dom)),
+                        contextid: parseInt(xpath.select1('string(/map/prop[@name="contextid"]//text())', dom)!.toString()),
                         paused
                     };
                 }
@@ -250,9 +250,9 @@ export class CorrelatorHttpInterface {
         const response = await axios.get(`${this.url}/correlator/debug/progress/stack/id:${contextid}`);
         const dom = new DOMParser().parseFromString(response.data, 'text/xml');
         const retVal = {
-                contextid: parseInt(xpath.select1('string(/map[@name="apama-response"]/list[@name="stack"]/prop[@name="contextid"]//text())', dom)),
+                contextid: parseInt(xpath.select1('string(/map[@name="apama-response"]/list[@name="stack"]/prop[@name="contextid"]//text())', dom)!.toString()),
                 monitor: xpath.select1('string(/map[@name="apama-response"]/list[@name="stack"]/prop[@name="monitor"]//text())', dom),
-                stackframes: xpath.select('/map[@name="apama-response"]/list[@name="stack"]/map[@name="stackframe"]', dom)
+                stackframes: xpath.select('/map[@name="apama-response"]/list[@name="stack"]/map[@name="stackframe"]', dom)!
                     // Have to convert back to a string and then back to dom because this xpath implementation only finds from root node
                     .map(node => node.toString())
                     .map(nodeString => new DOMParser().parseFromString(nodeString, 'text/xml'))
@@ -260,7 +260,7 @@ export class CorrelatorHttpInterface {
                         owner: xpath.select1('string(/map/prop[@name="owner"]//text())', dom),
                         type:  xpath.select1('string(/map/prop[@name="type"]//text())', dom),
                         action:  xpath.select1('string(/map/prop[@name="action"]//text())', dom),
-                        lineno: parseInt(xpath.select1('string(/map/prop[@name="lineno"]//text())', dom)),
+                        lineno: parseInt(xpath.select1('string(/map/prop[@name="lineno"]//text())', dom)!.toString()),
                         filename: xpath.select1('string(/map/prop[@name="filename"]//text())', dom),
                         filehash: xpath.select1('string(/map/prop[@name="filehash"]//text())', dom)
                     }))
