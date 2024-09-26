@@ -2,7 +2,7 @@
 
 import * as net from 'net';
 
-import { ExtensionContext, Disposable, window, tasks, debug, workspace, WorkspaceConfiguration, Task, ShellExecution, OutputChannel, TaskGroup} from 'vscode';
+import { ExtensionContext, Disposable, window, tasks, debug, workspace, WorkspaceConfiguration, OutputChannel} from 'vscode';
 
 import {
 	LanguageClient, LanguageClientOptions, ServerOptions
@@ -18,6 +18,8 @@ import { ApamaRunner } from './apama_util/apamarunner';
 //import { CumulocityView } from './c8y/cumulocityView';
 
 import * as semver from 'semver';
+
+let client : LanguageClient;
 
 //
 // client activation function, this is the entrypoint for the client
@@ -80,12 +82,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 		}
 		else {
 			const config = workspace.getConfiguration("softwareag.apama.langserver");
-			createLangServerTCP(apamaEnv, config, logger)
-				.then((ls) => {
-					ls.start();
-					context.subscriptions.push(ls);
-				})
-				.catch(err => logger.appendLine(err));
+			createLangServerTCP(apamaEnv, config, logger);
 		}
 	})
 	
@@ -97,34 +94,16 @@ export async function activate(context: ExtensionContext): Promise<void> {
 }
 
 
-function runLangServer(apamaEnv: ApamaEnvironment, config: WorkspaceConfiguration): Task {
-	const correlator = new Task(
-		{ type: "shell", task: "" },
-		"Apama Language Server",
-		"ApamaLanguageServer",
-		new ShellExecution(apamaEnv.getEplBuddyCmdline(), ['-l', '-p', config.port.toString()]),
-		[]
-	);
-	correlator.group = TaskGroup.Test;
-	return correlator;
-}
-
 //
 // This method will start the lang server - requires Apama 10.5.3+ however 
 // so this method will be gated on that version in the activate function above.
 //
 async function createLangServerTCP(apamaEnv: ApamaEnvironment, config: WorkspaceConfiguration, logger: OutputChannel): Promise<LanguageClient> {
-	logger.appendLine(`Starting Language Server on (host ${config.host} port ${config.port})`);
 	const lsType: string | undefined = config.get<string>("type");
-	if (lsType === "local") {
-		//default is to run the language server locally
-		await tasks.executeTask(runLangServer(apamaEnv, config));
-	}
-	else if (lsType === "disabled") {
+	if (lsType === "disabled") {
 		return Promise.reject("Apama Language Server disabled");
 	}
-	//server options is a function that returns the client connection to the 
-	//lang server
+
 	const serverOptions: ServerOptions = () => {
 		return new Promise((resolve) => {
 			const clientSocket = new net.Socket();
@@ -150,8 +129,9 @@ async function createLangServerTCP(apamaEnv: ApamaEnvironment, config: Workspace
 		}
 	};
 
-	//now this call will use the above options and function
-	return new LanguageClient(`Apama Language Client (host ${config.host} port ${config.port})`, serverOptions, clientOptions);
+	client = new LanguageClient(`Apama Language Client (host ${config.host} port ${config.port})`, serverOptions, clientOptions);
+	await client.start();
+	return client;
 }
 
 // this method is called when your extension is deactivated
