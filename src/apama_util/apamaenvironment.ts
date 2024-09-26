@@ -189,6 +189,11 @@ export class ApamaEnvironment {
     return r;
   }
 
+  getEplBuddyExecutable() {
+    this.updateCommands();
+    return this.cmd_eplbuddy;
+  }
+
   getEplBuddyCmdline(): string {
     this.updateCommands();
     const r = this.sourceEnv()  + this.cmd_eplbuddy + ' '; 
