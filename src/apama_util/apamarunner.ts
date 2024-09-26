@@ -4,7 +4,6 @@ import { ChildProcess, spawn } from 'child_process';
 
 import { exec as execCallback } from 'child_process';
 import { promisify } from 'util';
-import * as fs from 'fs/promises';
 
 const exec = promisify(execCallback);
 
