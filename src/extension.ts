@@ -125,7 +125,7 @@ async function createLangServerTCP(apamaEnv: ApamaEnvironment, config: Workspace
 			configurationSection: 'eplLanguageServer',
 			// Notify the server about file changes to epl files contained in the workspace
 			// need to think about this
-			// fileEvents: workspace.createFileSystemWatcher('**/.epl')
+			fileEvents: workspace.createFileSystemWatcher('**/.mon')
 		}
 	};
 
