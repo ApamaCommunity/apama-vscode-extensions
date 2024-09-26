@@ -109,6 +109,7 @@ async function createLangServerTCP(apamaEnv: ApamaEnvironment, config: Workspace
 		return new Promise((resolve) => {
 			const clientSocket = new net.Socket();
 			clientSocket.connect(config.port, config.host, () => {
+				logger.debug(`Connected to socket at: ${config.host}:${config.port}`)
 				resolve({
 					reader: clientSocket,
 					writer: clientSocket,
