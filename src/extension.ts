@@ -157,7 +157,7 @@ async function createLangServerTCP(apamaEnv: ApamaEnvironment, config: Workspace
 	};
 
 	//now this call will use the above options and function
-	return new LanguageClient(`tcp lang server (host ${config.host} port ${config.port})`, serverOptions, clientOptions);
+	return new LanguageClient(`Apama Language Client (host ${config.host} port ${config.port})`, serverOptions, clientOptions);
 }
 
 // this method is called when your extension is deactivated
