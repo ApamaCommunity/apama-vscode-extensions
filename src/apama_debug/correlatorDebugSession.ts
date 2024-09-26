@@ -15,6 +15,7 @@ import { basename } from 'path';
 import * as vscode from 'vscode';
 import { ApamaEnvironment } from '../apama_util/apamaenvironment';
 import { ApamaRunner } from '../apama_util/apamarunner';
+import { Logger } from '../logger/logger';
 
 const MAX_STACK_SIZE = 1000;
 
@@ -45,14 +46,14 @@ export class CorrelatorDebugSession extends DebugSession {
 	private correlatorHttp: CorrelatorHttpInterface;
 	private manager: ApamaRunner;
 	private correlatorBreakPoints: { [key: string]: string };
-	public constructor(private logger: vscode.OutputChannel, private apamaEnv: ApamaEnvironment, private config: CorrelatorConfig) {
+	public constructor(private logger: Logger, private apamaEnv: ApamaEnvironment, private config: CorrelatorConfig) {
 		super();
 
-		this.manager = new ApamaRunner("engine_management", apamaEnv.getManagerCmdline(), logger);
-		this.deployCmd = new ApamaRunner("engine_deploy", apamaEnv.getDeployCmdline(), logger);
-		this.injectCmd = new ApamaRunner("engine_inject", apamaEnv.getInjectCmdline(), logger);
+		this.manager = new ApamaRunner("engine_management", apamaEnv.getManagerCmdline());
+		this.deployCmd = new ApamaRunner("engine_deploy", apamaEnv.getDeployCmdline());
+		this.injectCmd = new ApamaRunner("engine_inject", apamaEnv.getInjectCmdline());
 		console.log("Correlator interface host: " + config.host.toString() + " port " + config.port.toString());
-		this.correlatorHttp = new CorrelatorHttpInterface(logger, config.host, config.port);
+		this.correlatorHttp = new CorrelatorHttpInterface(config.host, config.port);
 		this.correlatorBreakPoints = {} as { [key: string]: string };
 
 	}

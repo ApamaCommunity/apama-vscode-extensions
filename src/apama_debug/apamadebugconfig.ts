@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { WorkspaceFolder, DebugConfiguration, ProviderResult, CancellationToken, DebugConfigurationProvider, workspace, OutputChannel } from 'vscode';
+import { WorkspaceFolder, DebugConfiguration, ProviderResult, CancellationToken, DebugConfigurationProvider, workspace} from 'vscode';
 import * as Net from 'net';
 import { execFileSync } from 'child_process';
 import { CorrelatorDebugSession, normalizeCorrelatorFilePath } from './correlatorDebugSession';
 import { ApamaEnvironment } from '../apama_util/apamaenvironment';
+import { Logger } from '../logger/logger';
 
 export class ApamaDebugConfigurationProvider implements DebugConfigurationProvider {
 
     private _server?: Net.Server;
     
-    constructor( private logger:OutputChannel , private apamaEnv: ApamaEnvironment ) {
+    constructor( private logger:Logger, private apamaEnv: ApamaEnvironment ) {
         
     }
 

@@ -1,5 +1,6 @@
-import { TaskProvider, CancellationToken, ProviderResult, Task, ShellExecution, OutputChannel, TaskGroup } from 'vscode';
+import { TaskProvider, CancellationToken, ProviderResult, Task, ShellExecution, TaskGroup } from 'vscode';
 import { ApamaEnvironment } from './apamaenvironment';
+import { Logger } from '../logger/logger';
 
 // interface ApamaTaskDefinition extends TaskDefinition {
 //   task: string;
@@ -11,7 +12,7 @@ import { ApamaEnvironment } from './apamaenvironment';
 
 export class ApamaTaskProvider implements TaskProvider {
 
-  constructor(private logger: OutputChannel, private apamaEnv: ApamaEnvironment) {
+  constructor(private logger: Logger, private apamaEnv: ApamaEnvironment) {
 
   }
 

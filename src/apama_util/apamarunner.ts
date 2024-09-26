@@ -1,9 +1,9 @@
  
-import { OutputChannel, window } from 'vscode';
 import { ChildProcess, spawn } from 'child_process';
 
 import { exec as execCallback } from 'child_process';
 import { promisify } from 'util';
+import { Logger } from '../logger/logger';
 
 const exec = promisify(execCallback);
 
@@ -12,7 +12,7 @@ export class ApamaRunner {
   stdout = '';
   stderr = '';
 
-  constructor(public name: string, public command: string, private logger: OutputChannel) {
+  constructor(public name: string, public command: string) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -30,7 +30,7 @@ export class ApamaAsyncRunner {
   stderr = '';
   child?: ChildProcess;
 
-  constructor(public name: string, public command: string, private logger: OutputChannel) {
+  constructor(public name: string, public command: string, private logger: Logger) {
   }
 
   //
@@ -42,9 +42,6 @@ export class ApamaAsyncRunner {
   // TODO: pipes configuration might be worth passing as an argument
   //
   public start(args: string[], withShell: boolean, defaultHandlers: boolean): ChildProcess {
-    this.logger = window.createOutputChannel(this.name);
-    //this.logger.show();
-
     //N.B. this potentially will leave the correlator running - future work required...
     if (this.child && !this.child.killed) {
       this.logger.appendLine(this.name + " already started, stopping...");
@@ -70,7 +67,7 @@ export class ApamaAsyncRunner {
       this.child.stdout?.setEncoding('utf8');
       this.child.stdout?.on('data', (data: string) => {
         if (this.logger) {
-          this.logger.append(data);
+          this.logger.appendLine(data);
         }
       });
     }

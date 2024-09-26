@@ -2,7 +2,6 @@
 import axios, { AxiosError } from 'axios';
 import { DOMParser } from '@xmldom/xmldom';
 import * as xpath from 'xpath';
-import { OutputChannel } from 'vscode';
 
 export interface CorrelatorBreakpoint {
     filename: string;
@@ -55,7 +54,7 @@ export interface CorrelatorVariable {
 
 export class CorrelatorHttpInterface {
     private url: string;
-    constructor(private logger:OutputChannel, host: string, port: number) {
+    constructor(host: string, port: number) {
         this.url = `http://${host}:${port}`;
     }
 

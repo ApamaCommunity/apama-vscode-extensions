@@ -6,6 +6,7 @@ import * as vscode from 'vscode';
 import { ApamaEnvironment } from '../apama_util/apamaenvironment';
 import {Client, BasicAuth} from '@c8y/client';
 import * as fs from 'fs';
+import { Logger } from '../logger/logger';
 
 
 
@@ -39,7 +40,7 @@ export class CumulocityView implements vscode.TreeDataProvider<EPLApplication> {
 	// Added facilities for multiple workspaces - this will hopefully allow 
 	// ssh remote etc to work better later on, plus allows some extra organisational
 	// facilities....
-	constructor(private apamaEnv: ApamaEnvironment, private logger: vscode.OutputChannel, private context?: vscode.ExtensionContext) {
+	constructor(private apamaEnv: ApamaEnvironment, private logger: Logger, private context?: vscode.ExtensionContext) {
 		
 		//project commands 
 		this.registerCommands();

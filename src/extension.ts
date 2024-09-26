@@ -2,7 +2,7 @@
 
 import * as net from 'net';
 
-import { ExtensionContext, Disposable, window, tasks, debug, workspace, WorkspaceConfiguration, OutputChannel} from 'vscode';
+import { ExtensionContext, Disposable, tasks, debug, workspace, WorkspaceConfiguration} from 'vscode';
 
 import {
 	LanguageClient, LanguageClientOptions, ServerOptions
@@ -15,6 +15,7 @@ import { ApamaDebugConfigurationProvider } from './apama_debug/apamadebugconfig'
 import { ApamaProjectView } from './apama_project/apamaProjectView';
 import { ApamaCommandProvider } from './apama_util/commands';//MY CHANGES
 import { ApamaRunner } from './apama_util/apamarunner';
+import { Logger } from './logger/logger';
 //import { CumulocityView } from './c8y/cumulocityView';
 
 import * as semver from 'semver';
@@ -27,11 +28,11 @@ let client : LanguageClient;
 export async function activate(context: ExtensionContext): Promise<void> {
 	const commands: Disposable[] = [];
 
-	const logger = window.createOutputChannel('Apama Extension');
+	const logger = new Logger('ApamaCommunity.apama-extensions');
 
 	logger.appendLine('Started EPL Extension');
 	
-	const apamaEnv: ApamaEnvironment = new ApamaEnvironment(logger);
+	const apamaEnv: ApamaEnvironment = new ApamaEnvironment();
 	const taskprov = new ApamaTaskProvider(logger, apamaEnv);
 	context.subscriptions.push(tasks.registerTaskProvider("apama", taskprov));
 
@@ -66,7 +67,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
 	//If correlator version is >= 10.5.3 start with the connection to the server
 	let corrVersion = "";
-	const versionCmd = new ApamaRunner("version", apamaEnv.getCorrelatorCmdline(), logger);
+	const versionCmd = new ApamaRunner("version", apamaEnv.getCorrelatorCmdline());
 	versionCmd.run(".", ["--version"]).then( version => {
 		const versionlines = version.stdout.split('\n');
 		const pat = new RegExp(/correlator\sv(\d+\.\d+\.\d+)\.\d+\.\d+/);
@@ -98,7 +99,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 // This method will start the lang server - requires Apama 10.5.3+ however 
 // so this method will be gated on that version in the activate function above.
 //
-async function createLangServerTCP(apamaEnv: ApamaEnvironment, config: WorkspaceConfiguration, logger: OutputChannel): Promise<LanguageClient> {
+async function createLangServerTCP(apamaEnv: ApamaEnvironment, config: WorkspaceConfiguration, logger: Logger): Promise<LanguageClient> {
 	const lsType: string | undefined = config.get<string>("type");
 	if (lsType === "disabled") {
 		return Promise.reject("Apama Language Server disabled");
