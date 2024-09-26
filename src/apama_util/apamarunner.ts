@@ -22,20 +22,6 @@ export class ApamaRunner {
     return await exec(this.command + ' ' + args.join(' '), { cwd: workingDir });
   }
 
-   
-  async exists(workingDir: string): Promise<void> {
-    const file = `${workingDir}/${this.command}`;
-
-    try {
-      await fs.access(file); // Await the result of fs.access
-      // If it succeeds, the file exists.
-      return Promise.resolve();
-    } catch (error) {
-      // If it fails, the file does not exist.
-      return Promise.reject(`Couldn't find file at ${file}, ${error}`);
-    }
-  }
-  
 }
 
 

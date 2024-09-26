@@ -65,36 +65,30 @@ export async function activate(context: ExtensionContext): Promise<void> {
 	//If correlator version is >= 10.5.3 start with the connection to the server
 	let corrVersion = "";
 	const versionCmd = new ApamaRunner("version", apamaEnv.getCorrelatorCmdline(), logger);
-	versionCmd.exists(".").then( () => {
-		versionCmd.run(".", ["--version"]).then( version => {
-			const versionlines = version.stdout.split('\n');
-			const pat = new RegExp(/correlator\sv(\d+\.\d+\.\d+)\.\d+\.\d+/);
-			for (let index = 0; index < versionlines.length; index++) {
-				const line = versionlines[index];
-				if (pat.test(line)) {
-					corrVersion = RegExp.$1;
-				}
+	versionCmd.run(".", ["--version"]).then( version => {
+		const versionlines = version.stdout.split('\n');
+		const pat = new RegExp(/correlator\sv(\d+\.\d+\.\d+)\.\d+\.\d+/);
+		for (let index = 0; index < versionlines.length; index++) {
+			const line = versionlines[index];
+			if (pat.test(line)) {
+				corrVersion = RegExp.$1;
 			}
+		}
 
-			if (semver.lt(corrVersion, '10.5.3')) {
-				logger.appendLine(`Version: ${corrVersion} doesn't support the Apama Language Server - Skipping`);
-			}
-			else {
-				const config = workspace.getConfiguration("softwareag.apama.langserver");
-				createLangServerTCP(apamaEnv, config, logger)
-					.then((ls) => {
-						ls.start();
-						context.subscriptions.push(ls);
-					})
-					.catch(err => logger.appendLine(err));
-			}
-		})
-		
+		if (semver.lt(corrVersion, '10.5.3')) {
+			logger.appendLine(`Version: ${corrVersion} doesn't support the Apama Language Server - Skipping`);
+		}
+		else {
+			const config = workspace.getConfiguration("softwareag.apama.langserver");
+			createLangServerTCP(apamaEnv, config, logger)
+				.then((ls) => {
+					ls.start();
+					context.subscriptions.push(ls);
+				})
+				.catch(err => logger.appendLine(err));
+		}
 	})
-	.catch( error => {
-		logger.appendLine(`error: unable to launch correlator because ${error}`);
-	})
-		
+	
 	// Push the disposable to the context's subscriptions so that the 
 	// client can be deactivated on extension deactivation
 	commands.forEach(command => context.subscriptions.push(command));
