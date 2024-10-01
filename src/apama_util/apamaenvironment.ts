@@ -1,4 +1,4 @@
-import { workspace, WorkspaceConfiguration, OutputChannel, env } from 'vscode';
+import { workspace, WorkspaceConfiguration, env } from 'vscode';
 import { platform } from 'os';
 import { join } from 'path';
 
@@ -56,7 +56,7 @@ export class ApamaEnvironment {
   private cmd_receive: string;
   private cmd_inspect: string;
 
-  constructor( private logger:OutputChannel ) { 
+  constructor(  ) { 
     this.workspaceConfig = workspace.getConfiguration(confignode);
     this.isLinux = (platform() === 'linux');
     this.apamaHome = '';
@@ -187,6 +187,11 @@ export class ApamaEnvironment {
     const r = this.sourceEnv()  + this.cmd_management + ' '; 
     //this.logger.appendLine('startManager ' + r);
     return r;
+  }
+
+  getEplBuddyExecutable() {
+    this.updateCommands();
+    return this.cmd_eplbuddy;
   }
 
   getEplBuddyCmdline(): string {
