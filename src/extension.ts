@@ -56,16 +56,9 @@ export async function activate(context: ExtensionContext): Promise<void> {
 	//EPL Applications view is still WIP - needs more work 
 	//const c8yView = new CumulocityView(apamaEnv, logger, context);
 
-	//---------------------------------
-	// Language server start-up and support
-	//---------------------------------
 
-	// Start the command in a shell - note that the current EPL buddy doesn't repond 
-	// so this will fail until we do have a working lang-server app
-	// https://github.com/Microsoft/vscode-languageserver-node/issues/358
-
-
-	//If correlator version is >= 10.5.3 start with the connection to the server
+	// Checks that the specified correlator version is above 10.5.3 before attempting to 
+	// connect to the language server.
 	let corrVersion = "";
 	const versionCmd = new ApamaRunner("version", apamaEnv.getCorrelatorCmdline());
 	versionCmd.run(".", ["--version"]).then( version => {
@@ -95,10 +88,9 @@ export async function activate(context: ExtensionContext): Promise<void> {
 }
 
 
-//
-// This method will start the lang server - requires Apama 10.5.3+ however 
-// so this method will be gated on that version in the activate function above.
-//
+// This method connects to an existing language server running. 
+// It used to spawn a language server, but it did so inconsistently depending on configuration,
+// and in an unorthodox manner.
 async function createLangServerTCP(apamaEnv: ApamaEnvironment, config: WorkspaceConfiguration, logger: Logger): Promise<LanguageClient> {
 	const lsType: string | undefined = config.get<string>("type");
 	if (lsType === "disabled") {
