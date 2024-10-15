@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { window, commands, Disposable, workspace, OutputChannel, TreeDataProvider, EventEmitter, Event, TreeView, FileSystemWatcher, ExtensionContext, QuickPickItem, TextDocument, TreeItemCollapsibleState, TreeItem, WorkspaceFolder} from 'vscode';
+import { window, commands, Disposable, workspace, TreeDataProvider, EventEmitter, Event, TreeView, FileSystemWatcher, ExtensionContext, QuickPickItem, TextDocument, TreeItemCollapsibleState, TreeItem, WorkspaceFolder} from 'vscode';
 import { ApamaProject, ApamaProjectWorkspace, ApamaTreeItem, BundleItem } from './apamaProject';
 import { ApamaRunner } from '../apama_util/apamarunner';
 import { ApamaEnvironment } from '../apama_util/apamaenvironment'; 
+import { Logger } from '../logger/logger';
 
 export class ApamaProjectView implements TreeDataProvider<string | ApamaTreeItem> {
 	private _onDidChangeTreeData: EventEmitter<ApamaTreeItem | undefined> = new EventEmitter<ApamaTreeItem | undefined>();
@@ -13,7 +14,7 @@ export class ApamaProjectView implements TreeDataProvider<string | ApamaTreeItem
 	
 	private projects: ApamaProject[] = [];
 
-	// eslint-disable-next-line @typescript-eslint/ban-types
+	// eslint-disable-next-line
 	private treeView: TreeView<{}>;
 
 	private fsWatcher: FileSystemWatcher;
@@ -25,11 +26,11 @@ export class ApamaProjectView implements TreeDataProvider<string | ApamaTreeItem
 	// Added facilities for multiple workspaces - this will hopefully allow 
 	// ssh remote etc to work better later on, plus allows some extra organisational
 	// facilities....
-	constructor(private apamaEnv: ApamaEnvironment, private logger: OutputChannel, private workspaces: WorkspaceFolder[], private context: ExtensionContext) {
+	constructor(private apamaEnv: ApamaEnvironment, private logger: Logger, private workspaces: WorkspaceFolder[], private context: ExtensionContext) {
 		const subscriptions: Disposable[] = [];
 		
-		this.apama_project = new ApamaRunner('apama_project', apamaEnv.getApamaProjectCmdline(), logger);
-		this.apama_deploy = new ApamaRunner('apama_deploy', apamaEnv.getDeployCmdline(), logger);
+		this.apama_project = new ApamaRunner('apama_project', apamaEnv.getApamaProjectCmdline());
+		this.apama_deploy = new ApamaRunner('apama_deploy', apamaEnv.getDeployCmdline());
 		let ws: WorkspaceFolder;
 		workspaces.forEach( 
 			ws => this.workspaceList.push(new ApamaProjectWorkspace(logger,ws.name,ws.uri.fsPath,ws,this.apama_project,context.asAbsolutePath('resources') ) )

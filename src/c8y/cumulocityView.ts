@@ -1,11 +1,12 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+ 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const axios = require('axios').default;
+ 
+import axios, { AxiosRequestConfig } from 'axios';
 import * as vscode from 'vscode';
 import { ApamaEnvironment } from '../apama_util/apamaenvironment';
 import {Client, BasicAuth} from '@c8y/client';
 import * as fs from 'fs';
+import { Logger } from '../logger/logger';
 
 
 
@@ -31,7 +32,7 @@ export class CumulocityView implements vscode.TreeDataProvider<EPLApplication> {
 	private _onDidChangeTreeData: vscode.EventEmitter<EPLApplication | undefined> = new vscode.EventEmitter<EPLApplication | undefined>();
 	readonly onDidChangeTreeData: vscode.Event<EPLApplication | undefined> = this._onDidChangeTreeData.event;
 
-	// eslint-disable-next-line @typescript-eslint/ban-types
+	// eslint-disable-next-line 
 	private treeView: vscode.TreeView<{}>;
 	private filelist:EPLApplication[] = [];
 
@@ -39,7 +40,7 @@ export class CumulocityView implements vscode.TreeDataProvider<EPLApplication> {
 	// Added facilities for multiple workspaces - this will hopefully allow 
 	// ssh remote etc to work better later on, plus allows some extra organisational
 	// facilities....
-	constructor(private apamaEnv: ApamaEnvironment, private logger: vscode.OutputChannel, private context?: vscode.ExtensionContext) {
+	constructor(private apamaEnv: ApamaEnvironment, private logger: Logger, private context?: vscode.ExtensionContext) {
 		
 		//project commands 
 		this.registerCommands();
@@ -130,7 +131,11 @@ export class CumulocityView implements vscode.TreeDataProvider<EPLApplication> {
 						console.log(JSON.stringify(result));
 						// TODO: show errors/warnings
 					} catch (error) {
-						vscode.window.showErrorMessage("Error uploading " + uri.path +":\n" + error.error.message);
+						let errorMessage = "Failed to register EPL App command, unknown error";
+						if (error instanceof Error) {
+							errorMessage = error.message;
+						}
+						vscode.window.showErrorMessage("Error uploading " + uri.path +":\n" + errorMessage);
 					}
 				}),
 
@@ -169,14 +174,14 @@ export class CumulocityView implements vscode.TreeDataProvider<EPLApplication> {
 		try {
 			const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration('softwareag.c8y');
 			const url: string = config.get('url',"") + "service/cep/eplfiles?contents=true";
-			const options = {
+			const options: AxiosRequestConfig = {
 				auth: {
-					user: config.get("user", ""),
-					pass: config.get("password", "")
+					username: config.get("user", ""),
+					password: config.get("password", "")
 				}
-			};
+			};	
 			const result = await axios.get(url, options);
-			const eplfiles = JSON.parse(result);
+			const eplfiles = JSON.parse(result.data);
 			//"{"eplfiles":[{"id":"713","name":"Testjbh","state":"inactive","errors":[],"warnings":[],"description":"This is a test"},{"id":"715","name":"jbh1","state":"active","errors":[],"warnings":[],"description":"jbh desc"},{"id":"719","name":"thisIsATest","state":"active","errors":[],"warnings":[],"description":"This is a test monitor uploaded from VS Code"}]}"
 			for (const element of eplfiles.eplfiles) {
 				this.filelist.push(new EPLApplication(element.id,element.name, (element.state === 'inactive'),element.warnings,element.errors,element.desc,element.contents));

@@ -2,11 +2,11 @@
 
 import * as net from 'net';
 
-import { ExtensionContext, Disposable, window, tasks, debug, workspace, WorkspaceConfiguration, Task, ShellExecution, OutputChannel } from 'vscode';
+import { ExtensionContext, Disposable, tasks, debug, workspace, WorkspaceConfiguration} from 'vscode';
 
 import {
 	LanguageClient, LanguageClientOptions, ServerOptions
-} from 'vscode-languageclient';
+} from 'vscode-languageclient/node';
 
 
 import { ApamaEnvironment } from './apama_util/apamaenvironment';
@@ -15,9 +15,12 @@ import { ApamaDebugConfigurationProvider } from './apama_debug/apamadebugconfig'
 import { ApamaProjectView } from './apama_project/apamaProjectView';
 import { ApamaCommandProvider } from './apama_util/commands';//MY CHANGES
 import { ApamaRunner } from './apama_util/apamarunner';
+import { Logger } from './logger/logger';
 //import { CumulocityView } from './c8y/cumulocityView';
 
-import semver = require('semver');
+import * as semver from 'semver';
+
+let client : LanguageClient;
 
 //
 // client activation function, this is the entrypoint for the client
@@ -25,11 +28,11 @@ import semver = require('semver');
 export async function activate(context: ExtensionContext): Promise<void> {
 	const commands: Disposable[] = [];
 
-	const logger = window.createOutputChannel('Apama Extension');
-	logger.show();
-	logger.appendLine('Started EPL Extension');
+	const logger = new Logger('ApamaCommunity.apama-extensions');
 
-	const apamaEnv: ApamaEnvironment = new ApamaEnvironment(logger);
+	logger.appendLine('Started EPL Extension');
+	
+	const apamaEnv: ApamaEnvironment = new ApamaEnvironment();
 	const taskprov = new ApamaTaskProvider(logger, apamaEnv);
 	context.subscriptions.push(tasks.registerTaskProvider("apama", taskprov));
 
@@ -53,42 +56,30 @@ export async function activate(context: ExtensionContext): Promise<void> {
 	//EPL Applications view is still WIP - needs more work 
 	//const c8yView = new CumulocityView(apamaEnv, logger, context);
 
-	//---------------------------------
-	// Language server start-up and support
-	//---------------------------------
 
-	// Start the command in a shell - note that the current EPL buddy doesn't repond 
-	// so this will fail until we do have a working lang-server app
-	// https://github.com/Microsoft/vscode-languageserver-node/issues/358
-
-
-	//If correlator version is >= 10.5.3 start with the connection to the server
+	// Checks that the specified correlator version is above 10.5.3 before attempting to 
+	// connect to the language server.
 	let corrVersion = "";
-	const versionCmd = new ApamaRunner("version", apamaEnv.getCorrelatorCmdline(), logger);
-	const version = await versionCmd.run(".", ["--version"]);
-	const versionlines = version.stdout.split('\n');
-	const pat = new RegExp(/correlator\sv(\d+\.\d+\.\d+)\.\d+\.\d+/);
-	for (let index = 0; index < versionlines.length; index++) {
-		const line = versionlines[index];
-		if (pat.test(line)) {
-			corrVersion = RegExp.$1;
+	const versionCmd = new ApamaRunner("version", apamaEnv.getCorrelatorCmdline());
+	versionCmd.run(".", ["--version"]).then( version => {
+		const versionlines = version.stdout.split('\n');
+		const pat = new RegExp(/correlator\sv(\d+\.\d+\.\d+)\.\d+\.\d+/);
+		for (let index = 0; index < versionlines.length; index++) {
+			const line = versionlines[index];
+			if (pat.test(line)) {
+				corrVersion = RegExp.$1;
+			}
 		}
-	}
 
-	if (semver.lt(corrVersion, '10.5.3')) {
-		logger.appendLine(`Version: ${corrVersion} doesn't support the Apama Language Server - Skipping`);
-	}
-	else {
-		const config = workspace.getConfiguration("softwareag.apama.langserver");
-		createLangServerTCP(apamaEnv, config, logger)
-			.then((ls) => {
-				context.subscriptions.push(ls.start());
-			})
-			.catch(err => logger.appendLine(err));
-	}
-
-
-
+		if (semver.lt(corrVersion, '10.5.3')) {
+			logger.appendLine(`Version: ${corrVersion} doesn't support the Apama Language Server - Skipping`);
+		}
+		else {
+			const config = workspace.getConfiguration("softwareag.apama.langserver");
+			createLangServerTCP(apamaEnv, config, logger);
+		}
+	})
+	
 	// Push the disposable to the context's subscriptions so that the 
 	// client can be deactivated on extension deactivation
 	commands.forEach(command => context.subscriptions.push(command));
@@ -97,38 +88,20 @@ export async function activate(context: ExtensionContext): Promise<void> {
 }
 
 
-function runLangServer(apamaEnv: ApamaEnvironment, config: WorkspaceConfiguration): Task {
-	const correlator = new Task(
-		{ type: "shell", task: "" },
-		"Apama Language Server",
-		"ApamaLanguageServer",
-		new ShellExecution(apamaEnv.getEplBuddyCmdline(), ['-l', '-p', config.port.toString()]),
-		[]
-	);
-	correlator.group = 'test';
-	return correlator;
-}
-
-//
-// This method will start the lang server - requires Apama 10.5.3+ however 
-// so this method will be gated on that version in the activate function above.
-//
-async function createLangServerTCP(apamaEnv: ApamaEnvironment, config: WorkspaceConfiguration, logger: OutputChannel): Promise<LanguageClient> {
-	logger.appendLine(`Starting Language Server on (host ${config.host} port ${config.port})`);
+// This method connects to an existing language server running. 
+// It used to spawn a language server, but it did so inconsistently depending on configuration,
+// and in an unorthodox manner.
+async function createLangServerTCP(apamaEnv: ApamaEnvironment, config: WorkspaceConfiguration, logger: Logger): Promise<LanguageClient> {
 	const lsType: string | undefined = config.get<string>("type");
-	if (lsType === "local") {
-		//default is to run the language server locally
-		await tasks.executeTask(runLangServer(apamaEnv, config));
-	}
-	else if (lsType === "disabled") {
+	if (lsType === "disabled") {
 		return Promise.reject("Apama Language Server disabled");
 	}
-	//server options is a function that returns the client connection to the 
-	//lang server
+
 	const serverOptions: ServerOptions = () => {
 		return new Promise((resolve) => {
 			const clientSocket = new net.Socket();
 			clientSocket.connect(config.port, config.host, () => {
+				logger.debug(`Connected to socket at: ${config.host}:${config.port}`)
 				resolve({
 					reader: clientSocket,
 					writer: clientSocket,
@@ -146,12 +119,13 @@ async function createLangServerTCP(apamaEnv: ApamaEnvironment, config: Workspace
 			configurationSection: 'eplLanguageServer',
 			// Notify the server about file changes to epl files contained in the workspace
 			// need to think about this
-			// fileEvents: workspace.createFileSystemWatcher('**/.epl')
+			fileEvents: workspace.createFileSystemWatcher('**/.mon')
 		}
 	};
 
-	//now this call will use the above options and function
-	return new LanguageClient(`tcp lang server (host ${config.host} port ${config.port})`, serverOptions, clientOptions);
+	client = new LanguageClient(`Apama Language Client (host ${config.host} port ${config.port})`, serverOptions, clientOptions);
+	await client.start();
+	return client;
 }
 
 // this method is called when your extension is deactivated

@@ -1,11 +1,12 @@
-import { OutputChannel, TreeItem, TreeItemCollapsibleState, WorkspaceFolder, Uri, RelativePattern, workspace } from 'vscode';
+import { TreeItem, TreeItemCollapsibleState, WorkspaceFolder, Uri, RelativePattern, workspace } from 'vscode';
 import * as path from 'path';
 import { ApamaRunner } from '../apama_util/apamarunner';
+import { Logger } from '../logger/logger';
 
 
 
 export interface ApamaTreeItem {
-	logger:OutputChannel;
+	logger:Logger;
 	label: string;
 	fsDir: string;
 	items: ApamaTreeItem[];
@@ -19,7 +20,7 @@ export interface ApamaTreeItem {
 export class ApamaProjectWorkspace extends TreeItem implements ApamaTreeItem {
 
 	constructor(
-		public logger:OutputChannel,
+		public logger:Logger,
 		public readonly label: string,
     public readonly fsDir: string,
 		public ws: WorkspaceFolder,
@@ -71,7 +72,7 @@ export class ApamaProjectWorkspace extends TreeItem implements ApamaTreeItem {
 
 export class ApamaProject extends TreeItem  implements ApamaTreeItem {
 	constructor(
-		public logger:OutputChannel,
+		public logger:Logger,
 		public readonly label: string,
 		public readonly fsDir: string,
 		public ws: WorkspaceFolder,
@@ -144,7 +145,7 @@ export class ApamaProject extends TreeItem  implements ApamaTreeItem {
 }
 
 export class BundleItem extends TreeItem implements ApamaTreeItem {
-	constructor(public logger:OutputChannel,
+	constructor(public logger:Logger,
 							public readonly label: string,
 							public fsDir: string,
 							public ws: WorkspaceFolder,

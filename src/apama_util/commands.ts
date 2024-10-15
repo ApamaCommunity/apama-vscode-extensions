@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApamaRunner, ApamaAsyncRunner } from '../apama_util/apamarunner';
-import { OutputChannel,ExtensionContext, workspace, commands, window } from 'vscode';
+import { ExtensionContext, workspace, commands, window } from 'vscode';
 import { ApamaEnvironment } from '../apama_util/apamaenvironment';
 import { ChildProcess, spawn } from 'child_process';
 import { Writable } from 'stream';
+import { Logger } from '../logger/logger';
 
 export class ApamaCommandProvider {
   private injectCmd: ApamaRunner;
@@ -11,11 +12,11 @@ export class ApamaCommandProvider {
   private deleteCmd: ApamaRunner;
   private engineWatchCmd: ApamaAsyncRunner;
 
-  public constructor(private logger: OutputChannel, private apamaEnv: ApamaEnvironment,
+  public constructor(private logger: Logger, private apamaEnv: ApamaEnvironment,
     private context: ExtensionContext) {
-    this.injectCmd = new ApamaRunner("engine_inject", apamaEnv.getInjectCmdline(), logger);
-    this.sendCmd = new ApamaRunner("engine_send", apamaEnv.getSendCmdLine(), logger);
-    this.deleteCmd = new ApamaRunner("engine_delete", apamaEnv.getDeleteCmdLine(), logger);
+    this.injectCmd = new ApamaRunner("engine_inject", apamaEnv.getInjectCmdline());
+    this.sendCmd = new ApamaRunner("engine_send", apamaEnv.getSendCmdLine());
+    this.deleteCmd = new ApamaRunner("engine_delete", apamaEnv.getDeleteCmdLine());
     this.engineWatchCmd = new ApamaAsyncRunner("engine_watch", apamaEnv.getEngineWatchCmdline(), logger);
     this.registerCommands();
   }
@@ -114,7 +115,7 @@ export class ApamaCommandProvider {
   }
 
   //https://2ality.com/2018/05/child-process-streams.html
-  streamWrite(stream: Writable, chunk: string | Buffer | Uint8Array, encoding = 'utf8'): Promise<void> {
+  streamWrite(stream: Writable, chunk: string | Buffer | Uint8Array, encoding: BufferEncoding = "utf-8"): Promise<void> {
     return new Promise((resolve, reject) => {
       const errListener = (err: Error) => {
         stream.removeListener('error', errListener);
