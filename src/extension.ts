@@ -75,7 +75,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 			logger.appendLine(`Version: ${corrVersion} doesn't support the Apama Language Server - Skipping`);
 		}
 		else {
-			const config = workspace.getConfiguration("softwareag.apama.langserver");
+			const config = workspace.getConfiguration("apama.langserver");
 			createLangServerTCP(apamaEnv, config, logger);
 		}
 	})

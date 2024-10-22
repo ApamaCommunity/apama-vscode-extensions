@@ -24,7 +24,7 @@ export class ApamaCommandProvider {
   registerCommands(): void {
 
     if (this.context !== undefined) {
-      const port: any = workspace.getConfiguration("softwareag.apama").get("debugport");
+      const port: any = workspace.getConfiguration("apama").get("debugport");
       this.context.subscriptions.push.apply(this.context.subscriptions,
         [
           //

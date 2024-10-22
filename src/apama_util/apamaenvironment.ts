@@ -4,7 +4,7 @@ import { join } from 'path';
 
 
 
-const confignode = 'softwareag.apama';
+const confignode = 'apama';
 const default_linux_correlator = 'correlator';
 const default_windows_correlator = 'correlator.exe';
 const default_linux_deploy = 'engine_deploy';
