@@ -68,7 +68,7 @@ export class CumulocityView implements vscode.TreeDataProvider<EPLApplication> {
 				// inventory using sdk
 				//
 				vscode.commands.registerCommand('extension.c8y.login', async () => {
-					const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration('softwareag.c8y');
+					const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration('apama.c8y');
 
 					if( config ) {
 						const tenant:string = config.get('tenant',"");
@@ -107,7 +107,7 @@ export class CumulocityView implements vscode.TreeDataProvider<EPLApplication> {
 							appname = appname.slice(0, -4);
 						}
 
-						const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration('softwareag.c8y');
+						const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration('apama.c8y');
 						let url: string = config.get('url',""); // C8Y host
 						if (!url.endsWith("/")) {
 							url += "/";
@@ -172,7 +172,7 @@ export class CumulocityView implements vscode.TreeDataProvider<EPLApplication> {
 	async refresh(): Promise<void> {
 		this.filelist = [];
 		try {
-			const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration('softwareag.c8y');
+			const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration('apama.c8y');
 			const url: string = config.get('url',"") + "service/cep/eplfiles?contents=true";
 			const options: AxiosRequestConfig = {
 				auth: {

@@ -32,7 +32,7 @@ Based on the theme you choose the EPL code will be highlighted and easier to rea
 
 ## Settings
 
-There are various settings available for the extension now. All the Apama configuration entries are prefixed 'SoftwareAG.Apama', and searching for 'Apama' will show all of them.
+There are various settings available for the extension now. All the Apama configuration entries are prefixed 'Apama', and searching for 'Apama' will show all of them.
 
 * ApamaHome contains the path to the installation directory of the version you wish to use.
 * DebugHost is the default host for a correlator started for debug (allowing remote instance).
@@ -41,8 +41,6 @@ There are various settings available for the extension now. All the Apama config
   * Langserver.Host is the host that vscode should connect to the Langserver on.
   * Langserver.Port is the port the Langserver is running on.
   * Langserver.MaxErrors is the maximum number of diagnostics that should be returned by the LSP (INACTIVE)
-
-There are also some placeholders for using EPL with [Cumulocity IoT](https://www.softwareag.cloud/site/product/cumulocity-iot.html). these will become active in a later release (>v1.0).
 
 ![settings](images/settings.png)
 
@@ -80,7 +78,7 @@ The animation below shows how to create a non-default tasks (allowing multiple c
 
 ## Create Project
 
-The apama_project tool can be used to create projects which are compatible with the eclipse-based 'Software Ag Designer' IDE, and will also allow you to edit Designer created projects in vscode.
+The apama_project tool can be used to create projects which are compatible with the eclipse-based IDE, and will also allow you to edit Designer created projects in vscode.
 
 ![project support](images/4-project-create.gif)
 
@@ -125,6 +123,7 @@ To use the diagnostics capability you must have version 10.5.3 or later of Apama
 ## v2.0.0
 
 * Stops the extension startup from stealing application focus.
+* Changes all extension preferences: the "softwareag" prefixed has been removed. No migration path is provided.
 
 ## v1.2.1
 

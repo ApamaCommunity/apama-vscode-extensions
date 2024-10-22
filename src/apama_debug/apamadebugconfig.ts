@@ -18,7 +18,7 @@ export class ApamaDebugConfigurationProvider implements DebugConfigurationProvid
      *  Return an initial debug configuration
      */
     provideDebugConfigurations(folder: WorkspaceFolder | undefined, token?: CancellationToken): ProviderResult<DebugConfiguration[]> {
-        const config = workspace.getConfiguration("softwareag.apama");
+        const config = workspace.getConfiguration("apama");
         return [ {
             type: "apama",
             name: "Debug Apama Application",
@@ -59,7 +59,7 @@ export class ApamaDebugConfigurationProvider implements DebugConfigurationProvid
         config.injectionList = getInjectionList(this.apamaEnv, folder.uri.fsPath);
         config.correlator =  {};
         config.correlator.host = "127.0.0.1";
-        config.correlator.port = workspace.getConfiguration("softwareag.apama").get("debugport");
+        config.correlator.port = workspace.getConfiguration("apama").get("debugport");
         config.correlator.args = ["-g"];
     }
 
