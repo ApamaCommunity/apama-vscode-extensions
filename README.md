@@ -123,6 +123,7 @@ To use the diagnostics capability you must have version 10.5.3 or later of Apama
 ## v2.0.0
 
 * Stops the extension startup from stealing application focus.
+* Changes all extension preferences: the "softwareag" prefixed has been removed. No migration path is provided.
 
 ## v1.2.1
 
