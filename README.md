@@ -116,14 +116,8 @@ Debugging the application also follows the standard vscode patterns.
 
 To use the diagnostics capability you must have version 10.5.3 or later of Apama installed.
 
-## Development
-
 ## Release Notes
-
-## v2.0.0
-
-* Stops the extension startup from stealing application focus.
-* Changes all extension preferences: the "softwareag" prefixed has been removed. No migration path is provided.
+**Please see https://github.com/ApamaCommunity/apama-vscode-extensions/releases for the latest release notes. The notes below have been kept for historical purposes.**
 
 ## v1.2.1
 
