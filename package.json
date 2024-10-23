@@ -24,22 +24,22 @@
     "configuration": {
       "title": "Apama",
       "properties": {
-        "apama.apamahome": {
+        "apama.apamaHome": {
           "type": "string",
           "default": null,
           "description": "Home directory for the Apama installation."
         },
-        "apama.debugport": {
+        "apama.debugPort": {
           "type": "integer",
           "default": "15904",
           "description": "Port for correlator debugging."
         },
-        "apama.debughost": {
+        "apama.debugHost": {
           "type": "string",
           "default": "127.0.0.1",
           "description": "Host for correlator debugging."
         },
-        "apama.langserver.type": {
+        "apama.langServer.type": {
           "type": "string",
           "enum": [
             "local",
@@ -48,17 +48,17 @@
           "default": "local",
           "description": "Configure if the Language Server is enabled."
         },
-        "apama.langserver.port": {
+        "apama.langServer.port": {
           "type": "integer",
           "default": "30030",
           "description": "The Language Server port."
         },
-        "apama.langserver.host": {
+        "apama.langServer.host": {
           "type": "string",
           "default": "127.0.0.1",
           "description": "Host the Language Server will listen for connections on."
         },
-        "apama.langserver.maxErrors": {
+        "apama.langServer.maxErrors": {
           "type": "integer",
           "default": "100",
           "description": "The maximum number of diagnostics that the Language Server will return."
