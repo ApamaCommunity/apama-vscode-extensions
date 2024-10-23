@@ -34,7 +34,7 @@ Based on the theme you choose the EPL code will be highlighted and easier to rea
 
 There are various settings available for the extension now. All the Apama configuration entries are prefixed 'Apama', and searching for 'Apama' will show all of them.
 
-* ApamaHome contains the path to the installation directory of the version you wish to use.
+* apamaHome contains the path to the installation directory of the version you wish to use.
 * DebugHost is the default host for a correlator started for debug (allowing remote instance).
 * DebugPort is the default port for a correlator started for debug.
 * LangserverType is a dropdown that controls the LSP for vscode, it can be local (starts and attaches), remote (attaches) or disabled.

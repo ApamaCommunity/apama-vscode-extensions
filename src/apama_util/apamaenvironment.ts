@@ -82,9 +82,9 @@ export class ApamaEnvironment {
   private updateCommands() {
     this.workspaceConfig = workspace.getConfiguration(confignode);
    //overridden in config? 
-    if (this.workspaceConfig.has('apamahome')) {
+    if (this.workspaceConfig.has('apamaHome')) {
       //shouldn't be undefined here because has checks, but for linting need to cover
-      this.apamaHome = this.workspaceConfig.get('apamahome') || this.apamaHome;
+      this.apamaHome = this.workspaceConfig.get('apamaHome') || this.apamaHome;
     }
     else {
       //otherwise set default in config
