@@ -19,6 +19,8 @@ import { Logger } from './logger/logger';
 //import { CumulocityView } from './c8y/cumulocityView';
 
 import * as semver from 'semver';
+import { ExecutableResolver } from './settings/ExecutableResolver';
+import { exec } from 'child_process';
 
 let client : LanguageClient;
 
@@ -29,7 +31,6 @@ export async function activate(context: ExtensionContext): Promise<void> {
 	const commands: Disposable[] = [];
 
 	const logger = new Logger('ApamaCommunity.apama-extensions');
-
 	logger.appendLine('Started EPL Extension');
 	
 	const apamaEnv: ApamaEnvironment = new ApamaEnvironment();
@@ -37,14 +38,11 @@ export async function activate(context: ExtensionContext): Promise<void> {
 	context.subscriptions.push(tasks.registerTaskProvider("apama", taskprov));
 
 	const provider = new ApamaDebugConfigurationProvider(logger, apamaEnv);
-
 	context.subscriptions.push(debug.registerDebugConfigurationProvider('apama', provider));
-
 	context.subscriptions.push(provider);
-
 	const commandprov = new ApamaCommandProvider(logger, apamaEnv, context);
-	
 	commands.push(commandprov);
+
 	//this needs a workspace folder which under some circumstances can be undefined. 
 	//but we can ignore in that case and things shjould still work
 	if (workspace.workspaceFolders !== undefined) {
@@ -53,33 +51,9 @@ export async function activate(context: ExtensionContext): Promise<void> {
 		projView.refresh();
 	}
 
-	//EPL Applications view is still WIP - needs more work 
-	//const c8yView = new CumulocityView(apamaEnv, logger, context);
+	const executableResolver: ExecutableResolver = new ExecutableResolver("apama_env");
+	logger.info(`executableResolve.resolve(): ${(await executableResolver.resolve()).path}`)
 
-
-	// Checks that the specified correlator version is above 10.5.3 before attempting to 
-	// connect to the language server.
-	let corrVersion = "";
-	const versionCmd = new ApamaRunner("version", apamaEnv.getCorrelatorCmdline());
-	versionCmd.run(".", ["--version"]).then( version => {
-		const versionlines = version.stdout.split('\n');
-		const pat = new RegExp(/correlator\sv(\d+\.\d+\.\d+)\.\d+\.\d+/);
-		for (let index = 0; index < versionlines.length; index++) {
-			const line = versionlines[index];
-			if (pat.test(line)) {
-				corrVersion = RegExp.$1;
-			}
-		}
-
-		if (semver.lt(corrVersion, '10.5.3')) {
-			logger.appendLine(`Version: ${corrVersion} doesn't support the Apama Language Server - Skipping`);
-		}
-		else {
-			const config = workspace.getConfiguration("apama.langserver");
-			createLangServerTCP(apamaEnv, config, logger);
-		}
-	})
-	
 	// Push the disposable to the context's subscriptions so that the 
 	// client can be deactivated on extension deactivation
 	commands.forEach(command => context.subscriptions.push(command));
@@ -91,7 +65,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 // This method connects to an existing language server running. 
 // It used to spawn a language server, but it did so inconsistently depending on configuration,
 // and in an unorthodox manner.
-async function createLangServerTCP(apamaEnv: ApamaEnvironment, config: WorkspaceConfiguration, logger: Logger): Promise<LanguageClient> {
+async function createLangServerTCP(config: WorkspaceConfiguration, logger: Logger): Promise<LanguageClient> {
 	const lsType: string | undefined = config.get<string>("type");
 	if (lsType === "disabled") {
 		return Promise.reject("Apama Language Server disabled");
