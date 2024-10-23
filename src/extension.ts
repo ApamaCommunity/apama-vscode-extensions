@@ -21,6 +21,7 @@ import { Logger } from './logger/logger';
 import * as semver from 'semver';
 import { ExecutableResolver } from './settings/ExecutableResolver';
 import { exec } from 'child_process';
+import * as path from 'path';
 
 let client : LanguageClient;
 
@@ -51,8 +52,23 @@ export async function activate(context: ExtensionContext): Promise<void> {
 		projView.refresh();
 	}
 
-	const executableResolver: ExecutableResolver = new ExecutableResolver("apama_env");
-	logger.info(`executableResolve.resolve(): ${(await executableResolver.resolve()).path}`)
+	const config = workspace.getConfiguration('apama');
+	const userApamaHome = config.get('apamaHome');
+	
+	const executableResolver: ExecutableResolver = new ExecutableResolver("apama_env", logger);
+
+	let resolve; 
+	if (userApamaHome != undefined) {
+		resolve = await executableResolver.resolve(path.join(userApamaHome as string, "bin"));
+	} else {
+		resolve = await executableResolver.resolve();
+	}
+
+	if (resolve.kind == "success") {
+		logger.info(`executableResolve.resolve(): ${resolve.path}`)
+	} else {
+		logger.info(`Could not find executable on system, ${resolve.details}, ${resolve.kind}`);
+	}
 
 	// Push the disposable to the context's subscriptions so that the 
 	// client can be deactivated on extension deactivation
