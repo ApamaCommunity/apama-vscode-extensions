@@ -26,43 +26,42 @@
       "properties": {
         "apama.apamahome": {
           "type": "string",
-          "default": "c:\\apama",
+          "default": null,
           "description": "Home directory for the Apama installation."
         },
         "apama.debugport": {
           "type": "integer",
           "default": "15904",
-          "description": "Default port for correlator debugging."
+          "description": "Port for correlator debugging."
         },
         "apama.debughost": {
           "type": "string",
           "default": "127.0.0.1",
-          "description": "Default host for correlator debugging."
+          "description": "Host for correlator debugging."
         },
         "apama.langserver.type": {
           "type": "string",
           "enum": [
             "local",
-            "remote",
             "disabled"
           ],
           "default": "local",
-          "description": "Whether vscode should start the language server locally."
+          "description": "Configure if the Language Server is enabled."
         },
         "apama.langserver.port": {
           "type": "integer",
           "default": "30030",
-          "description": "The Apama language server port."
+          "description": "The Language Server port."
         },
         "apama.langserver.host": {
           "type": "string",
           "default": "127.0.0.1",
-          "description": "Default host the Apama langserver will listen for connections on."
+          "description": "Host the Language Server will listen for connections on."
         },
         "apama.langserver.maxErrors": {
           "type": "integer",
           "default": "100",
-          "description": "The maximum number of diagnostics that the Apama language server will return."
+          "description": "The maximum number of diagnostics that the Language Server will return."
         },
         "apama.c8y.url": {
           "type": "string",
