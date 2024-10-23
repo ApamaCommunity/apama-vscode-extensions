@@ -10,13 +10,17 @@ For more information about Apama and EPL please visit the [Apama Community](http
 
 Also available is a [VSCode extension for PySys testing](https://marketplace.visualstudio.com/items?itemName=ApamaCommunity.pysys-vscode-extension) .
 
-## Features of the epl-syntax-highlighting extension
+## Features of the plugin
 
 * Enables features of the extension for correct matching versions of Apama.
-* Supports EPL language diagnostics from Apama 10.5.3+
+* Supports EPL language diagnostics.
 * Support for debugging and launching pure single-file and multi-file EPL applications in a correlator.
 * Supports use of the apama_project tool.
+* Supports using the Apama Language Server for advanced syntax highlighting and error detection.
 * Apama based settings for current and upcoming changes live.
+
+## Requirements
+A minimum version of Apama 10.15.5 is required for advanced functionality.
 
 ## Limitations
 
@@ -111,10 +115,6 @@ You can add breakpoints to the code for debugging. These are limited to line-bas
 Debugging the application also follows the standard vscode patterns.
 
 ![tasks](images/10-debug.gif)
-
-## Requirements
-
-To use the diagnostics capability you must have version 10.5.3 or later of Apama installed.
 
 ## Release Notes
 **Please see https://github.com/ApamaCommunity/apama-vscode-extensions/releases for the latest release notes. The notes below have been kept for historical purposes.**
