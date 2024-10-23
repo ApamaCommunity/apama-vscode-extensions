@@ -1,6 +1,8 @@
 "use_strict";
 
 import * as net from 'net';
+import * as os from 'os';
+import * as path from 'path';
 
 import { ExtensionContext, Disposable, tasks, debug, workspace, WorkspaceConfiguration} from 'vscode';
 
@@ -20,14 +22,13 @@ import { Logger } from './logger/logger';
 
 import { ExecutableResolver } from './settings/ExecutableResolver';
 import { spawn } from 'child_process';
-import * as path from 'path';
 
 let client : LanguageClient;
 
-//
-// client activation function, this is the entrypoint for the client
-//
 export async function activate(context: ExtensionContext): Promise<void> {
+	/**
+	 * Extension entry point.
+	 */
 	const commands: Disposable[] = [];
 
 	const logger = new Logger('ApamaCommunity.apama-extensions');
@@ -53,8 +54,15 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
 	const config = workspace.getConfiguration('apama');
 	const userApamaHome = config.get('apamaHome');
-	
-	const executableResolver: ExecutableResolver = new ExecutableResolver("apama_env", logger);
+
+	let executableResolver : ExecutableResolver;
+	if (os.platform() == "win32") {
+		// eplbuddy does not require apama_env on Windows.
+		// And ExecutableResolver won't find `apama_env.bat`, as it is not independently executable on Windows.
+		executableResolver = new ExecutableResolver("eplbuddy", logger)
+	} else {
+		executableResolver = new ExecutableResolver("apama_env", logger);
+	}
 
 	let resolve; 
 	if (userApamaHome != undefined) {
