@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
+import { Logger } from '../logger/logger';
 
 export enum ResolveErrorKind {
     NotFound = "NOT_FOUND",
@@ -25,12 +26,14 @@ export class ExecutableResolver {
     private readonly executableName: string;
     private readonly commonLocations: string[];
 
+	private readonly logger: Logger;
+
    /**
      * Creates a new ExecutableResolver instance
      * @param executableName The name of the executable to find (e.g., 'python', 'git')
-     * @param commonLocations Array of paths to search as a last resort
+     * @param logger A logger instance.
      */
-    constructor(executableName: string) {
+    constructor(executableName: string, logger: Logger) {
         this.executableName = this.normalizeExecutableName(executableName);
         if (os.platform() === 'win32') {
             this.commonLocations = [
@@ -41,11 +44,12 @@ export class ExecutableResolver {
                 "/opt/Apama/bin/",
             ]; 
         }
+        this.logger = logger;
     }
 
     public async resolve(userSpecifiedPath?: string): Promise<ResolveResult> {
         if (userSpecifiedPath) {
-            return await this.validatePath(path.normalize(userSpecifiedPath));
+            return await this.validatePath(path.join(path.normalize(userSpecifiedPath), this.executableName));
         }
 
         const pathResolved = await this.findInPath();
