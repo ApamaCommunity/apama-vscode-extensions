@@ -28,9 +28,7 @@ A minimum version of Apama 10.15.5 is required for advanced functionality.
 * Diagnostics are limited to EPL files currently (imported packages may not work).
 * Completion is currently only snippet and history based.
 
-## Theme based syntax highlighting
-
-Based on the theme you choose the EPL code will be highlighted and easier to read than plain text files. This has been the case since the beginning of this extension, but it is more complete now (v1.0) and won't change significantly from here onward.
+## EPL Syntax highlighting
 
 ![example code](images/mainpage.PNG)
 
@@ -41,7 +39,7 @@ There are various settings available for the extension now. All the Apama config
 * apamaHome contains the path to the installation directory of the version you wish to use.
 * DebugHost is the default host for a correlator started for debug (allowing remote instance).
 * DebugPort is the default port for a correlator started for debug.
-* LangserverType is a dropdown that controls the LSP for vscode, it can be local (starts and attaches), remote (attaches) or disabled.
+* LangserverType is a dropdown that controls the LSP for vscode, it can be local (starts and attaches) or disabled.
   * Langserver.Host is the host that vscode should connect to the Langserver on.
   * Langserver.Port is the port the Langserver is running on.
   * Langserver.MaxErrors is the maximum number of diagnostics that should be returned by the LSP (INACTIVE)
