@@ -33,7 +33,28 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
 	const logger = new Logger('ApamaCommunity.apama-extensions');
 	logger.appendLine('Started EPL Extension');
-	
+
+	const config = workspace.getConfiguration('apama');
+	const userApamaHome = config.get('apamaHome');
+
+	// See if we can find a correlator.
+	const executableResolver = new ExecutableResolver("correlator", logger)
+
+	let resolve; 
+	if (userApamaHome != undefined) {
+		// If the user has specified an Apama Home, we only use that.
+		resolve = await executableResolver.resolve(path.join(userApamaHome as string, "bin"));
+	} else {
+		resolve = await executableResolver.resolve();
+	}
+
+	if (resolve.kind == "success") {
+		logger.info(`executableResolve.resolve(): ${resolve.path}`)
+	} else {
+		logger.info(`Could not find Apama on system`);
+		return Promise.resolve();
+	}
+
 	const apamaEnv: ApamaEnvironment = new ApamaEnvironment();
 	const taskprov = new ApamaTaskProvider(logger, apamaEnv);
 	context.subscriptions.push(tasks.registerTaskProvider("apama", taskprov));
@@ -50,32 +71,6 @@ export async function activate(context: ExtensionContext): Promise<void> {
 		const myClonedArray = [...workspace.workspaceFolders];
 		const projView = new ApamaProjectView(apamaEnv, logger, myClonedArray, context);
 		projView.refresh();
-	}
-
-	const config = workspace.getConfiguration('apama');
-	const userApamaHome = config.get('apamaHome');
-
-	let executableResolver : ExecutableResolver;
-	if (os.platform() == "win32") {
-		// eplbuddy does not require apama_env on Windows.
-		// And ExecutableResolver won't find `apama_env.bat`, as it is not independently executable on Windows.
-		executableResolver = new ExecutableResolver("eplbuddy", logger)
-	} else {
-		executableResolver = new ExecutableResolver("apama_env", logger);
-	}
-
-	let resolve; 
-	if (userApamaHome != undefined) {
-		resolve = await executableResolver.resolve(path.join(userApamaHome as string, "bin"));
-	} else {
-		resolve = await executableResolver.resolve();
-	}
-
-	if (resolve.kind == "success") {
-		logger.info(`executableResolve.resolve(): ${resolve.path}`)
-		createLangServerTCP(config, logger, resolve.path);
-	} else {
-		logger.info(`Could not find executable on system, ${resolve.details}, ${resolve.kind}`);
 	}
 
 	// Push the disposable to the context's subscriptions so that the 
