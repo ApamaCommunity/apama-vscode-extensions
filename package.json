@@ -53,11 +53,6 @@
           "default": "30030",
           "description": "The Language Server port."
         },
-        "apama.langServer.host": {
-          "type": "string",
-          "default": "127.0.0.1",
-          "description": "Host the Language Server will listen for connections on."
-        },
         "apama.langServer.maxErrors": {
           "type": "integer",
           "default": "100",
