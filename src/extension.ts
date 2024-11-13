@@ -18,9 +18,8 @@ import { ApamaRunner } from './apama_util/apamarunner';
 import { Logger } from './logger/logger';
 //import { CumulocityView } from './c8y/cumulocityView';
 
-import * as semver from 'semver';
 import { ExecutableResolver } from './settings/ExecutableResolver';
-import { exec } from 'child_process';
+import { spawn } from 'child_process';
 import * as path from 'path';
 
 let client : LanguageClient;
@@ -66,6 +65,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
 	if (resolve.kind == "success") {
 		logger.info(`executableResolve.resolve(): ${resolve.path}`)
+		createLangServerTCP(config, logger, resolve.path);
 	} else {
 		logger.info(`Could not find executable on system, ${resolve.details}, ${resolve.kind}`);
 	}
@@ -81,7 +81,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 // This method connects to an existing language server running. 
 // It used to spawn a language server, but it did so inconsistently depending on configuration,
 // and in an unorthodox manner.
-async function createLangServerTCP(config: WorkspaceConfiguration, logger: Logger): Promise<LanguageClient> {
+async function createLangServerTCP(config: WorkspaceConfiguration, logger: Logger, apamaEnvPath: string): Promise<LanguageClient> {
 	const lsType: string | undefined = config.get<string>("type");
 	if (lsType === "disabled") {
 		return Promise.reject("Apama Language Server disabled");
@@ -89,13 +89,32 @@ async function createLangServerTCP(config: WorkspaceConfiguration, logger: Logge
 
 	const serverOptions: ServerOptions = () => {
 		return new Promise((resolve) => {
-			const clientSocket = new net.Socket();
-			clientSocket.connect(config.port, config.host, () => {
-				logger.debug(`Connected to socket at: ${config.host}:${config.port}`)
-				resolve({
-					reader: clientSocket,
-					writer: clientSocket,
-				});
+			const proc = spawn("bash", ["-c", `${apamaEnvPath} eplbuddy -l`], {
+				env: process.env
+			});
+			proc.stdout.on('data', (data) => {
+				logger.info(`stdout: ${data}`);
+				if (data.toString().startsWith("Listening on")) {
+					const clientSocket = new net.Socket();
+					// Set an error handler
+					clientSocket.on('error', (error) => {
+						logger.error(`Socket connection error: ${error.message}`);
+					});
+					clientSocket.connect(30030, "127.0.0.1", () => {
+						logger.debug(`Connected to socket at: ${config.port}`)
+						resolve({
+							reader: clientSocket,
+							writer: clientSocket,
+						});
+					});
+				}
+			});
+
+			proc.stderr.on('data', (data) => {
+				logger.info(`stderr: ${data}`);
+			});
+			proc.on('error', (error) => {
+				logger.info(`Error: ${error}`);
 			});
 		});
 	};
