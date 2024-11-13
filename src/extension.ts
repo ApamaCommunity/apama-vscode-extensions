@@ -89,17 +89,18 @@ async function createLangServerTCP(config: WorkspaceConfiguration, logger: Logge
 
 	const serverOptions: ServerOptions = () => {
 		return new Promise((resolve) => {
-			const proc = spawn("bash", ["-c", `${apamaEnvPath} eplbuddy -l`], {
-				env: process.env
-			});
+			const proc = spawn(apamaEnvPath, ["eplbuddy", "-l"]);
+
 			proc.stdout.on('data', (data) => {
 				logger.info(`stdout: ${data}`);
+
 				if (data.toString().startsWith("Listening on")) {
 					const clientSocket = new net.Socket();
 					// Set an error handler
 					clientSocket.on('error', (error) => {
 						logger.error(`Socket connection error: ${error.message}`);
 					});
+
 					clientSocket.connect(30030, "127.0.0.1", () => {
 						logger.debug(`Connected to socket at: ${config.port}`)
 						resolve({
