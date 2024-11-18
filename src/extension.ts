@@ -22,6 +22,7 @@ import { Logger } from './logger/logger';
 
 import { ExecutableResolver } from './settings/ExecutableResolver';
 import { spawn } from 'child_process';
+import { create } from 'domain';
 
 let client : LanguageClient;
 
@@ -54,6 +55,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 		logger.info(`Could not find Apama on system`);
 		return Promise.resolve();
 	}
+	createLangServerTCP(config, logger, `${path.dirname(resolve.path)}/apama_env`);
 
 	const apamaEnv: ApamaEnvironment = new ApamaEnvironment();
 	const taskprov = new ApamaTaskProvider(logger, apamaEnv);
@@ -92,7 +94,7 @@ async function createLangServerTCP(config: WorkspaceConfiguration, logger: Logge
 
 	const serverOptions: ServerOptions = () => {
 		return new Promise((resolve) => {
-			const proc = spawn(apamaEnvPath, ["eplbuddy", "-l"]);
+			const proc = spawn(apamaEnvPath, [`eplbuddy`, "-l"]);
 
 			proc.stdout.on('data', (data) => {
 				logger.info(`stdout: ${data}`);
