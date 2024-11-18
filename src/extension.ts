@@ -15,14 +15,12 @@ import { ApamaEnvironment } from './apama_util/apamaenvironment';
 import { ApamaTaskProvider } from './apama_util/apamataskprovider';
 import { ApamaDebugConfigurationProvider } from './apama_debug/apamadebugconfig';
 import { ApamaProjectView } from './apama_project/apamaProjectView';
-import { ApamaCommandProvider } from './apama_util/commands';//MY CHANGES
-import { ApamaRunner } from './apama_util/apamarunner';
+import { ApamaCommandProvider } from './apama_util/commands';
 import { Logger } from './logger/logger';
 //import { CumulocityView } from './c8y/cumulocityView';
 
 import { ExecutableResolver } from './settings/ExecutableResolver';
 import { spawn } from 'child_process';
-import { create } from 'domain';
 
 let client : LanguageClient;
 
