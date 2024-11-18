@@ -94,7 +94,12 @@ async function createLangServerTCP(config: WorkspaceConfiguration, logger: Logge
 
 	const serverOptions: ServerOptions = () => {
 		return new Promise((resolve) => {
-			const proc = spawn(apamaEnvPath, [`eplbuddy`, "-l"]);
+			let proc;
+			if (os.platform() == "win32") {
+				proc = spawn(`${path.dirname(apamaEnvPath)}/eplbuddy.exe`, ['-l'])
+			} else {
+				proc = spawn(apamaEnvPath, [`eplbuddy`, "-l"]);
+			}
 
 			proc.stdout.on('data', (data) => {
 				logger.info(`stdout: ${data}`);
