@@ -17,7 +17,6 @@ import { ApamaDebugConfigurationProvider } from './apama_debug/apamadebugconfig'
 import { ApamaProjectView } from './apama_project/apamaProjectView';
 import { ApamaCommandProvider } from './apama_util/commands';
 import { Logger } from './logger/logger';
-//import { CumulocityView } from './c8y/cumulocityView';
 
 import { ExecutableResolver } from './settings/ExecutableResolver';
 import { spawn } from 'child_process';
@@ -53,7 +52,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 		logger.info(`Could not find Apama on system`);
 		return Promise.resolve();
 	}
-	createLangServerTCP(config, logger, `${path.dirname(resolve.path)}/apama_env`);
+	createLangServerTCP(config, `${path.dirname(resolve.path)}/apama_env`);
 
 	const apamaEnv: ApamaEnvironment = new ApamaEnvironment();
 	const taskprov = new ApamaTaskProvider(logger, apamaEnv);
@@ -80,11 +79,11 @@ export async function activate(context: ExtensionContext): Promise<void> {
 	return Promise.resolve();
 }
 
-
-// This method connects to an existing language server running. 
-// It used to spawn a language server, but it did so inconsistently depending on configuration,
-// and in an unorthodox manner.
-async function createLangServerTCP(config: WorkspaceConfiguration, logger: Logger, apamaEnvPath: string): Promise<LanguageClient> {
+async function createLangServerTCP(config: WorkspaceConfiguration, apamaEnvPath: string): Promise<LanguageClient> {
+	/**
+	 * Spawns a language server, and then proceeds to connect the language client up to it.
+	 */
+	const logger = new Logger('Apama Language Server');
 	const lsType: string | undefined = config.get<string>("type");
 	if (lsType === "disabled") {
 		return Promise.reject("Apama Language Server disabled");
@@ -148,6 +147,3 @@ async function createLangServerTCP(config: WorkspaceConfiguration, logger: Logge
 
 // this method is called when your extension is deactivated
 export function deactivate() : void { return; }
-
-
-
