@@ -328,6 +328,8 @@
     "glob": "^11.0.0",
     "semver": "^7.6.3",
     "shelljs": "^0.8.5",
+    "terminate": "^2.8.0",
+    "tree-kill": "^1.2.2",
     "vscode-languageclient": "^9.0.1",
     "vscode-languageserver": "^9.0.1",
     "xpath": "0.0.34"

@@ -19,9 +19,12 @@ import { ApamaCommandProvider } from './apama_util/commands';
 import { Logger } from './logger/logger';
 
 import { ExecutableResolver } from './settings/ExecutableResolver';
-import { spawn } from 'child_process';
+import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
+import { killProcessTree } from './utils/processUtils';
 
-let client : LanguageClient;
+let languageClient : LanguageClient;
+let LanguageServerProcess: ChildProcessWithoutNullStreams | null = null;
+const logger = new Logger('ApamaCommunity.apama-extensions');
 
 export async function activate(context: ExtensionContext): Promise<void> {
 	/**
@@ -29,7 +32,6 @@ export async function activate(context: ExtensionContext): Promise<void> {
 	 */
 	const commands: Disposable[] = [];
 
-	const logger = new Logger('ApamaCommunity.apama-extensions');
 	logger.appendLine('Started EPL Extension');
 
 	const config = workspace.getConfiguration('apama');
@@ -52,7 +54,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
 		logger.info(`Could not find Apama on system`);
 		return Promise.resolve();
 	}
-	createLangServerTCP(config, `${path.dirname(resolve.path)}/apama_env`);
+	
+	LanguageServerProcess = await createLangServerTCP(config, `${path.dirname(resolve.path)}/apama_env`);
 
 	const apamaEnv: ApamaEnvironment = new ApamaEnvironment();
 	const taskprov = new ApamaTaskProvider(logger, apamaEnv);
@@ -79,7 +82,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 	return Promise.resolve();
 }
 
-async function createLangServerTCP(config: WorkspaceConfiguration, apamaEnvPath: string): Promise<LanguageClient> {
+async function createLangServerTCP(config: WorkspaceConfiguration, apamaEnvPath: string): Promise<null> {
 	/**
 	 * Spawns a language server, and then proceeds to connect the language client up to it.
 	 */
@@ -91,14 +94,13 @@ async function createLangServerTCP(config: WorkspaceConfiguration, apamaEnvPath:
 
 	const serverOptions: ServerOptions = () => {
 		return new Promise((resolve) => {
-			let proc;
 			if (os.platform() == "win32") {
-				proc = spawn(`${path.dirname(apamaEnvPath)}/eplbuddy.exe`, ['-l'])
+				LanguageServerProcess = spawn(`${path.dirname(apamaEnvPath)}/eplbuddy.exe`, ['-l'])
 			} else {
-				proc = spawn(apamaEnvPath, [`eplbuddy`, "-l"]);
+				LanguageServerProcess = spawn(apamaEnvPath, [`eplbuddy`, "-l"], { "detached": true});
 			}
 
-			proc.stdout.on('data', (data) => {
+			LanguageServerProcess.stdout.on('data', (data) => {
 				logger.info(`stdout: ${data}`);
 
 				if (data.toString().startsWith("Listening on")) {
@@ -118,10 +120,10 @@ async function createLangServerTCP(config: WorkspaceConfiguration, apamaEnvPath:
 				}
 			});
 
-			proc.stderr.on('data', (data) => {
+			LanguageServerProcess.stderr.on('data', (data) => {
 				logger.info(`stderr: ${data}`);
 			});
-			proc.on('error', (error) => {
+			LanguageServerProcess.on('error', (error) => {
 				logger.info(`Error: ${error}`);
 			});
 		});
@@ -139,11 +141,14 @@ async function createLangServerTCP(config: WorkspaceConfiguration, apamaEnvPath:
 			fileEvents: workspace.createFileSystemWatcher('**/.mon')
 		}
 	};
-
-	client = new LanguageClient(`Apama Language Client (host ${config.host} port ${config.port})`, serverOptions, clientOptions);
-	await client.start();
-	return client;
+	languageClient = new LanguageClient(`Apama Language Client (host ${config.host} port ${config.port})`, serverOptions, clientOptions);
+	await languageClient.start();
+	return null;
 }
 
-// this method is called when your extension is deactivated
-export function deactivate() : void { return; }
+export function deactivate() { 
+	return Promise.all([
+		languageClient.stop(),
+		killProcessTree(LanguageServerProcess, logger),
+	]);
+}
