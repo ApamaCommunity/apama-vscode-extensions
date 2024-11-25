@@ -1,13 +1,14 @@
 "use_strict";
 
-import * as net from 'net';
 import * as os from 'os';
 import * as path from 'path';
 
 import { ExtensionContext, Disposable, tasks, debug, workspace, WorkspaceConfiguration} from 'vscode';
 
 import {
-	LanguageClient, LanguageClientOptions, ServerOptions
+	Executable,
+	LanguageClient, LanguageClientOptions,
+	TransportKind
 } from 'vscode-languageclient/node';
 
 
@@ -19,11 +20,8 @@ import { ApamaCommandProvider } from './apama_util/commands';
 import { Logger } from './logger/logger';
 
 import { ExecutableResolver } from './settings/ExecutableResolver';
-import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
-import { killProcessTree } from './utils/processUtils';
 
 let languageClient : LanguageClient;
-let LanguageServerProcess: ChildProcessWithoutNullStreams | null = null;
 const logger = new Logger('ApamaCommunity.apama-extensions');
 
 export async function activate(context: ExtensionContext): Promise<void> {
@@ -55,7 +53,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 		return Promise.resolve();
 	}
 	
-	LanguageServerProcess = await createLangServerTCP(config, `${path.dirname(resolve.path)}/apama_env`);
+	createLangServerTCP(config, `${path.dirname(resolve.path)}/apama_env`);
 
 	const apamaEnv: ApamaEnvironment = new ApamaEnvironment();
 	const taskprov = new ApamaTaskProvider(logger, apamaEnv);
@@ -86,47 +84,25 @@ async function createLangServerTCP(config: WorkspaceConfiguration, apamaEnvPath:
 	/**
 	 * Spawns a language server, and then proceeds to connect the language client up to it.
 	 */
-	const logger = new Logger('Apama Language Server');
 	const lsType: string | undefined = config.get<string>("type");
 	if (lsType === "disabled") {
 		return Promise.reject("Apama Language Server disabled");
 	}
 
-	const serverOptions: ServerOptions = () => {
-		return new Promise((resolve) => {
-			if (os.platform() == "win32") {
-				LanguageServerProcess = spawn(`${path.dirname(apamaEnvPath)}/eplbuddy.exe`, ['-l'])
-			} else {
-				LanguageServerProcess = spawn(apamaEnvPath, [`eplbuddy`, "-l"], { "detached": true});
-			}
+	let commandStr;
+	let args;
+	if (os.platform() == "win32") {
+		commandStr = `${path.dirname(apamaEnvPath)}/eplbuddy.exe`
+		args = ['-s']
+	} else {
+		commandStr = apamaEnvPath 
+		args = [`eplbuddy`, "-s"]
+	}
 
-			LanguageServerProcess.stdout.on('data', (data) => {
-				logger.info(`stdout: ${data}`);
-
-				if (data.toString().startsWith("Listening on")) {
-					const clientSocket = new net.Socket();
-					// Set an error handler
-					clientSocket.on('error', (error) => {
-						logger.error(`Socket connection error: ${error.message}`);
-					});
-
-					clientSocket.connect(30030, "127.0.0.1", () => {
-						logger.debug(`Connected to socket at: ${config.port}`)
-						resolve({
-							reader: clientSocket,
-							writer: clientSocket,
-						});
-					});
-				}
-			});
-
-			LanguageServerProcess.stderr.on('data', (data) => {
-				logger.info(`stderr: ${data}`);
-			});
-			LanguageServerProcess.on('error', (error) => {
-				logger.info(`Error: ${error}`);
-			});
-		});
+	const serverOptions: Executable = {
+		transport: TransportKind.stdio,
+		command: commandStr,
+		args: args
 	};
 
 	// Options of the language client
@@ -141,7 +117,7 @@ async function createLangServerTCP(config: WorkspaceConfiguration, apamaEnvPath:
 			fileEvents: workspace.createFileSystemWatcher('**/.mon')
 		}
 	};
-	languageClient = new LanguageClient(`Apama Language Client (host ${config.host} port ${config.port})`, serverOptions, clientOptions);
+	languageClient = new LanguageClient(`Apama Language Client`, serverOptions, clientOptions);
 	await languageClient.start();
 	return null;
 }
@@ -149,6 +125,5 @@ async function createLangServerTCP(config: WorkspaceConfiguration, apamaEnvPath:
 export function deactivate() { 
 	return Promise.all([
 		languageClient.stop(),
-		killProcessTree(LanguageServerProcess, logger),
 	]);
 }

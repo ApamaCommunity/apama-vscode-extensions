@@ -48,16 +48,6 @@
           "default": "local",
           "description": "Configure if the Language Server is enabled."
         },
-        "apama.langServer.port": {
-          "type": "integer",
-          "default": "30030",
-          "description": "The Language Server port."
-        },
-        "apama.langServer.maxErrors": {
-          "type": "integer",
-          "default": "100",
-          "description": "The maximum number of diagnostics that the Language Server will return."
-        },
         "apama.c8y.url": {
           "type": "string",
           "default": "https://demos.cumulocity.com/",
@@ -328,8 +318,6 @@
     "glob": "^11.0.0",
     "semver": "^7.6.3",
     "shelljs": "^0.8.5",
-    "terminate": "^2.8.0",
-    "tree-kill": "^1.2.2",
     "vscode-languageclient": "^9.0.1",
     "vscode-languageserver": "^9.0.1",
     "xpath": "0.0.34"
