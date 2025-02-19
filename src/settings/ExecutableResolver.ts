@@ -22,6 +22,11 @@ export interface ResolveSuccess {
 
 export type ResolveResult = ResolveSuccess | ResolveError;
 
+/**
+ * ExecutableResolver aims to find the provided executable on the system.
+ * It does so by looking at a user-provided location (if applicable), PATH, and finally, 
+ * a set of hard-coded common locations.
+ */
 export class ExecutableResolver {
     private readonly executableName: string;
     private readonly commonLocations: string[];
