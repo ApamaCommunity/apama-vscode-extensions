@@ -4,10 +4,6 @@ A community developed VSCode extension to support the development of Apama Strea
 
 For more information about Apama and EPL please visit the [Apama Community](http://www.apamacommunity.com/) website.
 
-* [Apama Community - blog](http://www.apamacommunity.com/blog/)
-* [Apama Community - downloads](http://www.apamacommunity.com/downloads/)
-* [Apama Community - documentation](http://www.apamacommunity.com/docs/)
-
 Also available is a [VSCode extension for PySys testing](https://marketplace.visualstudio.com/items?itemName=ApamaCommunity.pysys-vscode-extension) .
 
 ## Features of the plugin
