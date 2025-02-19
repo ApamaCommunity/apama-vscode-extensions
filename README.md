@@ -9,23 +9,21 @@ Also available is a [VSCode extension for PySys testing](https://marketplace.vis
 ## Features of the plugin
 
 * Enables features of the extension for correct matching versions of Apama.
-* Supports EPL language diagnostics.
+* Supports advanced syntax highlighting and error reporting using the Apama Language Server.
 * Support for debugging and launching pure single-file and multi-file EPL applications in a correlator.
 * Supports use of the apama_project tool.
-* Supports using the Apama Language Server for advanced syntax highlighting and error detection.
 * Apama based settings for current and upcoming changes live.
 
 ## Requirements
 - Syntax highlighting does not require any version of Apama to be installed.
-- For EPL lanugage diagnostics, a minimum of version of Apama 10.5.3 is required.
-- For Language Server support, a minimum version of Apama 10.15.6.0 is required.
+- For advanced syntax highlighting and error reporting using the Language Server, a minimum version of Apama 10.15.6.0 is required.
 
 A minimum version of Apama 10.15.6.0 is required for advanced functionality.
 
 ## Limitations
 
 * Debug of deployed projects only.
-* Diagnostics are limited to EPL files currently (imported packages may not work).
+* Advanced syntax highlighting is limited to EPL files currently (imported packages may not work).
 * Completion is currently only snippet and history based.
 
 ## EPL Syntax highlighting
@@ -43,9 +41,11 @@ There are various settings available for the extension now. All the Apama config
 
 ![settings](images/settings.png)
 
-## Diagnostics
+## Advanced syntax highlighting and error reporting
 
-If you have enabled the Language Server and are using Apama full version 10.5.3+ then you will have access to live diagnostics. These diagnostics are limited to the file currently being edited but will become more fully featured as future releases are produced. Specifically, if you write EPL that uses external bundles or code, then the diagnostics may not take these into account.
+This extension supports using a Language Server for advanced syntax highlighting and error reporting for users using Apama 10.15.6.0+. 
+
+It is currently limited to the file currently being edited but will become more fully featured as future releases are produced. Specifically, if you write EPL that uses external bundles or code, then the language server may not take these into account.
 
 ![tasks](images/11-diagnostics.gif)
 
