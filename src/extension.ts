@@ -49,7 +49,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 	if (resolve.kind == "success") {
 		logger.info(`executableResolve.resolve(): ${resolve.path}`)
 	} else {
-		logger.info(`Could not find Apama on system`);
+		logger.info(`Could not find Apama on your system: you can configure the "Apama Home" preference to specify an install location.`);
 		return Promise.resolve();
 	}
 	
