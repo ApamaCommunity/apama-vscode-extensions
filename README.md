@@ -33,12 +33,9 @@ A minimum version of Apama 10.15.5 is required for advanced functionality.
 There are various settings available for the extension now. All the Apama configuration entries are prefixed 'Apama', and searching for 'Apama' will show all of them.
 
 * apamaHome contains the path to the installation directory of the version you wish to use.
-* DebugHost is the default host for a correlator started for debug (allowing remote instance).
-* DebugPort is the default port for a correlator started for debug.
-* LangserverType is a dropdown that controls the LSP for vscode, it can be local (starts and attaches) or disabled.
-  * Langserver.Host is the host that vscode should connect to the Langserver on.
-  * Langserver.Port is the port the Langserver is running on.
-  * Langserver.MaxErrors is the maximum number of diagnostics that should be returned by the LSP (INACTIVE)
+* debugHost is the default host for a correlator started for debug (allowing remote instance).
+* debugPort is the default port for a correlator started for debug.
+* langServer.type is a dropdown that controls the LSP for vscode, it can be local (starts and attaches) or disabled.
 
 ![settings](images/settings.png)
 
