@@ -74,7 +74,7 @@ export class ExecutableResolver {
             if (!stats.isFile()) {
                 return {
                     kind: ResolveErrorKind.NotFound,
-                    path: "",
+                    path: filePath,
                     details: "Path exists but is not a file"
                 };
             }
@@ -82,7 +82,7 @@ export class ExecutableResolver {
             if (!this.isExecutable(stats)) {
                 return {
                     kind: ResolveErrorKind.NotExecutable,
-                    path: "",
+                    path: filePath,
                     details: "File exists but is not executable"
                 };
             }
