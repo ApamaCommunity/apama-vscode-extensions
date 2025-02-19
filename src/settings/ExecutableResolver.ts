@@ -41,7 +41,8 @@ export class ExecutableResolver {
             ]; 
         } else {
             this.commonLocations = [
-                "/opt/Apama/bin/",
+                "/opt/cumulocity/Apama/bin",
+                "/opt/Apama/bin/"
             ]; 
         }
         this.logger = logger;
