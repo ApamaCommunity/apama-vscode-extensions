@@ -16,6 +16,10 @@ Also available is a [VSCode extension for PySys testing](https://marketplace.vis
 * Apama based settings for current and upcoming changes live.
 
 ## Requirements
+- Syntax highlighting does not require any version of Apama to be installed.
+- For EPL lanugage diagnostics, a minimum of version of Apama 10.5.3 is required.
+- For Language Server support, a minimum version of Apama 10.15.6.0 is required.
+
 A minimum version of Apama 10.15.6.0 is required for advanced functionality.
 
 ## Limitations
