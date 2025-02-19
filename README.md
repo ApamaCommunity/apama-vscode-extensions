@@ -16,7 +16,7 @@ Also available is a [VSCode extension for PySys testing](https://marketplace.vis
 * Apama based settings for current and upcoming changes live.
 
 ## Requirements
-A minimum version of Apama 10.15.5 is required for advanced functionality.
+A minimum version of Apama 10.15.6.0 is required for advanced functionality.
 
 ## Limitations
 
