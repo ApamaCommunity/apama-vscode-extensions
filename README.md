@@ -6,23 +6,27 @@ For more information about Apama and EPL please visit the [Apama Community](http
 
 Also available is a [VSCode extension for PySys testing](https://marketplace.visualstudio.com/items?itemName=ApamaCommunity.pysys-vscode-extension) .
 
-## Features of the epl-syntax-highlighting extension
+## Features of the plugin
 
 * Enables features of the extension for correct matching versions of Apama.
-* Supports EPL language diagnostics from Apama 10.5.3+
+* Supports advanced syntax highlighting and error reporting using the Apama Language Server.
 * Support for debugging and launching pure single-file and multi-file EPL applications in a correlator.
 * Supports use of the apama_project tool.
 * Apama based settings for current and upcoming changes live.
 
+## Requirements
+- Syntax highlighting does not require any version of Apama to be installed.
+- For advanced syntax highlighting and error reporting using the Language Server, a minimum version of Apama 10.15.6.0 is required.
+
+A minimum version of Apama 10.15.6.0 is required for advanced functionality.
+
 ## Limitations
 
 * Debug of deployed projects only.
-* Diagnostics are limited to EPL files currently (imported packages may not work).
+* Advanced syntax highlighting is limited to EPL files currently (imported packages may not work).
 * Completion is currently only snippet and history based.
 
-## Theme based syntax highlighting
-
-Based on the theme you choose the EPL code will be highlighted and easier to read than plain text files. This has been the case since the beginning of this extension, but it is more complete now (v1.0) and won't change significantly from here onward.
+## EPL Syntax highlighting
 
 ![example code](images/mainpage.PNG)
 
@@ -30,19 +34,18 @@ Based on the theme you choose the EPL code will be highlighted and easier to rea
 
 There are various settings available for the extension now. All the Apama configuration entries are prefixed 'Apama', and searching for 'Apama' will show all of them.
 
-* ApamaHome contains the path to the installation directory of the version you wish to use.
-* DebugHost is the default host for a correlator started for debug (allowing remote instance).
-* DebugPort is the default port for a correlator started for debug.
-* LangserverType is a dropdown that controls the LSP for vscode, it can be local (starts and attaches), remote (attaches) or disabled.
-  * Langserver.Host is the host that vscode should connect to the Langserver on.
-  * Langserver.Port is the port the Langserver is running on.
-  * Langserver.MaxErrors is the maximum number of diagnostics that should be returned by the LSP (INACTIVE)
+* apamaHome contains the path to the installation directory of the version you wish to use.
+* debugHost is the default host for a correlator started for debug (allowing remote instance).
+* debugPort is the default port for a correlator started for debug.
+* langServer.type is a dropdown that controls the LSP for vscode, it can be local (starts and attaches) or disabled.
 
 ![settings](images/settings.png)
 
-## Diagnostics
+## Advanced syntax highlighting and error reporting
 
-If you have enabled the Language Server and are using Apama full version 10.5.3+ then you will have access to live diagnostics. These diagnostics are limited to the file currently being edited but will become more fully featured as future releases are produced. Specifically, if you write EPL that uses external bundles or code, then the diagnostics may not take these into account.
+This extension supports using a Language Server for advanced syntax highlighting and error reporting for users using Apama 10.15.6.0+. 
+
+It is currently limited to the file currently being edited but will become more fully featured as future releases are produced. Specifically, if you write EPL that uses external bundles or code, then the language server may not take these into account.
 
 ![tasks](images/11-diagnostics.gif)
 
@@ -108,18 +111,8 @@ Debugging the application also follows the standard vscode patterns.
 
 ![tasks](images/10-debug.gif)
 
-## Requirements
-
-To use the diagnostics capability you must have version 10.5.3 or later of Apama installed.
-
-## Development
-
 ## Release Notes
-
-## v2.0.0
-
-* Stops the extension startup from stealing application focus.
-* Changes all extension preferences: the "softwareag" prefixed has been removed. No migration path is provided.
+**Please see https://github.com/ApamaCommunity/apama-vscode-extensions/releases for the latest release notes. The notes below have been kept for historical purposes.**
 
 ## v1.2.1
 
