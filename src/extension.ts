@@ -117,7 +117,7 @@ async function createLangServerTCP(config: WorkspaceConfiguration, apamaEnvPath:
 			fileEvents: workspace.createFileSystemWatcher('**/.mon')
 		}
 	};
-	languageClient = new LanguageClient(`Apama Language Client`, serverOptions, clientOptions);
+	languageClient = new LanguageClient('apamaLanguageClient', `Apama Language Client`, serverOptions, clientOptions);
 	await languageClient.start();
 	return null;
 }
