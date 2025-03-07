@@ -4,7 +4,28 @@ A community developed VSCode extension to support the development of Apama Strea
 
 For more information about Apama and EPL please visit the [Apama Community](http://www.apamacommunity.com/) website.
 
-Also available is a [VSCode extension for PySys testing](https://marketplace.visualstudio.com/items?itemName=ApamaCommunity.pysys-vscode-extension) .
+Also available is a [VSCode extension for PySys testing](https://marketplace.visualstudio.com/items?itemName=ApamaCommunity.pysys-vscode-extension).
+
+## Building
+Run the following commands to install, and build the extension.
+```bash
+npm install
+npm run build
+```
+
+You can then launch it in VSCode using the `Debug: Start Debugging` command palette option. Ensure you have no existing instance of the extension installed. 
+
+Read [the VSCode Extension Guide](https://code.visualstudio.com/api) for more information.
+
+### Debugging 
+Adding the following to `.vscode/settings.json` will allow you to see communication between the extension and the Apama Language Server,
+
+```json
+{
+    "apamaLanguageClient.trace.server": "verbose",
+}
+```
+
 
 ## Features of the plugin
 
