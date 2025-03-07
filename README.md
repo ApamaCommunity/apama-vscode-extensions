@@ -18,7 +18,7 @@ You can then launch it in VSCode using the `Debug: Start Debugging` command pale
 Read [the VSCode Extension Guide](https://code.visualstudio.com/api) for more information.
 
 ### Debugging 
-Adding the following to `.vscode/settings.json` will allow you to see communication between the extension and the Apama Language Server (under Output > Apama Language Client),
+Adding the following to `.vscode/settings.json` in the launched debug VSCode instance will allow you to see communication between the extension and the Apama Language Server (under Output > Apama Language Client),
 
 ```json
 {
