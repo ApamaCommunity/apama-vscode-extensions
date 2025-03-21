@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApamaRunner } from '../apama_util/apamarunner';
 import { ExtensionContext, workspace, commands, window } from 'vscode';
-import { ApamaEnvironment, ApamaExecutables } from '../apama_util/apamaenvironment';
+import { ApamaEnvironment, ApamaExecutableInterface, ApamaExecutables } from '../apama_util/apamaenvironment';
 import { ChildProcess, spawn } from 'child_process';
 import { Writable } from 'stream';
 import { Logger } from '../logger/logger';
@@ -66,7 +66,8 @@ export class ApamaCommandProvider {
                 });
                 if (userInput !== undefined) {
                   // Specify engine_send command with NO evt files (but specify port) 
-                  const childProcess = spawn(this.apamaEnv.getCommandLine(ApamaExecutables.SEND) + ' -p ' + userInput.toString(), {
+                  let command: ApamaExecutableInterface = this.apamaEnv.getCommandAsInterface(ApamaExecutables.SEND);
+                  const childProcess = spawn(command.command, [...command.args, '-p', userInput.toString()], {
                     shell: true,
                     stdio: ['pipe', 'pipe', 'pipe']
                   });
