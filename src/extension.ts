@@ -1,6 +1,5 @@
 "use_strict";
 
-import * as os from 'os';
 import * as path from 'path';
 
 import { ExtensionContext, Disposable, tasks, debug, workspace, WorkspaceConfiguration} from 'vscode';
@@ -36,28 +35,36 @@ export async function activate(context: ExtensionContext): Promise<void> {
 	const userApamaHome = config.get('apamaHome');
 
 	// See if we can find a correlator.
-	const executableResolver = new ExecutableResolver("correlator", logger)
+	const correlatorResolver = new ExecutableResolver("correlator", logger)
+	const eplbuddyResolver = new ExecutableResolver("eplbuddy", logger)
 
-	let resolve; 
+	let correlatorResolve; 
+	let eplbuddyResolve;
 	if (userApamaHome != undefined) {
 		// If the user has specified an Apama Home, we only use that.
-		resolve = await executableResolver.resolve(path.join(userApamaHome as string, "bin"));
+		correlatorResolve = await correlatorResolver.resolve(path.join(userApamaHome as string, "bin"));
+		eplbuddyResolve = await eplbuddyResolver.resolve(path.join(userApamaHome as string, "bin"));
 	} else {
-		resolve = await executableResolver.resolve();
+		correlatorResolve = await correlatorResolver.resolve();
+		eplbuddyResolve = await eplbuddyResolver.resolve();
 	}
 
-	if (resolve.kind == "success") {
-		logger.info(`Found the correaltor at ${resolve.path}`)
+	if (correlatorResolve.kind == "success") {
+		logger.info(`Found the correaltor at ${correlatorResolve.path}`)
 	} else {
 		logger.info(`Could not find Apama in your environment: you can configure the "Apama Home" preference to specify an install location.`);
 		return Promise.resolve();
 	}
 
 	// Gives the directory of $APAMA_HOME/bin.
-	const apamaBin = path.dirname(resolve.path);
+	const apamaBin = path.dirname(correlatorResolve.path);
 	const apamaEnv: ApamaEnvironment = new ApamaEnvironment(apamaBin);
-	
-	createLanguageServer(config, apamaEnv.getCommandAsInterface(ApamaExecutables.EPLBUDDY));
+
+	if (eplbuddyResolve.kind == "success") {
+		createLanguageServer(config, apamaEnv.getCommandAsInterface(ApamaExecutables.EPLBUDDY));
+	} else {
+		logger.info("Could not find eplbuddy, will not be launching Language Server.")
+	}
 
 	const taskprov = new ApamaTaskProvider(logger, apamaEnv);
 	context.subscriptions.push(tasks.registerTaskProvider("apama", taskprov));
@@ -95,7 +102,7 @@ async function createLanguageServer(config: WorkspaceConfiguration, eplBuddyComm
 	const serverOptions: Executable = {
 		transport: TransportKind.stdio,
 		command: eplBuddyCommand.command,
-		args: eplBuddyCommand.args
+		args: [...eplBuddyCommand.args, '-s']
 	};
 
 	// Options of the language client
