@@ -56,7 +56,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 	// Gives the directory of $APAMA_HOME/bin.
 	const apamaBin = path.dirname(resolve.path);
 	
-	createLangServerTCP(config, apamaBin);
+	createLanguageServer(config, apamaBin);
 
 	const apamaEnv: ApamaEnvironment = new ApamaEnvironment(apamaBin);
 	const taskprov = new ApamaTaskProvider(logger, apamaEnv);
@@ -83,7 +83,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 	return Promise.resolve();
 }
 
-async function createLangServerTCP(config: WorkspaceConfiguration, apamaBinPath: string): Promise<null> {
+async function createLanguageServer(config: WorkspaceConfiguration, apamaBinPath: string): Promise<null> {
 	/**
 	 * Spawns a language server, and then proceeds to connect the language client up to it.
 	 */
