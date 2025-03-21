@@ -47,15 +47,18 @@ export async function activate(context: ExtensionContext): Promise<void> {
 	}
 
 	if (resolve.kind == "success") {
-		logger.info(`executableResolve.resolve(): ${resolve.path}`)
+		logger.info(`Found the correaltor at ${resolve.path}`)
 	} else {
 		logger.info(`Could not find Apama in your environment: you can configure the "Apama Home" preference to specify an install location.`);
 		return Promise.resolve();
 	}
-	
-	createLangServerTCP(config, `${path.dirname(resolve.path)}/apama_env`);
 
-	const apamaEnv: ApamaEnvironment = new ApamaEnvironment();
+	// Gives the directory of $APAMA_HOME/bin.
+	const apamaBin = path.dirname(resolve.path);
+	
+	createLangServerTCP(config, apamaBin);
+
+	const apamaEnv: ApamaEnvironment = new ApamaEnvironment(apamaBin);
 	const taskprov = new ApamaTaskProvider(logger, apamaEnv);
 	context.subscriptions.push(tasks.registerTaskProvider("apama", taskprov));
 
@@ -80,7 +83,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 	return Promise.resolve();
 }
 
-async function createLangServerTCP(config: WorkspaceConfiguration, apamaEnvPath: string): Promise<null> {
+async function createLangServerTCP(config: WorkspaceConfiguration, apamaBinPath: string): Promise<null> {
 	/**
 	 * Spawns a language server, and then proceeds to connect the language client up to it.
 	 */
@@ -92,10 +95,10 @@ async function createLangServerTCP(config: WorkspaceConfiguration, apamaEnvPath:
 	let commandStr;
 	let args;
 	if (os.platform() == "win32") {
-		commandStr = `${path.dirname(apamaEnvPath)}/eplbuddy.exe`
+		commandStr = `${apamaBinPath}/eplbuddy.exe`
 		args = ['-s']
 	} else {
-		commandStr = apamaEnvPath 
+		commandStr = `${apamaBinPath}/apama_env`
 		args = [`eplbuddy`, "-s"]
 	}
 

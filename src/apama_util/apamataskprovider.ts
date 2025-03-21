@@ -1,13 +1,6 @@
 import { TaskProvider, CancellationToken, ProviderResult, Task, ShellExecution, TaskGroup } from 'vscode';
-import { ApamaEnvironment } from './apamaenvironment';
+import { ApamaEnvironment, ApamaCommands } from './apamaenvironment';
 import { Logger } from '../logger/logger';
-
-// interface ApamaTaskDefinition extends TaskDefinition {
-//   task: string;
-//   port: number;
-//   project: string;
-//   cmdline: string;
-// }
 
 
 export class ApamaTaskProvider implements TaskProvider {
@@ -54,10 +47,10 @@ export class ApamaTaskProvider implements TaskProvider {
 
     //default options for running
     const correlator = new Task(
-      {"type":"apama","task":"correlator","port":"15903","cmdline":this.apamaEnv.getCorrelatorCmdline()},
+      {"type":"apama","task":"correlator","port":"15903","cmdline":this.apamaEnv.getCommandLine(ApamaCommands.CORRELATOR)},
       "correlator",
       "apama",
-      new ShellExecution(this.apamaEnv.getCorrelatorCmdline()),
+      new ShellExecution(this.apamaEnv.getCommandLine(ApamaCommands.CORRELATOR)),
       []
     );
     correlator.group = TaskGroup.Test;
@@ -68,10 +61,10 @@ export class ApamaTaskProvider implements TaskProvider {
 
     //default options for running
     const correlator = new Task(
-      {"type":"apama","task":"engine_receive","port":"15903","cmdline":this.apamaEnv.getEngineReceiveCmdline()},
+      {"type":"apama","task":"engine_receive","port":"15903","cmdline":this.apamaEnv.getCommandLine(ApamaCommands.RECEIVE)},
       "engine_receive",
       "apama",
-      new ShellExecution(this.apamaEnv.getEngineReceiveCmdline()),
+      new ShellExecution(this.apamaEnv.getCommandLine(ApamaCommands.RECEIVE)),
       []
     );
     correlator.group = TaskGroup.Test;
@@ -82,10 +75,10 @@ export class ApamaTaskProvider implements TaskProvider {
      //TODO: get user defined options?
      //let options = windows.showInputBox(...etc...);
     const engine_watch = new Task(
-      {"type":"apama","task":"engine_watch","port":"15903","cmdline":this.apamaEnv.getEngineWatchCmdline()},
+      {"type":"apama","task":"engine_watch","port":"15903","cmdline":this.apamaEnv.getCommandLine(ApamaCommands.WATCH)},
       "engine_watch",
       "apama",
-      new ShellExecution(this.apamaEnv.getEngineWatchCmdline()/* + options */),
+      new ShellExecution(this.apamaEnv.getCommandLine(ApamaCommands.WATCH)),
       []
     );
     engine_watch.group = TaskGroup.Test;
