@@ -66,7 +66,7 @@ export class ApamaCommandProvider {
                 });
                 if (userInput !== undefined) {
                   // Specify engine_send command with NO evt files (but specify port) 
-                  let command: ApamaExecutableInterface = this.apamaEnv.getCommandAsInterface(ApamaExecutables.SEND);
+                  const command: ApamaExecutableInterface = this.apamaEnv.getCommandAsInterface(ApamaExecutables.SEND);
                   const childProcess = spawn(command.command, [...command.args, '-p', userInput.toString()], {
                     shell: true,
                     stdio: ['pipe', 'pipe', 'pipe']
