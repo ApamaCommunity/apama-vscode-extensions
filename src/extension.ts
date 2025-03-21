@@ -50,7 +50,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 	}
 
 	if (correlatorResolve.kind == "success") {
-		logger.info(`Found the correaltor at ${correlatorResolve.path}`)
+		logger.info(`Found the correlator at ${correlatorResolve.path}`)
 	} else {
 		logger.info(`Could not find Apama in your environment: you can configure the "Apama Home" preference to specify an install location.`);
 		return Promise.resolve();
