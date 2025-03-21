@@ -12,7 +12,7 @@ import {
 } from 'vscode-languageclient/node';
 
 
-import { ApamaEnvironment } from './apama_util/apamaenvironment';
+import { ApamaEnvironment, ApamaExecutableInterface, ApamaExecutables } from './apama_util/apamaenvironment';
 import { ApamaTaskProvider } from './apama_util/apamataskprovider';
 import { ApamaDebugConfigurationProvider } from './apama_debug/apamadebugconfig';
 import { ApamaProjectView } from './apama_project/apamaProjectView';
@@ -55,10 +55,10 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
 	// Gives the directory of $APAMA_HOME/bin.
 	const apamaBin = path.dirname(resolve.path);
-	
-	createLanguageServer(config, apamaBin);
-
 	const apamaEnv: ApamaEnvironment = new ApamaEnvironment(apamaBin);
+	
+	createLanguageServer(config, apamaEnv.getCommandAsInterface(ApamaExecutables.EPLBUDDY));
+
 	const taskprov = new ApamaTaskProvider(logger, apamaEnv);
 	context.subscriptions.push(tasks.registerTaskProvider("apama", taskprov));
 
@@ -83,7 +83,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 	return Promise.resolve();
 }
 
-async function createLanguageServer(config: WorkspaceConfiguration, apamaBinPath: string): Promise<null> {
+async function createLanguageServer(config: WorkspaceConfiguration, eplBuddyCommand: ApamaExecutableInterface): Promise<null> {
 	/**
 	 * Spawns a language server, and then proceeds to connect the language client up to it.
 	 */
@@ -92,20 +92,10 @@ async function createLanguageServer(config: WorkspaceConfiguration, apamaBinPath
 		return Promise.reject("Apama Language Server disabled");
 	}
 
-	let commandStr;
-	let args;
-	if (os.platform() == "win32") {
-		commandStr = `${apamaBinPath}/eplbuddy.exe`
-		args = ['-s']
-	} else {
-		commandStr = `${apamaBinPath}/apama_env`
-		args = [`eplbuddy`, "-s"]
-	}
-
 	const serverOptions: Executable = {
 		transport: TransportKind.stdio,
-		command: commandStr,
-		args: args
+		command: eplBuddyCommand.command,
+		args: eplBuddyCommand.args
 	};
 
 	// Options of the language client

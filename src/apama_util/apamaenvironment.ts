@@ -9,7 +9,13 @@ export enum ApamaExecutables {
   SEND = 'engine_send',
   RECEIVE = 'engine_receive',
   WATCH = 'engine_watch',
-  DELETE = 'engine_delete'
+  DELETE = 'engine_delete',
+  EPLBUDDY = 'eplbuddy'
+}
+
+export interface ApamaExecutableInterface {
+  command: string,
+  args: string[]
 }
 
 export class ApamaEnvironment {
@@ -30,5 +36,9 @@ export class ApamaEnvironment {
 
   getCommandAsList(command: ApamaExecutables) {
     return [this.apamaEnv, command]
+  }
+
+  getCommandAsInterface(command: ApamaExecutables): ApamaExecutableInterface {
+    return {command: this.apamaEnv, args: [command]}
   }
 }
