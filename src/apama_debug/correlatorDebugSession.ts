@@ -13,7 +13,7 @@ import { DebugProtocol } from '@vscode/debugprotocol';
 import { CorrelatorHttpInterface, CorrelatorBreakpoint, CorrelatorPaused } from './correlatorHttpInterface';
 import { basename } from 'path';
 import * as vscode from 'vscode';
-import { ApamaEnvironment, ApamaCommands } from '../apama_util/apamaenvironment';
+import { ApamaEnvironment, ApamaExecutables } from '../apama_util/apamaenvironment';
 import { ApamaRunner } from '../apama_util/apamarunner';
 import { Logger } from '../logger/logger';
 
@@ -49,9 +49,9 @@ export class CorrelatorDebugSession extends DebugSession {
 	public constructor(private logger: Logger, private apamaEnv: ApamaEnvironment, private config: CorrelatorConfig) {
 		super();
 
-		this.manager = new ApamaRunner("engine_management", apamaEnv.getCommandLine(ApamaCommands.MANAGEMENT));
-		this.deployCmd = new ApamaRunner("engine_deploy", apamaEnv.getCommandLine(ApamaCommands.DEPLOY));
-		this.injectCmd = new ApamaRunner("engine_inject", apamaEnv.getCommandLine(ApamaCommands.INJECT));
+		this.manager = new ApamaRunner("engine_management", apamaEnv.getCommandLine(ApamaExecutables.MANAGEMENT));
+		this.deployCmd = new ApamaRunner("engine_deploy", apamaEnv.getCommandLine(ApamaExecutables.DEPLOY));
+		this.injectCmd = new ApamaRunner("engine_inject", apamaEnv.getCommandLine(ApamaExecutables.INJECT));
 		console.log("Correlator interface host: " + config.host.toString() + " port " + config.port.toString());
 		this.correlatorHttp = new CorrelatorHttpInterface(config.host, config.port);
 		this.correlatorBreakPoints = {} as { [key: string]: string };
@@ -94,7 +94,7 @@ export class CorrelatorDebugSession extends DebugSession {
 			{ type: "shell", task: "" },
 			"DebugCorrelator",
 			"correlator",
-			new vscode.ShellExecution(this.apamaEnv.getCommandLine(ApamaCommands.CORRELATOR), localargs),
+			new vscode.ShellExecution(this.apamaEnv.getCommandLine(ApamaExecutables.CORRELATOR), localargs),
 			[]
 		);
 		// correlator.group = 'test';

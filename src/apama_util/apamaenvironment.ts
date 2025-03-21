@@ -1,6 +1,6 @@
 import { platform } from 'os';
 
-export enum ApamaCommands {
+export enum ApamaExecutables {
   CORRELATOR = 'correlator',
   INJECT = 'engine_inject',
   DEPLOY = 'engine_deploy',
@@ -24,11 +24,11 @@ export class ApamaEnvironment {
     }
   }
 
-  getCommandLine(command: ApamaCommands) {
+  getCommandLine(command: ApamaExecutables) {
     return `${this.apamaEnv} ${command}`
   }
 
-  getCommandAsList(command: ApamaCommands) {
+  getCommandAsList(command: ApamaExecutables) {
     return [this.apamaEnv, command]
   }
 }

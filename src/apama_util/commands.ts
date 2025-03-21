@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApamaRunner } from '../apama_util/apamarunner';
 import { ExtensionContext, workspace, commands, window } from 'vscode';
-import { ApamaEnvironment, ApamaCommands } from '../apama_util/apamaenvironment';
+import { ApamaEnvironment, ApamaExecutables } from '../apama_util/apamaenvironment';
 import { ChildProcess, spawn } from 'child_process';
 import { Writable } from 'stream';
 import { Logger } from '../logger/logger';
@@ -13,9 +13,9 @@ export class ApamaCommandProvider {
 
   public constructor(private logger: Logger, private apamaEnv: ApamaEnvironment,
     private context: ExtensionContext) {
-    this.injectCmd = new ApamaRunner("engine_inject", apamaEnv.getCommandLine(ApamaCommands.INJECT));
-    this.sendCmd = new ApamaRunner("engine_send", apamaEnv.getCommandLine(ApamaCommands.SEND));
-    this.deleteCmd = new ApamaRunner("engine_delete", apamaEnv.getCommandLine(ApamaCommands.DELETE));
+    this.injectCmd = new ApamaRunner("engine_inject", apamaEnv.getCommandLine(ApamaExecutables.INJECT));
+    this.sendCmd = new ApamaRunner("engine_send", apamaEnv.getCommandLine(ApamaExecutables.SEND));
+    this.deleteCmd = new ApamaRunner("engine_delete", apamaEnv.getCommandLine(ApamaExecutables.DELETE));
     this.registerCommands();
   }
 
@@ -66,7 +66,7 @@ export class ApamaCommandProvider {
                 });
                 if (userInput !== undefined) {
                   // Specify engine_send command with NO evt files (but specify port) 
-                  const childProcess = spawn(this.apamaEnv.getCommandLine(ApamaCommands.SEND) + ' -p ' + userInput.toString(), {
+                  const childProcess = spawn(this.apamaEnv.getCommandLine(ApamaExecutables.SEND) + ' -p ' + userInput.toString(), {
                     shell: true,
                     stdio: ['pipe', 'pipe', 'pipe']
                   });

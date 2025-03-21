@@ -2,7 +2,7 @@
 import { window, commands, Disposable, workspace, TreeDataProvider, EventEmitter, Event, TreeView, FileSystemWatcher, ExtensionContext, QuickPickItem, TextDocument, TreeItemCollapsibleState, TreeItem, WorkspaceFolder} from 'vscode';
 import { ApamaProject, ApamaProjectWorkspace, ApamaTreeItem, BundleItem } from './apamaProject';
 import { ApamaRunner } from '../apama_util/apamarunner';
-import { ApamaEnvironment, ApamaCommands } from '../apama_util/apamaenvironment';
+import { ApamaEnvironment, ApamaExecutables } from '../apama_util/apamaenvironment';
 import { Logger } from '../logger/logger';
 
 export class ApamaProjectView implements TreeDataProvider<string | ApamaTreeItem> {
@@ -29,8 +29,8 @@ export class ApamaProjectView implements TreeDataProvider<string | ApamaTreeItem
 	constructor(private apamaEnv: ApamaEnvironment, private logger: Logger, private workspaces: WorkspaceFolder[], private context: ExtensionContext) {
 		const subscriptions: Disposable[] = [];
 		
-		this.apama_project = new ApamaRunner('apama_project', apamaEnv.getCommandLine(ApamaCommands.PROJECT));
-		this.apama_deploy = new ApamaRunner('apama_deploy', apamaEnv.getCommandLine(ApamaCommands.DEPLOY));
+		this.apama_project = new ApamaRunner('apama_project', apamaEnv.getCommandLine(ApamaExecutables.PROJECT));
+		this.apama_deploy = new ApamaRunner('apama_deploy', apamaEnv.getCommandLine(ApamaExecutables.DEPLOY));
 		let ws: WorkspaceFolder;
 		workspaces.forEach( 
 			ws => this.workspaceList.push(new ApamaProjectWorkspace(logger,ws.name,ws.uri.fsPath,ws,this.apama_project,context.asAbsolutePath('resources') ) )
