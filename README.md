@@ -22,7 +22,7 @@ Adding the following to `.vscode/settings.json` in the launched debug VSCode ins
 
 ```json
 {
-    "apamaLanguageClient.trace.server": "verbose",
+    "apamaLanguageClient.trace.server": "verbose"
 }
 ```
 
