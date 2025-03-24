@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ApamaRunner, ApamaAsyncRunner } from '../apama_util/apamarunner';
+import { ApamaRunner } from '../apama_util/apamarunner';
 import { ExtensionContext, workspace, commands, window } from 'vscode';
-import { ApamaEnvironment } from '../apama_util/apamaenvironment';
+import { ApamaEnvironment, ApamaExecutableInterface, ApamaExecutables } from '../apama_util/apamaenvironment';
 import { ChildProcess, spawn } from 'child_process';
 import { Writable } from 'stream';
 import { Logger } from '../logger/logger';
@@ -10,14 +10,12 @@ export class ApamaCommandProvider {
   private injectCmd: ApamaRunner;
   private sendCmd: ApamaRunner;
   private deleteCmd: ApamaRunner;
-  private engineWatchCmd: ApamaAsyncRunner;
 
   public constructor(private logger: Logger, private apamaEnv: ApamaEnvironment,
     private context: ExtensionContext) {
-    this.injectCmd = new ApamaRunner("engine_inject", apamaEnv.getInjectCmdline());
-    this.sendCmd = new ApamaRunner("engine_send", apamaEnv.getSendCmdLine());
-    this.deleteCmd = new ApamaRunner("engine_delete", apamaEnv.getDeleteCmdLine());
-    this.engineWatchCmd = new ApamaAsyncRunner("engine_watch", apamaEnv.getEngineWatchCmdline(), logger);
+    this.injectCmd = new ApamaRunner("engine_inject", apamaEnv.getCommandLine(ApamaExecutables.INJECT));
+    this.sendCmd = new ApamaRunner("engine_send", apamaEnv.getCommandLine(ApamaExecutables.SEND));
+    this.deleteCmd = new ApamaRunner("engine_delete", apamaEnv.getCommandLine(ApamaExecutables.DELETE));
     this.registerCommands();
   }
 
@@ -68,7 +66,8 @@ export class ApamaCommandProvider {
                 });
                 if (userInput !== undefined) {
                   // Specify engine_send command with NO evt files (but specify port) 
-                  const childProcess = spawn(this.apamaEnv.getSendCmdLine() + ' -p ' + userInput.toString(), {
+                  const command: ApamaExecutableInterface = this.apamaEnv.getCommandAsInterface(ApamaExecutables.SEND);
+                  const childProcess = spawn(command.command, [...command.args, '-p', userInput.toString()], {
                     shell: true,
                     stdio: ['pipe', 'pipe', 'pipe']
                   });

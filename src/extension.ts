@@ -1,6 +1,5 @@
 "use_strict";
 
-import * as os from 'os';
 import * as path from 'path';
 
 import { ExtensionContext, Disposable, tasks, debug, workspace, WorkspaceConfiguration} from 'vscode';
@@ -12,7 +11,7 @@ import {
 } from 'vscode-languageclient/node';
 
 
-import { ApamaEnvironment } from './apama_util/apamaenvironment';
+import { ApamaEnvironment, ApamaExecutableInterface, ApamaExecutables } from './apama_util/apamaenvironment';
 import { ApamaTaskProvider } from './apama_util/apamataskprovider';
 import { ApamaDebugConfigurationProvider } from './apama_debug/apamadebugconfig';
 import { ApamaProjectView } from './apama_project/apamaProjectView';
@@ -36,26 +35,37 @@ export async function activate(context: ExtensionContext): Promise<void> {
 	const userApamaHome = config.get('apamaHome');
 
 	// See if we can find a correlator.
-	const executableResolver = new ExecutableResolver("correlator", logger)
+	const correlatorResolver = new ExecutableResolver("correlator", logger)
+	const eplbuddyResolver = new ExecutableResolver("eplbuddy", logger)
 
-	let resolve; 
+	let correlatorResolve; 
+	let eplbuddyResolve;
 	if (userApamaHome != undefined) {
 		// If the user has specified an Apama Home, we only use that.
-		resolve = await executableResolver.resolve(path.join(userApamaHome as string, "bin"));
+		correlatorResolve = await correlatorResolver.resolve(path.join(userApamaHome as string, "bin"));
+		eplbuddyResolve = await eplbuddyResolver.resolve(path.join(userApamaHome as string, "bin"));
 	} else {
-		resolve = await executableResolver.resolve();
+		correlatorResolve = await correlatorResolver.resolve();
+		eplbuddyResolve = await eplbuddyResolver.resolve();
 	}
 
-	if (resolve.kind == "success") {
-		logger.info(`executableResolve.resolve(): ${resolve.path}`)
+	if (correlatorResolve.kind == "success") {
+		logger.info(`Found the correlator at ${correlatorResolve.path}`)
 	} else {
 		logger.info(`Could not find Apama in your environment: you can configure the "Apama Home" preference to specify an install location.`);
 		return Promise.resolve();
 	}
-	
-	createLangServerTCP(config, `${path.dirname(resolve.path)}/apama_env`);
 
-	const apamaEnv: ApamaEnvironment = new ApamaEnvironment();
+	// Gives the directory of $APAMA_HOME/bin.
+	const apamaBin = path.dirname(correlatorResolve.path);
+	const apamaEnv: ApamaEnvironment = new ApamaEnvironment(apamaBin);
+
+	if (eplbuddyResolve.kind == "success") {
+		createLanguageServer(config, apamaEnv.getCommandAsInterface(ApamaExecutables.EPLBUDDY));
+	} else {
+		logger.info("Could not find eplbuddy, will not be launching Language Server.")
+	}
+
 	const taskprov = new ApamaTaskProvider(logger, apamaEnv);
 	context.subscriptions.push(tasks.registerTaskProvider("apama", taskprov));
 
@@ -80,7 +90,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 	return Promise.resolve();
 }
 
-async function createLangServerTCP(config: WorkspaceConfiguration, apamaEnvPath: string): Promise<null> {
+async function createLanguageServer(config: WorkspaceConfiguration, eplBuddyCommand: ApamaExecutableInterface): Promise<null> {
 	/**
 	 * Spawns a language server, and then proceeds to connect the language client up to it.
 	 */
@@ -89,20 +99,10 @@ async function createLangServerTCP(config: WorkspaceConfiguration, apamaEnvPath:
 		return Promise.reject("Apama Language Server disabled");
 	}
 
-	let commandStr;
-	let args;
-	if (os.platform() == "win32") {
-		commandStr = `${path.dirname(apamaEnvPath)}/eplbuddy.exe`
-		args = ['-s']
-	} else {
-		commandStr = apamaEnvPath 
-		args = [`eplbuddy`, "-s"]
-	}
-
 	const serverOptions: Executable = {
 		transport: TransportKind.stdio,
-		command: commandStr,
-		args: args
+		command: eplBuddyCommand.command,
+		args: [...eplBuddyCommand.args, '-s']
 	};
 
 	// Options of the language client
