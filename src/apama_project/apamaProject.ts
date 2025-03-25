@@ -22,64 +22,6 @@ export interface ApamaTreeItem {
   resourceDir: string;
 }
 
-export class ApamaProjectWorkspace extends TreeItem implements ApamaTreeItem {
-  constructor(
-    public logger: Logger,
-    public readonly label: string,
-    public readonly fsDir: string,
-    public ws: WorkspaceFolder,
-    public apama_project: ApamaRunner,
-    public resourceDir: string,
-  ) {
-    super(label, TreeItemCollapsibleState.Collapsed);
-  }
-
-  items: ApamaProject[] = [];
-  contextValue = "workspace";
-  instance = false;
-
-  //
-  // Find all the projects
-  //
-  async scanProjects(): Promise<ApamaProject[]> {
-    const result: ApamaProject[] = [];
-
-    //find .projects, but exclude anything with _deployed suffix
-    //also covers all roots of a multi root workspace
-    const projectsPattern: RelativePattern = new RelativePattern(
-      this.ws,
-      "**/.project",
-    );
-    const ignorePattern: RelativePattern = new RelativePattern(
-      this.ws,
-      "**/*_deployed/**",
-    );
-    const projectNames = await workspace.findFiles(
-      projectsPattern,
-      ignorePattern,
-    );
-
-    for (let index = 0; index < projectNames.length; index++) {
-      const project: Uri = projectNames[index];
-      const current: ApamaProject = new ApamaProject(
-        this.logger,
-        path.relative(this.ws.uri.fsPath, path.dirname(project.fsPath)),
-        path.dirname(project.fsPath),
-        this.ws,
-        this.apama_project,
-        this.resourceDir,
-      );
-      result.push(current);
-    }
-    return result;
-  }
-
-  iconPath = {
-    light: path.join(this.resourceDir, "light", "folder.svg"),
-    dark: path.join(this.resourceDir, "dark", "folder.svg"),
-  };
-}
-
 export class ApamaProject extends TreeItem implements ApamaTreeItem {
   constructor(
     public logger: Logger,
@@ -94,6 +36,47 @@ export class ApamaProject extends TreeItem implements ApamaTreeItem {
   items: BundleItem[] = [];
   contextValue = "project";
   instance = false;
+
+  //
+  // Find all the projects in a workspace
+  //
+  static async scanProjects(
+    logger: Logger,
+    ws: WorkspaceFolder,
+    apama_project: ApamaRunner,
+    resourceDir: string
+  ): Promise<ApamaProject[]> {
+    const result: ApamaProject[] = [];
+
+    //find .projects, but exclude anything with _deployed suffix
+    //also covers all roots of a multi root workspace
+    const projectsPattern: RelativePattern = new RelativePattern(
+      ws,
+      "**/.project",
+    );
+    const ignorePattern: RelativePattern = new RelativePattern(
+      ws,
+      "**/*_deployed/**",
+    );
+    const projectNames = await workspace.findFiles(
+      projectsPattern,
+      ignorePattern,
+    );
+
+    for (let index = 0; index < projectNames.length; index++) {
+      const project: Uri = projectNames[index];
+      const current: ApamaProject = new ApamaProject(
+        logger,
+        path.basename(path.dirname(project.fsPath)),
+        path.dirname(project.fsPath),
+        ws,
+        apama_project,
+        resourceDir,
+      );
+      result.push(current);
+    }
+    return result;
+  }
 
   //
   // Use apama project tool to populate ApamaProject objects list of Bundles
@@ -168,7 +151,7 @@ export class ApamaProject extends TreeItem implements ApamaTreeItem {
   }
 
   iconPath = {
-    light: path.join(this.resourceDir, "dark", "project.svg"),
+    light: path.join(this.resourceDir, "light", "project.svg"),
     dark: path.join(this.resourceDir, "dark", "project.svg"),
   };
 }
