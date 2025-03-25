@@ -45,26 +45,6 @@
           ],
           "default": "local",
           "description": "Configure if the Language Server is enabled."
-        },
-        "apama.c8y.url": {
-          "type": "string",
-          "default": "https://demos.cumulocity.com/",
-          "description": "Url of the cumulocity instance."
-        },
-        "apama.c8y.tenant": {
-          "type": "string",
-          "default": "demos",
-          "description": "Tenant Id: click on user at the top right of the cumulocity application."
-        },
-        "apama.c8y.user": {
-          "type": "string",
-          "default": "user",
-          "description": "User name you log in as."
-        },
-        "apama.c8y.password": {
-          "type": "string",
-          "default": "pw",
-          "description": "password for cumulocity."
         }
       }
     },
@@ -118,12 +98,7 @@
         "path": "./snippets.json"
       }
     ],
-    "commands": [
-      {
-        "command": "extension.c8y.upload_epl_app",
-        "category": "Apama",
-        "title": "Cumulocity: Upload as EPL App"
-      },
+    "commands": [ 
       {
         "command": "extension.apamaProjects.apamaToolCreateProject",
         "title": "Create Project",
@@ -144,15 +119,6 @@
       },
       {
         "command": "extension.apamaProjects.refresh",
-        "title": "Refresh",
-        "category": "Apama",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        }
-      },
-      {
-        "command": "extension.c8y.refresh",
         "title": "Refresh",
         "category": "Apama",
         "icon": {
@@ -215,11 +181,6 @@
         "command": "extension.apama.engine_watch",
         "category": "Apama",
         "title": "correlator: engine watch"
-      },
-      {
-        "command": "extension.c8y.openEplApp",
-        "category": "Apama",
-        "title": "Open EPL Application"
       }
     ],
     "menus": {
@@ -322,7 +283,6 @@
     "test": "vscode-test"
   },
   "dependencies": {
-    "@c8y/client": "^1020.26.2",
     "@vscode/debugadapter": "^1.67.0",
     "@vscode/debugprotocol": "^1.67.0",
     "@xmldom/xmldom": "^0.8.10",
