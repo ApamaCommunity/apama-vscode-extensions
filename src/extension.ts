@@ -138,7 +138,7 @@ async function createLanguageServer(
   };
 
   const initializationOptions = {
-    "logLevels": config.get<string>("logLevel", "").split(",")
+    "logLevels": (config.get<string>("logLevels", "").length > 0 ? config.get<string>("logLevels", "").split(",") : [])
   }
 
   // TODO: to support multiple folders per workspace, spin up separate LanguageClient instances for 
