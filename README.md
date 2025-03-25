@@ -132,32 +132,3 @@ You can add breakpoints to the code for debugging. These are limited to line-bas
 Debugging the application also follows the standard vscode patterns.
 
 ![tasks](images/10-debug.gif)
-
-## Release Notes
-**Please see https://github.com/ApamaCommunity/apama-vscode-extensions/releases for the latest release notes. The notes below have been kept for historical purposes.**
-
-## v1.2.1
-
-* First release under ApamaCommunity.
-
-## v1.0.1 (June 2020)
-
-* Finished syntax highlighting.
-* Documentation.
-* Apama EPL diagnostics (via LSP support in eplbuddy tool).
-* Integration with apama_project tool.
-* Fixed small bug when starting the Language Server.
-* Preparation for future support of integration with [EPL Apps](https://cumulocity.com/guides/apama/analytics-introduction/#apama-epl-apps) feature of Cumulocity IoT.
-
-## v0.2.0 to v0.9.0 (February 2020)
-
-* Better syntax highlighting, Snippets, Apama EPL debugging
-* Snippets support and further syntax highlighting added
-* Cleanup of code and rewrite of the tmLanguage file
-* Small readme change and addition of image dir.
-
-## v0.1.0 (February 2020)
-
-* Initial release (started June 2018)
-* Basic highlighting with some support for more complex code structures.
-* Placeholder for command functionality
