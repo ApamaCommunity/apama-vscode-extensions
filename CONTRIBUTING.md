@@ -28,3 +28,9 @@ If working on `eplbuddy`, adding the following to `.vscode/settings.json` in the
     "apamaLanguageClient.trace.server": "verbose"
 }
 ```
+
+## Testing
+More effort needs to be put into building a suitable testsuite for the extension. 
+
+## Releasing
+TODO: describe how to publish to the marketplace
