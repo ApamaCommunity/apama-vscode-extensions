@@ -137,18 +137,28 @@ async function createLanguageServer(
     args: [...eplBuddyCommand.args, "-s"],
   };
 
+  const initializationOptions = {
+    "logLevels": config.get<string>("logLevel", "").split(",")
+  }
+
+  // TODO: to support multiple folders per workspace, spin up separate LanguageClient instances for 
+  // each one (as per https://github.com/microsoft/vscode-extension-samples/blob/main/lsp-multi-server-sample/client/src/extension.ts)
+
   // Options of the language client
   const clientOptions: LanguageClientOptions = {
     // Activate the server for epl files
     documentSelector: ["epl"],
+    initializationOptions: initializationOptions,
     synchronize: {
       // Synchronize the section 'eplLanguageServer' of the settings to the server
       configurationSection: "eplLanguageServer",
       // Notify the server about file changes to epl files contained in the workspace
       // need to think about this
-      fileEvents: workspace.createFileSystemWatcher("**/.mon"),
+      fileEvents: workspace.createFileSystemWatcher("**/.mon"), // TODO: is this really needed or does it happen automatically when opening files?
     },
   };
+
+  // TODO: we should really reload this if the APAMA_HOME config changes
   languageClient = new LanguageClient(
     "apamaLanguageClient",
     `Apama Language Client`,
