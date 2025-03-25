@@ -111,30 +111,23 @@ export class ApamaProjectView
   registerCommands(): void {
     if (this.context !== undefined) {
       this.context.subscriptions.push.apply(this.context.subscriptions, [
-        //
-        // Create project
-        //
+        
+        /** Create project */
         commands.registerCommand(
           "extension.apamaProjects.apamaToolCreateProject",
           () => {
-            //display prompt.
-            window
-              .showInputBox({
-                value: "apama_project",
-                placeHolder: "Project directory name",
-              })
-              .then((result) => {
-                if (
-                  typeof result === "string" &&
-                  workspace.rootPath !== undefined
-                ) {
-                  this.apama_project
-                    .run(workspace.rootPath, ["create", result])
-                    .catch((err: string) => {
-                      this.logger.appendLine(err);
-                    });
-                }
+            if (workspace.rootPath !== undefined) {
+                this.apama_project
+                  .run(workspace.rootPath, ["create", '.'])
+                  .then((result) => {
+                    window.showInformationMessage(result.stdout);
+                    this.logger.info(result);
+                  })
+                  .catch((err) => {
+                    window.showErrorMessage(err.stderr);
+                    this.logger.error(err);
               });
+            }
           },
         ),
 
