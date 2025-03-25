@@ -18,8 +18,6 @@ import {
 } from "vscode";
 import {
   ApamaProject,
-  ApamaProjectWorkspace,
-  ApamaTreeItem,
   BundleItem,
 } from "./apamaProject";
 import { ApamaRunner } from "../apama_util/apamarunner";
@@ -28,18 +26,15 @@ import {
   ApamaExecutables,
 } from "../apama_util/apamaenvironment";
 import { Logger } from "../logger/logger";
-
 export class ApamaProjectView
-  implements TreeDataProvider<string | ApamaTreeItem>
+  implements TreeDataProvider<string | ApamaProject | BundleItem>
 {
-  private _onDidChangeTreeData: EventEmitter<ApamaTreeItem | undefined> =
-    new EventEmitter<ApamaTreeItem | undefined>();
-  readonly onDidChangeTreeData: Event<ApamaTreeItem | undefined> =
+  private _onDidChangeTreeData: EventEmitter<ApamaProject | BundleItem | undefined> =
+    new EventEmitter<ApamaProject | BundleItem | undefined>();
+  readonly onDidChangeTreeData: Event<ApamaProject | BundleItem | undefined> =
     this._onDidChangeTreeData.event;
 
   //we want to have a list of top level nodes (projects)
-  private workspaceList: ApamaProjectWorkspace[] = [];
-
   private projects: ApamaProject[] = [];
 
   // eslint-disable-next-line
@@ -70,20 +65,6 @@ export class ApamaProjectView
       "apama_deploy",
       apamaEnv.getCommandLine(ApamaExecutables.DEPLOY),
     );
-    let ws: WorkspaceFolder;
-    workspaces.forEach((ws) =>
-      this.workspaceList.push(
-        new ApamaProjectWorkspace(
-          logger,
-          ws.name,
-          ws.uri.fsPath,
-          ws,
-          this.apama_project,
-          context.asAbsolutePath("resources"),
-        ),
-      ),
-    );
-
     //project commands
     this.registerCommands();
 
@@ -111,30 +92,23 @@ export class ApamaProjectView
   registerCommands(): void {
     if (this.context !== undefined) {
       this.context.subscriptions.push.apply(this.context.subscriptions, [
-        //
-        // Create project
-        //
+        
+        /** Create project */
         commands.registerCommand(
           "extension.apamaProjects.apamaToolCreateProject",
           () => {
-            //display prompt.
-            window
-              .showInputBox({
-                value: "apama_project",
-                placeHolder: "Project directory name",
-              })
-              .then((result) => {
-                if (
-                  typeof result === "string" &&
-                  workspace.rootPath !== undefined
-                ) {
-                  this.apama_project
-                    .run(workspace.rootPath, ["create", result])
-                    .catch((err: string) => {
-                      this.logger.appendLine(err);
-                    });
-                }
+            if (workspace.rootPath !== undefined) {
+                this.apama_project
+                  .run(workspace.rootPath, ["create", '.'])
+                  .then((result) => {
+                    window.showInformationMessage(result.stdout);
+                    this.logger.info(result);
+                  })
+                  .catch((err) => {
+                    window.showErrorMessage(err.stderr);
+                    this.logger.error(err);
               });
+            }
           },
         ),
 
@@ -240,6 +214,25 @@ export class ApamaProjectView
       ]);
     }
   }
+  
+  /** Initialize projects from workspaces */
+  async initializeProjects(): Promise<void> {
+    this.logger.info("Initializing projects");
+    // Clear existing projects
+    this.projects = [];
+    
+    // Scan for projects in each workspace
+    for (const ws of this.workspaces) {
+      const workspaceProjects = await ApamaProject.scanProjects(
+        this.logger,
+        ws,
+        this.apama_project,
+        this.context.asAbsolutePath("resources")
+      );
+
+      this.projects.push(...workspaceProjects);
+    }
+  }
 
   //
   // Trigger refresh of the tree
@@ -253,45 +246,35 @@ export class ApamaProjectView
   // made this async so we can avoid race conditions on updates
   //
   async getChildren(
-    item?: BundleItem | ApamaProject | ApamaProjectWorkspace | undefined,
+    item?: BundleItem | ApamaProject | undefined,
   ): Promise<
-    undefined | BundleItem[] | ApamaProject[] | ApamaProjectWorkspace[]
+    undefined | BundleItem[] | ApamaProject[]
   > {
+    this.logger.info("getChildren() called")
     //if this is a bundle - then there are no children
     if (item && item.contextValue === "bundle") {
       if (item.items.length === 0) {
-        return [];
+        return Promise.resolve([]);
       } else {
-        return item.items;
+        return Promise.resolve(item.items);
       }
     }
-
+    
     //if this is a project - we should have set up the bundles now
     if (item instanceof ApamaProject) {
       //lets get the bundles
-      const index = this.workspaceList[item.ws.index].items.findIndex(
-        (proj) => proj === item,
-      );
-      this.workspaceList[item.ws.index].items[index].items =
-        await item.getBundlesFromProject();
-      return this.workspaceList[item.ws.index].items[index].items;
+      item.items = await item.getBundlesFromProject();
+      return Promise.resolve(item.items);
+    } else {
+      await this.initializeProjects();
+      return Promise.resolve(this.projects);
     }
-
-    //if this is a project - we should have set up the bundles now
-    if (item instanceof ApamaProjectWorkspace) {
-      //lets get the projects for a workspace
-      this.workspaceList[item.ws.index].items = await item.scanProjects();
-      return await this.workspaceList[item.ws.index].items;
-    }
-
-    //Root nodes
-    return this.workspaceList;
   }
 
   //
   // interface requirement
   //
-  getTreeItem(element: BundleItem | ApamaProject | ApamaTreeItem): TreeItem {
+  getTreeItem(element: BundleItem | ApamaProject): TreeItem {
     //No string nodes in my tree so should never happen
     if (typeof element === "string") {
       //this.logger.appendLine("ERROR ???? getTreeItem -- " + element.toString());
