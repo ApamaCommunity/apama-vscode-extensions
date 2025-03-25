@@ -67,7 +67,7 @@ export class ApamaProject extends TreeItem implements ApamaTreeItem {
       const project: Uri = projectNames[index];
       const current: ApamaProject = new ApamaProject(
         logger,
-        path.dirname(project.fsPath),
+        path.basename(path.dirname(project.fsPath)),
         path.dirname(project.fsPath),
         ws,
         apama_project,
