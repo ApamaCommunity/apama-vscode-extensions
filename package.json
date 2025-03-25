@@ -123,11 +123,13 @@
     "commands": [
       {
         "command": "extension.c8y.upload_epl_app",
+        "category": "Apama",
         "title": "Cumulocity: Upload as EPL App"
       },
       {
         "command": "extension.apamaProjects.apamaToolCreateProject",
         "title": "Create Project",
+        "category": "Apama",
         "icon": {
           "light": "resources/light/folder.svg",
           "dark": "resources/dark/folder.svg"
@@ -136,6 +138,7 @@
       {
         "command": "extension.apamaProjects.apamaToolDeployProject",
         "title": "Deploy Project",
+        "category": "Apama",
         "icon": {
           "light": "resources/light/boolean.svg",
           "dark": "resources/dark/boolean.svg"
@@ -144,6 +147,7 @@
       {
         "command": "extension.apamaProjects.refresh",
         "title": "Refresh",
+        "category": "Apama",
         "icon": {
           "light": "resources/light/refresh.svg",
           "dark": "resources/dark/refresh.svg"
@@ -152,6 +156,7 @@
       {
         "command": "extension.c8y.refresh",
         "title": "Refresh",
+        "category": "Apama",
         "icon": {
           "light": "resources/light/refresh.svg",
           "dark": "resources/dark/refresh.svg"
@@ -160,6 +165,7 @@
       {
         "command": "extension.apamaProjects.apamaToolAddBundles",
         "title": "Add Bundle",
+        "category": "Apama",
         "icon": {
           "light": "resources/light/add.svg",
           "dark": "resources/dark/add.svg"
@@ -168,6 +174,7 @@
       {
         "command": "extension.apamaProjects.apamaToolRemoveBundle",
         "title": "Remove Bundle",
+        "category": "Apama",
         "icon": {
           "light": "resources/action-close.svg",
           "dark": "resources/action-close-dark.svg"
@@ -176,6 +183,7 @@
       {
         "command": "extension.apamaProjects.close",
         "title": "Close",
+        "category": "Apama",
         "icon": {
           "light": "resources/action-close.svg",
           "dark": "resources/action-close-dark.svg"
@@ -184,6 +192,7 @@
       {
         "command": "extension.apamaProjects.closeGroup",
         "title": "Close Group",
+        "category": "Apama",
         "icon": {
           "light": "resources/closeall.svg",
           "dark": "resources/closeall_inverse.svg"
@@ -191,23 +200,28 @@
       },
       {
         "command": "extension.apama.engine_inject",
+        "category": "Apama",
         "title": "correlator: engine inject"
       },
       {
         "command": "extension.apama.engine_send",
+        "category": "Apama",
         "title": "correlator: engine send"
       },
       {
         "command": "extension.apama.engine_delete",
+        "category": "Apama",
         "title": "correlator: engine delete"
       },
       {
         "command": "extension.apama.engine_watch",
+        "category": "Apama",
         "title": "correlator: engine watch"
       },
       {
         "command": "extension.c8y.openEplApp",
-        "title": "open EPL Application"
+        "category": "Apama",
+        "title": "Open EPL Application"
       }
     ],
     "menus": {
@@ -334,6 +348,7 @@
     "@vscode/test-electron": "^2.4.1",
     "esbuild": "^0.24.0",
     "eslint": "^9.11.1",
+    "prettier": "3.5.3",
     "typescript": "^5.6.2"
   }
 }

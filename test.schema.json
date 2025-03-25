@@ -5,146 +5,144 @@
   "type": "object",
 
   "properties": {
-      "connectivityPlugins": {
-          "description": "An array of connectivity plugins for the correlator to start.",
-          "type": "object",
-          "additionalProperties": {
-              "$comment": "Both schemas contain class. If class is the first specified property then VSC will attenmpt to validate to the first schema in the array below",
-              "anyOf": [
-                  {"$ref": "#/definitions/C++Plugin"},
-                  {"$ref": "#/definitions/JavaPlugin"}
-              ]
-          }
-      },
-
-      "dynamicChainManagers": {
-          "description": "A map where each key is a manager name, that is, a string naming an instance of a dynamic chain manager plug-in class.",
-          "type": "object",
-          "additionalProperties": {
-              "type": "object",
-              "properties": {
-                  "transport": {
-                      "type": "string",
-                      "description": "Specifies the transport plug-in associated with this dynamic chain manager."
-                  },
-                  "managerConfig": {
-                      "type": "object",
-                      "description": "Specifies the configuration map that will be passed to the chain manager constructor when it is created at startup. The available configuration options are defined by the plug-in author, therefore, see the plug-in's documentation for details.",
-                      "anyOf": [
-                          {"$ref": "#/definitions/HTTPServerTransportConfig"}
-                      ]
-                  }
-              },
-              "required": [ "transport", "managerConfig" ],
-              "additionalProperties": false
-          }
+    "connectivityPlugins": {
+      "description": "An array of connectivity plugins for the correlator to start.",
+      "type": "object",
+      "additionalProperties": {
+        "$comment": "Both schemas contain class. If class is the first specified property then VSC will attenmpt to validate to the first schema in the array below",
+        "anyOf": [
+          { "$ref": "#/definitions/C++Plugin" },
+          { "$ref": "#/definitions/JavaPlugin" }
+        ]
       }
+    },
+
+    "dynamicChainManagers": {
+      "description": "A map where each key is a manager name, that is, a string naming an instance of a dynamic chain manager plug-in class.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "transport": {
+            "type": "string",
+            "description": "Specifies the transport plug-in associated with this dynamic chain manager."
+          },
+          "managerConfig": {
+            "type": "object",
+            "description": "Specifies the configuration map that will be passed to the chain manager constructor when it is created at startup. The available configuration options are defined by the plug-in author, therefore, see the plug-in's documentation for details.",
+            "anyOf": [{ "$ref": "#/definitions/HTTPServerTransportConfig" }]
+          }
+        },
+        "required": ["transport", "managerConfig"],
+        "additionalProperties": false
+      }
+    }
   },
 
   "definitions": {
-      "HTTPServerTransportConfig": {
-          "type": "object",
-          "properties": {
-              "port": {
-                  "type": [ "integer", "string" ],
-                  "description": "The user-defined port on which the server is accessible.",
-                  "minimum": 0,
-                  "maximum": 65535
-              },
-              "bindAddress": {
-                  "type": "string",
-                  "description": "Binds to specific interfaces, potentially on multiple ports. Each entry is either a host, or a host:port combination.",
-                  "$comment": "We could add a pattern to match."
-              },
-              "tls": {
-                  "type": "boolean",
-                  "description": "Set this to true to enable TLS (https)."
-              },
-              "tlsCertificateFile": {
-                  "type": "string",
-                  "description": "The server certificate file in PEM format. Required if TLS is enabled."
-              },
-              "tlsKeyFile": {
-                  "type": "string",
-                  "description": "The private key for the certificate in PEM format. Required if TLS is enabled."
-              },
-              "connectionTimeoutSecs": {
-                  "type": "integer",
-                  "description": "Maximum time to handle a single request before returning a timeout (in seconds).",
-                  "minimum": 0
-              },
-              "maxConnections": {
-                  "type": "integer",
-                  "description": "Maximum number of simultaneous connections which can be handled.",
-                  "minimum": 1
-              },
-              "staticFiles": {
-                  "description": "Map of static files.",
-                  "propertyNames": {
-                      "pattern": "^[/]"
-                  },
-                  "additionalProperties": {
-                      "type": "object",
-                      "properties": {
-                          "file": { "type": "string" },
-                          "contentType": { "type": "string" },
-                          "charset": { "type": "string" }
-                      },
-                      "required": [ "file", "contentType" ],
-                      "additionalProperties": false
-                  }
-              }
+    "HTTPServerTransportConfig": {
+      "type": "object",
+      "properties": {
+        "port": {
+          "type": ["integer", "string"],
+          "description": "The user-defined port on which the server is accessible.",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "bindAddress": {
+          "type": "string",
+          "description": "Binds to specific interfaces, potentially on multiple ports. Each entry is either a host, or a host:port combination.",
+          "$comment": "We could add a pattern to match."
+        },
+        "tls": {
+          "type": "boolean",
+          "description": "Set this to true to enable TLS (https)."
+        },
+        "tlsCertificateFile": {
+          "type": "string",
+          "description": "The server certificate file in PEM format. Required if TLS is enabled."
+        },
+        "tlsKeyFile": {
+          "type": "string",
+          "description": "The private key for the certificate in PEM format. Required if TLS is enabled."
+        },
+        "connectionTimeoutSecs": {
+          "type": "integer",
+          "description": "Maximum time to handle a single request before returning a timeout (in seconds).",
+          "minimum": 0
+        },
+        "maxConnections": {
+          "type": "integer",
+          "description": "Maximum number of simultaneous connections which can be handled.",
+          "minimum": 1
+        },
+        "staticFiles": {
+          "description": "Map of static files.",
+          "propertyNames": {
+            "pattern": "^[/]"
           },
-          "required": [ "port" ],
-          "additionalProperties": false
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "file": { "type": "string" },
+              "contentType": { "type": "string" },
+              "charset": { "type": "string" }
+            },
+            "required": ["file", "contentType"],
+            "additionalProperties": false
+          }
+        }
       },
+      "required": ["port"],
+      "additionalProperties": false
+    },
 
-      "C++Plugin": {
-          "type":"object",
-          "properties": {
-              "libraryName": {
-                  "type": "string",
-                  "description": "The base filename name of the library, excluding the operating system-specific prefixes and suffixes (that is, excluding the \"lib\" prefix and \".so\" suffix for UNIX, and the \".dll\" suffix for Windows)."
-              },
-              "class": {
-                  "type": "string",
-                  "description": "The base name of the class, without a package. The plug-in's documentation specifies the class name to be used."
-              },
-              "directory": {
-                  "type": "string",
-                  "description": "Specifies a directory where where the library will be found."
-              }
-          },
-          "required": [ "libraryName", "class" ],
-          "additionalProperties": false
+    "C++Plugin": {
+      "type": "object",
+      "properties": {
+        "libraryName": {
+          "type": "string",
+          "description": "The base filename name of the library, excluding the operating system-specific prefixes and suffixes (that is, excluding the \"lib\" prefix and \".so\" suffix for UNIX, and the \".dll\" suffix for Windows)."
+        },
+        "class": {
+          "type": "string",
+          "description": "The base name of the class, without a package. The plug-in's documentation specifies the class name to be used."
+        },
+        "directory": {
+          "type": "string",
+          "description": "Specifies a directory where where the library will be found."
+        }
       },
+      "required": ["libraryName", "class"],
+      "additionalProperties": false
+    },
 
-      "JavaPlugin": {
-          "type": "object",
-          "properties": {
-              "class": {
-                  "type": "string",
-                  "description": "The name of the plug-in class, which must include the package. The plug-in's documentation specifies the class name to be used."
-              },
-              "classpath": {
-                  "anyOf": [
-                      {
-                          "type": "array",
-                          "items": { "type": "string" },
-                          "minItems": 1
-                      },
-                      {
-                          "type": "string"
-                      }
-                  ]
-              },
-              "directory": {
-                  "type": "string",
-                  "description": "Specifies a directory where the jar files will be found (unless an absolute path is specified for a classpath element)."
-              }
-          },
-          "required": [ "class", "classpath" ],
-          "additionalProperties": false
-     }
+    "JavaPlugin": {
+      "type": "object",
+      "properties": {
+        "class": {
+          "type": "string",
+          "description": "The name of the plug-in class, which must include the package. The plug-in's documentation specifies the class name to be used."
+        },
+        "classpath": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": { "type": "string" },
+              "minItems": 1
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "directory": {
+          "type": "string",
+          "description": "Specifies a directory where the jar files will be found (unless an absolute path is specified for a classpath element)."
+        }
+      },
+      "required": ["class", "classpath"],
+      "additionalProperties": false
+    }
   }
 }
