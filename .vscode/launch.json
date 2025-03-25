@@ -10,7 +10,7 @@
       "outFiles": ["${workspaceFolder}/dist/**/*.js"],
       "request": "launch",
       "runtimeExecutable": "${execPath}",
-      "type": "pwa-extensionHost"
+      "type": "extensionHost"
     }
   ]
 }
