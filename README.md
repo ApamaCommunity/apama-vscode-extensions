@@ -1,51 +1,34 @@
-# apama-vscode-extensions
+# Apama extension for EPL development in VSCode
 
-A community developed VSCode extension to support the development of Apama Streaming Analytics applications.
+A community-developed extension to support the development of Apama Streaming Analytics applications in VSCode.
 
-For more information about Apama and EPL please visit the [Apama Community](http://www.apamacommunity.com/) website.
+For more information about Apama and EPL please visit the [Apama Community](https://www.cumulocity.com/product/apama-community-edition/) website.
 
-Also available is a [VSCode extension for PySys testing](https://marketplace.visualstudio.com/items?itemName=ApamaCommunity.pysys-vscode-extension).
-
-## Building
-Run the following commands to install, and build the extension.
-```bash
-npm install
-npm run build
-```
-
-You can then launch it in VSCode using the `Debug: Start Debugging` command palette option. Ensure you have no existing instance of the extension installed. 
-
-Read [the VSCode Extension Guide](https://code.visualstudio.com/api) for more information.
-
-### Debugging 
-Adding the following to `.vscode/settings.json` in the launched debug VSCode instance will allow you to see communication between the extension and the Apama Language Server (under Output > Apama Language Client),
-
-```json
-{
-    "apamaLanguageClient.trace.server": "verbose"
-}
-```
-
+See also the [VSCode extension for PySys testing](https://marketplace.visualstudio.com/items?itemName=ApamaCommunity.pysys-vscode-extension).
 
 ## Features of the plugin
 
-* Enables features of the extension for correct matching versions of Apama.
-* Supports advanced syntax highlighting and error reporting using the Apama Language Server.
-* Support for debugging and launching pure single-file and multi-file EPL applications in a correlator.
-* Supports use of the apama_project tool.
-* Apama based settings for current and upcoming changes live.
+* Syntax highlighting
+* Error/warn messages and problems
+* Adding bundles to an Apama project
+* Support for debugging and launching pure single-file and multi-file EPL applications in a correlator
 
-## Requirements
-- Syntax highlighting does not require any version of Apama to be installed.
-- For advanced syntax highlighting and error reporting using the Language Server, a minimum version of Apama 10.15.6.0 is required.
+## Getting started
 
-A minimum version of Apama 10.15.6.0 is required for advanced functionality.
+To use all the functionality provided by this extension, you need an installation of Apama. If Apama is not installed, basic syntax highlighting is available even if Apama is not installed.
+
+It is strongly recommended to use the latest version of Apama. Support for Apama versions before 10.15.6.0 is not guaranteed (consider reverting to an older version of the extension if you are using an old version). 
+
+The extension can run on Linux. It can also be installed on Windows for Apama versions that support Windows. For Apama versions that do not provide a Windows build, VSCode's [WSL](https://code.visualstudio.com/docs/remote/wsl) support can be used to edit files on Windows using a Linux Apama installation. 
+
+TODO: describe installation and the need to configure Apama Home and then reload the Window
 
 ## Limitations
 
-* Debug of deployed projects only.
-* Advanced syntax highlighting is limited to EPL files currently (imported packages may not work).
-* Completion is currently only snippet and history based.
+* Completion proposal are not yet available (except for basic snippet and history suggestions).
+* Configuration changes are not automatically applied; for example after reconfiguring the Apama Home directory you need to reload the VSCode window (press `F1` and type `Reload Window`). 
+* No support for multiple folders per workspace - there should be just one folder per workspace, and it should contain an Apama project (i.e. a `.project` and `.dependencies` file at the top level)
+* No incremental builds - all EPL files are rebuilt every time there is a change (although there is caching of the parsing phase for files that did not change). This may result in slow error markers (and high CPU utilization) when working on a large project on a low-powered laptop 
 
 ## EPL Syntax highlighting
 
@@ -53,7 +36,7 @@ A minimum version of Apama 10.15.6.0 is required for advanced functionality.
 
 ## Settings
 
-There are various settings available for the extension now. All the Apama configuration entries are prefixed 'Apama', and searching for 'Apama' will show all of them.
+There are various settings available for the extension. All the Apama configuration entries are prefixed 'Apama', and searching for 'Apama' will show all of them.
 
 * apamaHome contains the path to the installation directory of the version you wish to use.
 * debugHost is the default host for a correlator started for debug (allowing remote instance).
