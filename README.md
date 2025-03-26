@@ -98,7 +98,7 @@ There are various snippets defined in the extension to make writing code easier.
 
 ## Tasks: correlator, inject monitor, and send event
 
-Tasks can be created for running correlators on specific ports. The commands to inject EPL and send events also support these ports. Additionally there are tasks for engine_watch and engine_recieve that can also be set up. In future releases there will be a more coherent interface for this allowing a suite of tasks to be set up in one operation.
+Tasks can be created for running correlators on specific ports. The commands to inject EPL and send events also support these ports. Additionally there are tasks for engine_watch and engine_receive that can also be set up. In future releases there will be a more coherent interface for this allowing a suite of tasks to be set up in one operation.
 
 The animation below shows the default operation of the tasks.
 
