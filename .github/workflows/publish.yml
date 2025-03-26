@@ -1,8 +1,5 @@
 name: publish release
 on:
-  push:
-    branches:
-    - main
   release:
     types:
     - created
