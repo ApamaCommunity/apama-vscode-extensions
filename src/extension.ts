@@ -147,21 +147,21 @@ async function createLanguageServer(
   // Options of the language client
   const clientOptions: LanguageClientOptions = {
     // Activate the server for epl files
-    documentSelector: ["epl"],
+    documentSelector: [{language:"apamaepl", scheme:"file"}],
     initializationOptions: initializationOptions,
     synchronize: {
       // Synchronize the section 'eplLanguageServer' of the settings to the server
       configurationSection: "eplLanguageServer",
       // Notify the server about file changes to epl files contained in the workspace
       // need to think about this
-      fileEvents: workspace.createFileSystemWatcher("**/.mon"), // TODO: is this really needed or does it happen automatically when opening files?
+      //fileEvents: workspace.createFileSystemWatcher("**/.mon"), // TODO: is this really needed or does it happen automatically when opening files?
     },
   };
 
   // TODO: we should really reload this if the APAMA_HOME config changes
   languageClient = new LanguageClient(
     "apamaLanguageClient",
-    `Apama Language Client`,
+    `Apama Language Server`,
     serverOptions,
     clientOptions,
   );
