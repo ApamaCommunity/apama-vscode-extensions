@@ -6,6 +6,7 @@
 * Fixed automatic Language Server start up - if Apama is installed in a default location, or the `apamaHome` preference set to a valid location, the Language Server will automatically start up.
 * The "Create Project" command requires a minimum of 10.15.6.2.
 * A single workspace folder is now considered to hold just one project, at the top level.
+* Removed support for deploying projects. This can be manually done using the `engine_deploy` tool.
 
 # Old versions
 
