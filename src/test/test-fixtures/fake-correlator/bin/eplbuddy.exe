@@ -1,0 +1,4 @@
+@echo off
+REM Mock eplbuddy.exe script for testing
+echo "Mock eplbuddy started"
+exit /b 0

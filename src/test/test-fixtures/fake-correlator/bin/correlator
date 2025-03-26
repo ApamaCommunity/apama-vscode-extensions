@@ -1,0 +1,4 @@
+#!/bin/bash
+# Mock correlator script for testing
+echo "Mock correlator started"
+exit 0

@@ -1,0 +1,4 @@
+#!/bin/bash
+# Mock eplbuddy script for testing
+echo "Mock eplbuddy started"
+exit 0

@@ -1,0 +1,16 @@
+#!/bin/bash
+# Mock apama_env script for testing
+# This script is used to execute Apama commands
+# It simply passes the command to the actual executable
+
+if [ $# -eq 0 ]; then
+  echo "Usage: apama_env <command> [args...]"
+  exit 1
+fi
+
+COMMAND=$1
+shift
+
+# Execute the command directly from the bin directory
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+"$DIR/$COMMAND" "$@"
