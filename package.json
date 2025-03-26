@@ -208,6 +208,16 @@
           "command": "apama.apamaToolRemoveBundle",
           "group": "inline"
         }
+      ],
+      "commandPalette": [
+        {
+          "command": "apama.apamaToolAddBundles",
+          "when": "false"
+        },
+        {
+          "command": "apama.apamaToolRemoveBundle",
+          "when": "false"
+        }
       ]
     },
     "views": {
