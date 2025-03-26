@@ -109,7 +109,7 @@
         }
       },
       {
-        "command": "apama.refresh",
+        "command": "apama.refreshProjects",
         "title": "Refresh",
         "category": "Apama",
         "icon": {
@@ -136,24 +136,6 @@
         }
       },
       {
-        "command": "apama.close",
-        "title": "Close",
-        "category": "Apama",
-        "icon": {
-          "light": "resources/action-close.svg",
-          "dark": "resources/action-close-dark.svg"
-        }
-      },
-      {
-        "command": "apama.closeGroup",
-        "title": "Close Group",
-        "category": "Apama",
-        "icon": {
-          "light": "resources/closeall.svg",
-          "dark": "resources/closeall_inverse.svg"
-        }
-      },
-      {
         "command": "apama.engine_inject",
         "category": "Apama",
         "title": "correlator: engine inject"
@@ -167,11 +149,6 @@
         "command": "apama.engine_delete",
         "category": "Apama",
         "title": "correlator: engine delete"
-      },
-      {
-        "command": "apama.engine_watch",
-        "category": "Apama",
-        "title": "correlator: engine watch"
       }
     ],
     "menus": {
@@ -192,7 +169,7 @@
           "group": "navigation"
         },
         {
-          "command": "apama.refresh",
+          "command": "apama.refreshProjects",
           "when": "view == apamaProjects",
           "group": "navigation"
         }
@@ -207,6 +184,24 @@
           "when": "view == apamaProjects && viewItem == bundle",
           "command": "apama.apamaToolRemoveBundle",
           "group": "inline"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "apama.apamaToolAddBundles",
+          "when": "false"
+        },
+        {
+          "command": "apama.apamaToolRemoveBundle",
+          "when": "false"
+        },
+        {
+          "command": "apama.engine_inject",
+          "when": "false"
+        },
+        {
+          "command": "apama.refreshProjects",
+          "when": "false"
         }
       ]
     },
