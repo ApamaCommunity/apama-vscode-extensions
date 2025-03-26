@@ -231,7 +231,6 @@ export class ApamaProjectView
   ): Promise<
     undefined | BundleItem[] | ApamaProject[]
   > {
-    this.logger.info("getChildren() called")
     //if this is a bundle - then there are no children
     if (item && item.contextValue === "bundle") {
       if (item.items.length === 0) {
