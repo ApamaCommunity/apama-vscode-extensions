@@ -109,7 +109,7 @@
         }
       },
       {
-        "command": "apama.refresh",
+        "command": "apama.refreshProjects",
         "title": "Refresh",
         "category": "Apama",
         "icon": {
@@ -169,7 +169,7 @@
           "group": "navigation"
         },
         {
-          "command": "apama.refresh",
+          "command": "apama.refreshProjects",
           "when": "view == apamaProjects",
           "group": "navigation"
         }
@@ -197,6 +197,10 @@
         },
         {
           "command": "apama.engine_inject",
+          "when": "false"
+        },
+        {
+          "command": "apama.refreshProjects",
           "when": "false"
         }
       ]

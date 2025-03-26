@@ -189,7 +189,7 @@ export class ApamaProjectView
         //
         // refresh projects
         //
-        commands.registerCommand("apama.refresh", () => {
+        commands.registerCommand("apama.refreshProjects", () => {
           this.refresh();
         }),
       ]);
