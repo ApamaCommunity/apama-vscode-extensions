@@ -176,25 +176,6 @@ export class ApamaProjectView
         ),
 
         //
-        // Engine Deploy
-        //
-        commands.registerCommand(
-          "extension.apamaProjects.apamaToolDeployProject",
-          (project: ApamaProject) => {
-            this.apama_deploy
-              .run(project.ws.uri.fsPath, [
-                "--outputDeployDir",
-                project.label + "_deployed",
-                project.label,
-              ])
-              .then((result) =>
-                window.showInformationMessage(`${result.stdout}`),
-              )
-              .catch((err) => window.showErrorMessage(`${err}`));
-          },
-        ),
-
-        //
         // Placeholder for clicking on a bundle/project - will open files possibly or navigate to the right directory.
         //
         commands.registerCommand(

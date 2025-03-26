@@ -109,15 +109,6 @@
         }
       },
       {
-        "command": "extension.apamaProjects.apamaToolDeployProject",
-        "title": "Deploy Project",
-        "category": "Apama",
-        "icon": {
-          "light": "resources/light/boolean.svg",
-          "dark": "resources/dark/boolean.svg"
-        }
-      },
-      {
         "command": "extension.apamaProjects.refresh",
         "title": "Refresh",
         "category": "Apama",
@@ -207,11 +198,6 @@
         }
       ],
       "view/item/context": [
-        {
-          "when": "view == apamaProjects && viewItem == project",
-          "command": "extension.apamaProjects.apamaToolDeployProject",
-          "group": "inline@1"
-        },
         {
           "when": "view == apamaProjects && viewItem == project",
           "command": "extension.apamaProjects.apamaToolAddBundles",
