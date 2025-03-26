@@ -149,11 +149,6 @@
         "command": "apama.engine_delete",
         "category": "Apama",
         "title": "correlator: engine delete"
-      },
-      {
-        "command": "apama.engine_watch",
-        "category": "Apama",
-        "title": "correlator: engine watch"
       }
     ],
     "menus": {
@@ -198,6 +193,10 @@
         },
         {
           "command": "apama.apamaToolRemoveBundle",
+          "when": "false"
+        },
+        {
+          "command": "apama.engine_inject",
           "when": "false"
         }
       ]
