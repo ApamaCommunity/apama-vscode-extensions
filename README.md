@@ -25,8 +25,8 @@ The extension can run on Linux. It can also be installed on Windows, either dire
 If you do not have a Windows installation package or simply prefer to develop on Linux, installing the VS Code [WSL](https://code.visualstudio.com/docs/remote/wsl) extension allows VS Code running on Windows to use a Linux-based Apama installation package. 
 
 See the VS Code documentation for detailed guidance on setting up WSL but the main steps are:
-* Install the latest version of [WSL](https://learn.microsoft.com/en-us/windows/wsl/install), using the **Debian** distribution of Linux:  `wsl --install -d Debian` (hint: this may take some time and require a restart).
-* Open a WSL terminal (for example by opening  `Debian` from the Start Menu) and install one of the "full edition" Apama packages for Linux. In more detail, for 10.15:
+* Install the latest version of [WSL](https://learn.microsoft.com/en-us/windows/wsl/install), using the **Debian** distribution of Linux:  `wsl --install -d Debian` (hint: this must be run from an Administrator terminal; it may take some time and require a restart).
+* Open a WSL terminal (for example by opening `Debian` from the Start Menu) and install one of the "full edition" Apama packages for Linux. In more detail, for 10.15:
   * Identify the required package from the [download site](https://download.cumulocity.com/Apama/10.15), for example `apama-c8y-dev_10.15.*.*_amd64_linux.tar.gz`
   * Download the package by passing this URL to `wget` (you may need to run `sudo apt install wget` first, if it is not yet installed). 
   * Then unpack it to the default directory using: `sudo mkdir -p /opt/cumulocity && sudo tar -xf apama-dev_10.15.*_amd64_linux.tar.gz -C /opt/cumulocity` (hint: you will need to enter the password for the root account you created during WSL setup). 
