@@ -154,9 +154,9 @@ export class ApamaProjectView
                   .then((result) =>
                     window.showInformationMessage(`${result.stdout}`),
                   )
-                  .catch((err) => window.showErrorMessage(`${err}`));
+                  .catch((err) => window.showErrorMessage(`${err.stderr}`));
               })
-              .catch((err) => window.showErrorMessage(`${err}`));
+              .catch((err) => window.showErrorMessage(`${err.stderr}`));
           },
         ),
 
@@ -171,7 +171,7 @@ export class ApamaProjectView
               .then((result) =>
                 window.showInformationMessage(`${result.stdout}`),
               )
-              .catch((err) => window.showErrorMessage(`${err}`));
+              .catch((err) => window.showErrorMessage(`${err.stderr}`));
           },
         ),
 

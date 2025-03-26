@@ -100,9 +100,9 @@ export class ApamaProject extends TreeItem implements ApamaTreeItem {
       ) {
         if (item.length > 0) {
           //on the raw string, count the indentation
-          let current = item.trimRight();
+          let current = item.trimEnd();
           let indentation = current.length;
-          current = item.trimLeft();
+          current = item.trimStart();
           indentation = indentation - current.length;
 
           if (indentation === 12) {
