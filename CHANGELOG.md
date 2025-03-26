@@ -20,7 +20,6 @@
 * Apama EPL diagnostics (via LSP support in eplbuddy tool).
 * Integration with apama_project tool.
 * Fixed small bug when starting the Language Server.
-* Preparation for future support of integration with [EPL Apps](https://cumulocity.com/guides/apama/analytics-introduction/#apama-epl-apps) feature of Cumulocity IoT.
 
 ## v0.2.0 to v0.9.0 (February 2020)
 
