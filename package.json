@@ -136,24 +136,6 @@
         }
       },
       {
-        "command": "apama.close",
-        "title": "Close",
-        "category": "Apama",
-        "icon": {
-          "light": "resources/action-close.svg",
-          "dark": "resources/action-close-dark.svg"
-        }
-      },
-      {
-        "command": "apama.closeGroup",
-        "title": "Close Group",
-        "category": "Apama",
-        "icon": {
-          "light": "resources/closeall.svg",
-          "dark": "resources/closeall_inverse.svg"
-        }
-      },
-      {
         "command": "apama.engine_inject",
         "category": "Apama",
         "title": "correlator: engine inject"
