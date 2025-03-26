@@ -261,7 +261,8 @@
     "esbuild-watch": "node esbuild.js --watch",
     "compile-tests": "tsc -p . --outDir out",
     "pretest": "npm run compile-tests",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "deploy": "vsce publish"
   },
   "dependencies": {
     "@vscode/debugadapter": "^1.67.0",
