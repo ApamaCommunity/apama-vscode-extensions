@@ -43,7 +43,7 @@ export class ApamaCommandProvider {
         // engine_inject command
         //
         commands.registerCommand(
-          "extension.apama.engine_inject",
+          "apama.engine_inject",
           async (monFile) => {
             if (monFile !== undefined) {
               // Display prompt to receive port
@@ -65,7 +65,7 @@ export class ApamaCommandProvider {
         // engine_send command
         //
         commands.registerCommand(
-          "extension.apama.engine_send",
+          "apama.engine_send",
           async (evtFile?) => {
             // Display prompt to receive port
             const portInput = await window.showInputBox({
@@ -117,7 +117,7 @@ export class ApamaCommandProvider {
         //
         // engine_delete command
         //
-        commands.registerCommand("extension.apama.engine_delete", async () => {
+        commands.registerCommand("apama.engine_delete", async () => {
           // Display prompt to receive port
           const portInput = await window.showInputBox({
             value: port.toString(),

@@ -95,7 +95,7 @@ export class ApamaProjectView
         
         /** Create project */
         commands.registerCommand(
-          "extension.apamaProjects.apamaToolCreateProject",
+          "apama.apamaToolCreateProject",
           () => {
             if (workspace.rootPath !== undefined) {
                 this.apama_project
@@ -116,7 +116,7 @@ export class ApamaProjectView
         // Add Bundle
         //
         commands.registerCommand(
-          "extension.apamaProjects.apamaToolAddBundles",
+          "apama.apamaToolAddBundles",
           (project: ApamaProject) => {
             this.apama_project
               .run(project.fsDir, ["list", "bundles"])
@@ -164,7 +164,7 @@ export class ApamaProjectView
         // Remove Bundle
         //
         commands.registerCommand(
-          "extension.apamaProjects.apamaToolRemoveBundle",
+          "apama.apamaToolRemoveBundle",
           (bundle: BundleItem) => {
             this.apama_project
               .run(bundle.fsDir, ["remove", "bundle", '"' + bundle.label + '"'])
@@ -179,7 +179,7 @@ export class ApamaProjectView
         // Placeholder for clicking on a bundle/project - will open files possibly or navigate to the right directory.
         //
         commands.registerCommand(
-          "extension.apamaProjects.SelectItem",
+          "apama.SelectItem",
           (_document: TextDocument) => {
             //this.logger.appendLine(document.fileName);
             return;
@@ -189,7 +189,7 @@ export class ApamaProjectView
         //
         // refresh projects
         //
-        commands.registerCommand("extension.apamaProjects.refresh", () => {
+        commands.registerCommand("apama.refresh", () => {
           this.refresh();
         }),
       ]);

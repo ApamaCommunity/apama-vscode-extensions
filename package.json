@@ -100,7 +100,7 @@
     ],
     "commands": [ 
       {
-        "command": "extension.apamaProjects.apamaToolCreateProject",
+        "command": "apama.apamaToolCreateProject",
         "title": "Create Project",
         "category": "Apama",
         "icon": {
@@ -109,7 +109,7 @@
         }
       },
       {
-        "command": "extension.apamaProjects.refresh",
+        "command": "apama.refresh",
         "title": "Refresh",
         "category": "Apama",
         "icon": {
@@ -118,7 +118,7 @@
         }
       },
       {
-        "command": "extension.apamaProjects.apamaToolAddBundles",
+        "command": "apama.apamaToolAddBundles",
         "title": "Add Bundle",
         "category": "Apama",
         "icon": {
@@ -127,7 +127,7 @@
         }
       },
       {
-        "command": "extension.apamaProjects.apamaToolRemoveBundle",
+        "command": "apama.apamaToolRemoveBundle",
         "title": "Remove Bundle",
         "category": "Apama",
         "icon": {
@@ -136,7 +136,7 @@
         }
       },
       {
-        "command": "extension.apamaProjects.close",
+        "command": "apama.close",
         "title": "Close",
         "category": "Apama",
         "icon": {
@@ -145,7 +145,7 @@
         }
       },
       {
-        "command": "extension.apamaProjects.closeGroup",
+        "command": "apama.closeGroup",
         "title": "Close Group",
         "category": "Apama",
         "icon": {
@@ -154,22 +154,22 @@
         }
       },
       {
-        "command": "extension.apama.engine_inject",
+        "command": "apama.engine_inject",
         "category": "Apama",
         "title": "correlator: engine inject"
       },
       {
-        "command": "extension.apama.engine_send",
+        "command": "apama.engine_send",
         "category": "Apama",
         "title": "correlator: engine send"
       },
       {
-        "command": "extension.apama.engine_delete",
+        "command": "apama.engine_delete",
         "category": "Apama",
         "title": "correlator: engine delete"
       },
       {
-        "command": "extension.apama.engine_watch",
+        "command": "apama.engine_watch",
         "category": "Apama",
         "title": "correlator: engine watch"
       }
@@ -178,21 +178,21 @@
       "explorer/context": [
         {
           "when": "resourceExtname == .mon",
-          "command": "extension.apama.engine_inject"
+          "command": "apama.engine_inject"
         },
         {
           "when": "resourceExtname == .evt",
-          "command": "extension.apama.engine_send"
+          "command": "apama.engine_send"
         }
       ],
       "view/title": [
         {
           "when": "view == apamaProjects",
-          "command": "extension.apamaProjects.apamaToolCreateProject",
+          "command": "apama.apamaToolCreateProject",
           "group": "navigation"
         },
         {
-          "command": "extension.apamaProjects.refresh",
+          "command": "apama.refresh",
           "when": "view == apamaProjects",
           "group": "navigation"
         }
@@ -200,12 +200,12 @@
       "view/item/context": [
         {
           "when": "view == apamaProjects && viewItem == project",
-          "command": "extension.apamaProjects.apamaToolAddBundles",
+          "command": "apama.apamaToolAddBundles",
           "group": "inline@2"
         },
         {
           "when": "view == apamaProjects && viewItem == bundle",
-          "command": "extension.apamaProjects.apamaToolRemoveBundle",
+          "command": "apama.apamaToolRemoveBundle",
           "group": "inline"
         }
       ]
