@@ -96,19 +96,52 @@ export class ApamaProjectView
         /** Create project */
         commands.registerCommand(
           "apama.apamaToolCreateProject",
-          () => {
-            if (workspace.rootPath !== undefined) {
-                this.apama_project
-                  .run(workspace.rootPath, ["create", '.'])
-                  .then((result) => {
-                    window.showInformationMessage(result.stdout);
-                    this.logger.info(result);
-                  })
-                  .catch((err) => {
-                    window.showErrorMessage(err.stderr);
-                    this.logger.error(err);
-              });
+          async () => {
+            // Dynamically get current workspace folders
+            const workspaceFolders = workspace.workspaceFolders;
+            
+            // Handle multiple workspaces
+            if (!workspaceFolders || workspaceFolders.length === 0) {
+              window.showErrorMessage("No workspace folders are open");
+              return;
             }
+            
+            let targetWorkspace: WorkspaceFolder;
+            
+            // If only one workspace, use it directly
+            if (workspaceFolders.length === 1) {
+              targetWorkspace = workspaceFolders[0];
+            } else {
+              // If multiple workspaces, prompt user to select one
+              const workspaceItems = workspaceFolders.map(ws => ({
+                label: ws.name,
+                description: ws.uri.fsPath,
+                workspace: ws
+              }));
+              
+              const selected = await window.showQuickPick(workspaceItems, {
+                placeHolder: "Select workspace to create Apama project in"
+              });
+              
+              if (!selected) {
+                return; // User cancelled the selection
+              }
+              
+              targetWorkspace = selected.workspace;
+            }
+            
+            // Create the project in the selected workspace
+            this.apama_project
+              .run(targetWorkspace.uri.fsPath, ["create", '.'])
+              .then((result) => {
+                window.showInformationMessage(result.stdout);
+                this.logger.info(result);
+                this.refresh(); // Refresh the view to show the new project
+              })
+              .catch((err) => {
+                window.showErrorMessage(err.stderr);
+                this.logger.error(err);
+              });
           },
         ),
 
@@ -203,7 +236,7 @@ export class ApamaProjectView
     this.projects = [];
     
     // Scan for projects in each workspace
-    for (const ws of this.workspaces) {
+    for (const ws of workspace.workspaceFolders) {
       const workspaceProjects = await ApamaProject.scanProjects(
         this.logger,
         ws,
