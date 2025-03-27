@@ -12,6 +12,18 @@
       "request": "launch",
       "runtimeExecutable": "${execPath}",
       "type": "extensionHost"
+    },
+    {
+      "name": "Extension Tests",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "${workspaceFolder}/src/test/test-fixtures/fixture1",
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
+      ],
+      "outFiles": ["${workspaceFolder}/out/test/**/*.js"],
     }
   ]
 }

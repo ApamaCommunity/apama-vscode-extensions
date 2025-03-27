@@ -210,7 +210,6 @@ export class ApamaProjectView
               .catch((err) => window.showErrorMessage(`${err.stderr}`));
           },
         ),
-
         //
         // Placeholder for clicking on a bundle/project - will open files possibly or navigate to the right directory.
         //

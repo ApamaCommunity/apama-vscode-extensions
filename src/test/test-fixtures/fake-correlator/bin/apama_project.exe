@@ -1,0 +1,4 @@
+@echo off
+REM Mock apama_project.exe script for testing
+echo "Mock apama_project started"
+exit /b 0

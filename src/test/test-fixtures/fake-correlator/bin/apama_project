@@ -1,0 +1,4 @@
+#!/bin/bash
+# Mock apama_project script for testing
+echo "Mock apama_project started"
+exit 0

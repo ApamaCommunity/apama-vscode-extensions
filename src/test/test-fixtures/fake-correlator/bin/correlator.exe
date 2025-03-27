@@ -1,0 +1,4 @@
+@echo off
+REM Mock correlator.exe script for testing
+echo "Mock correlator started"
+exit /b 0
