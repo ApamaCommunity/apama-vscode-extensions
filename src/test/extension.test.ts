@@ -1,5 +1,6 @@
 import * as assert from "assert";
 import * as path from 'path';
+import * as fs from 'fs';
 
 // You can import and use all API from the 'vscode' module
 // as well as import your extension to test it
@@ -12,6 +13,9 @@ suite("Extension Test Suite", () => {
     // Get the absolute path to the fake-correlator directory
     // __dirname in the compiled JS will be in the 'out' directory, but we need to point to the src directory
     const fakeCorrPath = path.resolve(__dirname, "../../src/test/test-fixtures/fake-correlator");
+
+    console.log(`Fake correlator path: ${fakeCorrPath}`);
+    console.log(`Fake correlator exists: ${fs.existsSync(fakeCorrPath)}`);
    
     // Update the configuration
     const configuration = vscode.workspace.getConfiguration();
