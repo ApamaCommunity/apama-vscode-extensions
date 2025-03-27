@@ -118,8 +118,10 @@ export async function activate(context: ExtensionContext): Promise<void> {
   // client can be deactivated on extension deactivation
   commands.forEach((command) => context.subscriptions.push(command));
 
-  workspace.onDidChangeConfiguration(async () => {
-    await resetLanguageServers(config, apamaEnv.getCommandAsInterface(ApamaExecutables.EPLBUDDY));
+  workspace.onDidChangeConfiguration(async (configurationevent) => {
+    if (configurationevent.affectsConfiguration("apama.apamaHome")) {
+      await resetLanguageServers(config, apamaEnv.getCommandAsInterface(ApamaExecutables.EPLBUDDY));
+    }
   });
 
   workspace.onDidChangeWorkspaceFolders(async () => {
