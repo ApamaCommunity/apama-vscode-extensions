@@ -140,7 +140,6 @@ export class ApamaProjectView
               .then((result) => {
                 window.showInformationMessage(result.stdout);
                 this.logger.info(result);
-                this.refresh(); // Refresh the view to show the new project
               })
               .catch((err) => {
                 window.showErrorMessage(err.stderr);
