@@ -99,16 +99,12 @@ export async function activate(context: ExtensionContext): Promise<void> {
   const commandprov = new ApamaCommandProvider(logger, apamaEnv, context);
   commands.push(commandprov);
 
-  //this needs a workspace folder which under some circumstances can be undefined.
-  //but we can ignore in that case and things shjould still work
-  if (workspace.workspaceFolders !== undefined) {
-    const projView = new ApamaProjectView(
-      apamaEnv,
-      logger,
-      context,
-    );
-    projView.refresh();
-  }
+  const projView = new ApamaProjectView(
+    apamaEnv,
+    logger,
+    context,
+  );
+  projView.refresh();
 
   // Push the disposable to the context's subscriptions so that the
   // client can be deactivated on extension deactivation
