@@ -33,26 +33,18 @@
         "apama.apamaHome": {
           "type": "string",
           "default": null,
-          "description": "Home directory for the Apama installation."
+          "markdownDescription": "The location where Apama is installed (the `Apama/` directory). \n\nMust be a full edition of Apama that includes `bin/apama_project`. If not specified, the default install location will be assumed. You must reload this VS Code window after changing this setting.",
+          "scope":"machine-overridable"
         },
         "apama.debugPort": {
           "type": "integer",
-          "default": "15904",
+          "default": 15904,
           "description": "Port for correlator debugging."
         },
         "apama.debugHost": {
           "type": "string",
           "default": "127.0.0.1",
           "description": "Host for correlator debugging."
-        },
-        "apama.langServer.type": {
-          "type": "string",
-          "enum": [
-            "local",
-            "disabled"
-          ],
-          "default": "local",
-          "description": "Configure if the Language Server is enabled."
         }
       }
     },

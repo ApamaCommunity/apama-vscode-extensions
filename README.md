@@ -78,7 +78,6 @@ There are various settings available for the extension. All the Apama configurat
 * apamaHome contains the path to the installation directory of the version you wish to use.
 * debugHost is the default host for a correlator started for debug (allowing remote instance).
 * debugPort is the default port for a correlator started for debug.
-* langServer.type is a dropdown that controls the LSP for vscode, it can be local (starts and attaches) or disabled.
 
 ![settings](images/settings.png)
 
