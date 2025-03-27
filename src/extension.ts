@@ -9,6 +9,8 @@ import {
   debug,
   workspace,
   WorkspaceConfiguration,
+  Memento,
+  window
 } from "vscode";
 
 import {
@@ -36,13 +38,17 @@ const servers = new Map<string, LanguageClient>();
 
 const logger = new Logger("Apama Extension Client");
 
+/** The ExtensionContext.globalState */
+let globalState: Memento;
+
 /**
  * Extension entry point.
  */
 export async function activate(context: ExtensionContext): Promise<void> {
+  globalState = context.globalState;
   const commands: Disposable[] = [];
 
-  logger.appendLine("Started EPL Extension");
+  logger.appendLine("Started Apama Extension");
 
   const config = workspace.getConfiguration("apama");
   const userApamaHome = config.get("apamaHome");
@@ -146,7 +152,8 @@ async function startLanguageServers(
   // TODO: to implement folder change detection, remove existing clients that do not match any current workspace folder AND if there was a singleton and now isn't restart it 
   // since it needs a different documentSelector pattern
 
-  if (workspace.workspaceFolders)
+  if (workspace.workspaceFolders) {
+    let serverVersion = undefined;
     for (const folder of workspace.workspaceFolders)
     {
       // These APIs aren't really documented, but what's going on here is we're creating an instance of 
@@ -172,9 +179,20 @@ async function startLanguageServers(
       );
       servers.set(folder.uri.toString(), languageClient);
       await languageClient.start();
+      serverVersion = languageClient.initializeResult?.serverInfo?.version;
     }
 
-  // TODO: check .initializeResult?.serverInfo?.version ?
+    // We won't keep incrementing this forever - this is to just nudge people towards the latest Apama version that has "decent" VSCode support 
+    // to give the best impression of what this extension can do. 
+    // Currently 10.15.6.1 is the best, but we will likely end up resting on 10.15.6.2 or .3.
+    if (!serverVersion || ["10.15.6.0"].includes(serverVersion)) { 
+      logger.warn(`Old Apama version detected: ${serverVersion}`);
+      if (!globalState.get<boolean>("apama.alreadyShownNotification.oldApama")) {
+        globalState.update("apama.alreadyShownNotification.oldApama", true);
+        window.showInformationMessage("You are using an old version - consider installing the latest Apama version to get a better experience in Visual Studio Code");
+      }
+    }
+  }
 
   return Promise.resolve();
 }
