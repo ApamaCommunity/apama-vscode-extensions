@@ -52,7 +52,6 @@ export class ApamaProjectView
   constructor(
     private apamaEnv: ApamaEnvironment,
     private logger: Logger,
-    private workspaces: WorkspaceFolder[],
     private context: ExtensionContext,
   ) {
     const subscriptions: Disposable[] = [];
@@ -235,8 +234,16 @@ export class ApamaProjectView
     // Clear existing projects
     this.projects = [];
     
+    // Dynamically get current workspace folders
+    const workspaceFolders = workspace.workspaceFolders;
+    
+    // If no workspace folders are open, return empty projects
+    if (!workspaceFolders || workspaceFolders.length === 0) {
+      return;
+    }
+    
     // Scan for projects in each workspace
-    for (const ws of this.workspaces) {
+    for (const ws of workspaceFolders) {
       const workspaceProjects = await ApamaProject.scanProjects(
         this.logger,
         ws,

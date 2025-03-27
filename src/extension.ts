@@ -102,11 +102,9 @@ export async function activate(context: ExtensionContext): Promise<void> {
   //this needs a workspace folder which under some circumstances can be undefined.
   //but we can ignore in that case and things shjould still work
   if (workspace.workspaceFolders !== undefined) {
-    const myClonedArray = [...workspace.workspaceFolders];
     const projView = new ApamaProjectView(
       apamaEnv,
       logger,
-      myClonedArray,
       context,
     );
     projView.refresh();
