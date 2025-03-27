@@ -163,7 +163,9 @@ async function startLanguageServers(
       // Options of the language client
       const clientOptions: LanguageClientOptions = {
         // Activate the server for epl files under this folder
-        // If there's just one workspace (the common case), 
+        // If there's just one workspace (the common case), do not filter at all, which allows us to edit individual files from 
+        // outside the workspace (e.g. testcase .mon files) and get semantic checking of them while the file is open 
+        // (no way to make that work sanely with multiple roots, so don't bother)
         documentSelector: [{language:"apamaepl", scheme:"file", pattern: 
           workspace.workspaceFolders.length == 1 ? undefined :`${folder.uri.fsPath}/**/*`}],
         initializationOptions: initializationOptions,
