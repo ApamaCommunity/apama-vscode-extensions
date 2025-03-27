@@ -160,10 +160,6 @@ async function startLanguageServers(
           workspace.workspaceFolders.length == 1 ? undefined :`${folder.uri.fsPath}/**/*`}],
         initializationOptions: initializationOptions,
         workspaceFolder: folder,
-        synchronize: {
-          // Synchronize the section 'eplLanguageServer' of the settings to the server
-          configurationSection: "eplLanguageServer",
-        },
       };
 
       // TODO: we should really reload this if the APAMA_HOME config changes
