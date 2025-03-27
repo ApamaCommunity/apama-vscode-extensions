@@ -236,7 +236,7 @@ export class ApamaProjectView
     this.projects = [];
     
     // Scan for projects in each workspace
-    for (const ws of workspace.workspaceFolders) {
+    for (const ws of this.workspaces) {
       const workspaceProjects = await ApamaProject.scanProjects(
         this.logger,
         ws,
