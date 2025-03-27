@@ -2,8 +2,9 @@
   "publisher": "ApamaCommunity",
   "name": "apama-extensions",
   "displayName": "apama-extensions",
-  "description": "An Extension for EPL applications",
+  "description": "Support for writing Apama Streaming Analytics applications in EPL",
   "version": "2.0.0",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ApamaCommunity/apama-vscode-extensions"
@@ -12,10 +13,17 @@
     "vscode": "^1.88.0"
   },
   "categories": [
-    "Other"
+    "Programming Languages"
   ],
+  "keywords": [
+    "epl",
+    "mon",
+    "Cumulocity",
+    "Apama",
+    "MonitorScript"
+  ],
+  "qna":"https://techcommunity.cumulocity.com/tag/streaming-analytics-apama",
   "activationEvents": [
-    "onDebug"
   ],
   "main": "./dist/extension",
   "contributes": {
@@ -76,7 +84,7 @@
     ],
     "languages": [
       {
-        "id": "epl",
+        "id": "apamaepl",
         "extensions": [
           ".mon",
           ".epl",
@@ -87,14 +95,14 @@
     ],
     "grammars": [
       {
-        "language": "epl",
+        "language": "apamaepl",
         "scopeName": "source.epl",
         "path": "./epl.tmLanguage.json"
       }
     ],
     "snippets": [
       {
-        "language": "epl",
+        "language": "apamaepl",
         "path": "./snippets.json"
       }
     ],
@@ -215,7 +223,7 @@
     },
     "breakpoints": [
       {
-        "language": "epl"
+        "language": "apamaepl"
       }
     ],
     "debuggers": [
@@ -282,8 +290,8 @@
     "@types/shelljs": "^0.8.8",
     "@types/vscode": "^1.88.0",
     "@types/xmldom": "^0.1.34",
-    "@typescript-eslint/eslint-plugin": "^8.7.0",
-    "@typescript-eslint/parser": "^8.7.0",
+    "@typescript-eslint/eslint-plugin": "^8.28.0",
+    "@typescript-eslint/parser": "^8.28.0",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1",
     "esbuild": "^0.25.0",

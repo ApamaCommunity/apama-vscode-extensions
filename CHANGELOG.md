@@ -5,8 +5,10 @@
 * Apama 10.15.6.0 is the minimum version required for Language Server support.
 * Fixed automatic Language Server start up - if Apama is installed in a default location, or the `apamaHome` preference set to a valid location, the Language Server will automatically start up.
 * The "Create Project" command requires a minimum of 10.15.6.2.
-* A single workspace folder is now considered to hold just one project, at the top level.
-* Removed support for deploying projects. This can be manually done using the `engine_deploy` tool.
+* A single workspace folder is now considered to hold just one Apama project, and the Apama project files (`.project` and `.dependencies`) must be at the top level.
+* Added basic support for multi-root workspaces (each folder added to a workspace is build as an independent Apama project). Change detection is not yet done, so currently requires reloading the Window after changing the open folders. 
+* Removed support for creating deployment directories. This can be manually done using the `engine_deploy` command line tool.
+
 
 # Old versions
 

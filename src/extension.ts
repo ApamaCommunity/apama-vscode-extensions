@@ -9,6 +9,8 @@ import {
   debug,
   workspace,
   WorkspaceConfiguration,
+  Memento,
+  window
 } from "vscode";
 
 import {
@@ -31,16 +33,22 @@ import { Logger } from "./logger/logger";
 
 import { ExecutableResolver } from "./settings/ExecutableResolver";
 
-let languageClient: LanguageClient;
-const logger = new Logger("ApamaCommunity.apama-extensions");
+/** VSCode clients for talking to each language server, keyed by workspace folder URI */
+const servers = new Map<string, LanguageClient>();
 
+const logger = new Logger("Apama Extension Client");
+
+/** The ExtensionContext.globalState */
+let globalState: Memento;
+
+/**
+ * Extension entry point.
+ */
 export async function activate(context: ExtensionContext): Promise<void> {
-  /**
-   * Extension entry point.
-   */
+  globalState = context.globalState;
   const commands: Disposable[] = [];
 
-  logger.appendLine("Started EPL Extension");
+  logger.appendLine("Started Apama Extension");
 
   const config = workspace.getConfiguration("apama");
   const userApamaHome = config.get("apamaHome");
@@ -78,7 +86,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
   const apamaEnv: ApamaEnvironment = new ApamaEnvironment(apamaBin);
 
   if (eplbuddyResolve.kind == "success") {
-    createLanguageServer(
+    startLanguageServers(
       config,
       apamaEnv.getCommandAsInterface(ApamaExecutables.EPLBUDDY),
     );
@@ -113,56 +121,83 @@ export async function activate(context: ExtensionContext): Promise<void> {
   return Promise.resolve();
 }
 
-async function createLanguageServer(
+/** Start language servers (eplbuddy) for each workspace folder */
+async function startLanguageServers(
   config: WorkspaceConfiguration,
   eplBuddyCommand: ApamaExecutableInterface,
-): Promise<null> {
-  /**
-   * Spawns a language server, and then proceeds to connect the language client up to it.
-   */
-  const lsType: string | undefined = config.get<string>("type");
+): Promise<void> {
+    const lsType: string | undefined = config.get<string>("type");
   if (lsType === "disabled") {
     return Promise.reject("Apama Language Server disabled");
   }
 
   const serverOptions: Executable = {
-    transport: TransportKind.stdio,
+    transport: TransportKind.stdio, // passes the "--stdio" option implicitly
     command: eplBuddyCommand.command,
-    args: [...eplBuddyCommand.args, "-s"],
+    args: [...eplBuddyCommand.args, "-s"], // "-s" is just for backwards compat with pre-10.15.6.2 eplbuddy
   };
 
   const initializationOptions = {
-    "logLevels": (config.get<string>("logLevels", "").length > 0 ? config.get<string>("logLevels", "").split(",") : [])
+    // Copy the "apama.server" config directly to the server using this (undocumented) option, so we can configure undocumented or newly added features
+    ...config.get<object>("languageServer")
+  };
+  // We could also assign any top-level settings we want to here as well
+
+  // TODO: to implement folder change detection, remove existing clients that do not match any current workspace folder AND if there was a singleton and now isn't restart it 
+  // since it needs a different documentSelector pattern
+
+  if (workspace.workspaceFolders) {
+    let serverVersion = undefined;
+    for (const folder of workspace.workspaceFolders)
+    {
+      // These APIs aren't really documented, but what's going on here is we're creating an instance of 
+      // the client from https://github.com/microsoft/vscode-languageserver-node/tree/main which 
+      // uses the VSCode API to implement the client/glue to our language server executable
+
+      // Options of the language client
+      const clientOptions: LanguageClientOptions = {
+        // Activate the server for epl files under this folder
+        // If there's just one workspace (the common case), do not filter at all, which allows us to edit individual files from 
+        // outside the workspace (e.g. testcase .mon files) and get semantic checking of them while the file is open 
+        // (no way to make that work sanely with multiple roots, so don't bother)
+        documentSelector: [{language:"apamaepl", scheme:"file", pattern: 
+          workspace.workspaceFolders.length == 1 ? undefined :`${folder.uri.fsPath}/**/*`}],
+        initializationOptions: initializationOptions,
+        workspaceFolder: folder,
+      };
+
+      // TODO: we should really reload this if the APAMA_HOME config changes
+      const languageClient = new LanguageClient(
+        "apamaLanguageClient",
+        `Apama Lang Server [${folder.name}]`,
+        serverOptions,
+        clientOptions,
+      );
+      servers.set(folder.uri.toString(), languageClient);
+      await languageClient.start();
+      serverVersion = languageClient.initializeResult?.serverInfo?.version;
+    }
+
+    // We won't keep incrementing this forever - this is to just nudge people towards the latest Apama version that has "decent" VSCode support 
+    // to give the best impression of what this extension can do. 
+    // Currently 10.15.6.1 is the best, but we will likely end up resting on 10.15.6.2 or .3.
+    if (!serverVersion || ["10.15.6.0"].includes(serverVersion)) { 
+      logger.warn(`Old Apama version detected: ${serverVersion}`);
+      if (!globalState.get<boolean>("apama.alreadyShownNotification.oldApama")) {
+        globalState.update("apama.alreadyShownNotification.oldApama", true);
+        window.showInformationMessage("You are using an old version - consider installing the latest Apama version to get a better experience in Visual Studio Code");
+      }
+    }
   }
 
-  // TODO: to support multiple folders per workspace, spin up separate LanguageClient instances for 
-  // each one (as per https://github.com/microsoft/vscode-extension-samples/blob/main/lsp-multi-server-sample/client/src/extension.ts)
-
-  // Options of the language client
-  const clientOptions: LanguageClientOptions = {
-    // Activate the server for epl files
-    documentSelector: ["epl"],
-    initializationOptions: initializationOptions,
-    synchronize: {
-      // Synchronize the section 'eplLanguageServer' of the settings to the server
-      configurationSection: "eplLanguageServer",
-      // Notify the server about file changes to epl files contained in the workspace
-      // need to think about this
-      fileEvents: workspace.createFileSystemWatcher("**/.mon"), // TODO: is this really needed or does it happen automatically when opening files?
-    },
-  };
-
-  // TODO: we should really reload this if the APAMA_HOME config changes
-  languageClient = new LanguageClient(
-    "apamaLanguageClient",
-    `Apama Language Client`,
-    serverOptions,
-    clientOptions,
-  );
-  await languageClient.start();
-  return null;
+  return Promise.resolve();
 }
 
-export function deactivate() {
-  return Promise.all([languageClient.stop()]);
+export function deactivate(): Thenable<void> {
+  const promises: Thenable<void>[] = [];
+  for (const client of servers.values()) {
+    promises.push(client.stop());
+  }
+  servers.clear();
+  return Promise.all(promises).then(() => undefined);
 }

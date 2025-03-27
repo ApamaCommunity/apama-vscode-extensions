@@ -1,8 +1,8 @@
 # Apama extension for EPL development in VSCode
 
-A community-developed extension to support the development of Apama Streaming Analytics applications in VSCode.
+A community-developed extension for using VSCode to develop Apama Streaming Analytics applications.
 
-For more information about Apama and EPL please visit the [Apama Community](https://www.cumulocity.com/product/apama-community-edition/) website.
+For more information about Apama and EPL please visit the [Apama Community](https://www.cumulocity.com/product/apama-community-edition/) website. To ask questions about Apama or this extension, see the [Apama community forum](https://techcommunity.cumulocity.com/tag/streaming-analytics-apama).
 
 See also the [VSCode extension for PySys testing](https://marketplace.visualstudio.com/items?itemName=ApamaCommunity.pysys-vscode-extension).
 
@@ -84,9 +84,7 @@ There are various settings available for the extension. All the Apama configurat
 
 ## Advanced syntax highlighting and error reporting
 
-This extension supports using a Language Server for advanced syntax highlighting and error reporting for users using Apama 10.15.6.0+. 
-
-It is currently limited to the file currently being edited but will become more fully featured as future releases are produced. Specifically, if you write EPL that uses external bundles or code, then the language server may not take these into account.
+This extension supports using a Language Server for advanced syntax highlighting and error reporting for users using Apama 10.15.6.1 and later. 
 
 ![tasks](images/11-diagnostics.gif)
 
@@ -98,7 +96,7 @@ There are various snippets defined in the extension to make writing code easier.
 
 ## Tasks: correlator, inject monitor, and send event
 
-Tasks can be created for running correlators on specific ports. The commands to inject EPL and send events also support these ports. Additionally there are tasks for engine_watch and engine_recieve that can also be set up. In future releases there will be a more coherent interface for this allowing a suite of tasks to be set up in one operation.
+Tasks can be created for running correlators on specific ports. The commands to inject EPL and send events also support these ports. Additionally there are tasks for engine_watch and engine_receive that can also be set up.
 
 The animation below shows the default operation of the tasks.
 

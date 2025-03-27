@@ -1,1 +1,430 @@
-{"fileTypes": ["epl", "mon", "evt"], "name": "epl", "patterns": [{"include": "#main"}], "scopeName": "source.epl", "uuid": "", "repository": {"main": {"patterns": [{"include": "#using"}, {"include": "#event"}, {"include": "#monitor"}, {"include": "#keywords"}, {"include": "#array"}, {"include": "#action"}, {"include": "#while_loop"}, {"include": "#comments"}, {"include": "#string"}, {"include": "#assignment"}, {"include": "#punctuation"}, {"include": "#constants"}, {"include": "#types"}, {"include": "#containertypes"}, {"include": "#numeric"}, {"include": "#member"}, {"include": "#method"}, {"include": "#bareVariable"}]}, "action": {"patterns": [{"match": "(\\s?)(action)(\\s+)([a-zA-Z][0-9a-zA-Z]*(?:_[0-9a-zA-Z]+)*)(\\s?)", "captures": {"1": {"name": "text.epl"}, "2": {"name": "entity.name.type.epl"}, "3": {"name": "text.epl"}, "4": {"name": "variable.epl"}, "5": {"name": "text.epl"}}}]}, "array": {"patterns": [{"begin": "(\\[)", "beginCaptures": {"1": {"name": "punctuation.epl"}}, "patterns": [{"include": "#uid_array"}], "end": "(\\])", "endCaptures": {"1": {"name": "punctuation.epl"}}}]}, "assignment": {"patterns": [{"match": "([a-zA-Z][0-9a-zA-Z]*(?:_[0-9a-zA-Z]+)*)(\\s?)(\\:=)", "captures": {"1": {"name": "variable.epl"}, "2": {"name": "text.epl"}, "3": {"name": "keyword.operator.epl"}}}]}, "bareVariable": {"patterns": [{"match": "\\b([a-zA-Z][0-9a-zA-Z]*(?:_[0-9a-zA-Z]+)*)\\b", "name": "variable.epl"}]}, "comments": {"patterns": [{"match": "(//.*)", "name": "comment.line.epl"}, {"begin": "(/\\*)", "beginCaptures": {"1": {"name": "comment.block.epl"}}, "contentName": "comment.block.epl", "end": "(.*?\\*/)", "endCaptures": {"1": {"name": "comment.block.epl"}}}]}, "constants": {"patterns": [{"match": "(\\b)(true|false|INFO|DEBUG|WARN|ERROR)(\\b)", "name": "constant.language.epl"}]}, "containertypes": {"patterns": [{"match": "(sequence|optional|dictionary|stream)", "name": "entity.name.type.epl"}, {"begin": "(\\<)", "beginCaptures": {"1": {"name": "punctuation.epl"}}, "patterns": [{"include": "#uid_containertypes_param"}], "end": "(\\>)", "endCaptures": {"1": {"name": "punctuation.epl"}}}]}, "event": {"patterns": [{"match": "(\\s?)(event)(\\s+)([a-zA-Z][0-9a-zA-Z]*(?:_[0-9a-zA-Z]+)*)", "captures": {"1": {"name": "text.epl"}, "2": {"name": "entity.name.type.epl"}, "3": {"name": "text.epl"}, "4": {"name": "variable.epl"}}}]}, "inside_quotes": {"patterns": [{"match": "(\\\\(?:\\\\|\"))", "name": "string.quoted.other.epl"}, {"match": "([^\\x{0022}\\x{005c}]+)", "name": "string.quoted.epl"}]}, "keywords": {"patterns": [{"match": "(\\b)(import|rstream|from|in|partition|retain|group|by|having|or|and|xor|not|select|constant|as|at|if|then|else|spawn|emit|route|enqueue|send|to|print|log|die|while|do|return|break|continue|for|try|catch|ifpresent|switch|case|default|throw|new|on|all|wait)(\\b)", "name": "keyword.epl"}]}, "member": {"patterns": [{"match": "\\b(\\.)([a-zA-Z][0-9a-zA-Z]*(?:_[0-9a-zA-Z]+)*)\\b", "captures": {"1": {"name": "keyword.operator.epl"}, "2": {"name": "variable.epl"}}}]}, "method": {"patterns": [{"match": "(\\.)([a-zA-Z][0-9a-zA-Z]*(?:_[0-9a-zA-Z]+)*)(\\s?)(\\()", "captures": {"1": {"name": "keyword.operator.epl"}, "2": {"name": "entity.name.function.epl"}, "3": {"name": "text.epl"}, "4": {"name": "punctuation.epl"}}}]}, "monitor": {"patterns": [{"match": "(\\s?)(monitor)(\\s+)([a-zA-Z][0-9a-zA-Z]*(?:_[0-9a-zA-Z]+)*)", "captures": {"1": {"name": "text.epl"}, "2": {"name": "entity.name.type.epl"}, "3": {"name": "text.epl"}, "4": {"name": "variable.epl"}}}]}, "numeric": {"patterns": [{"match": "(\\b)([-\\x{002b}]?[0-9]*\\.?[0-9]+([eE][-\\x{002b}]?[0-9]+)?([df])?)(\\b)", "name": "constant.numeric.epl"}]}, "punctuation": {"patterns": [{"match": "(\\+|\\-|\\*|=|,|>|<|;|\\s)", "name": "keyword.operator.epl"}]}, "string": {"patterns": [{"begin": "(\")", "beginCaptures": {"1": {"name": "punctuation.epl"}}, "patterns": [{"include": "#inside_quotes"}], "end": "(\")", "endCaptures": {"1": {"name": "punctuation.epl"}}}]}, "types": {"patterns": [{"match": "(\\b)(decimal|float|integer|string|boolean|any|listener|channel|context)(\\b)", "captures": {"1": {"name": "text.epl"}, "2": {"name": "entity.name.type.epl"}, "3": {"name": "text.epl"}}}]}, "uid_array": {"patterns": [{"include": "#string"}, {"include": "#punctuation"}, {"include": "#constants"}, {"include": "#numeric"}]}, "uid_comments_block": {"patterns": []}, "uid_containertypes_param": {"patterns": [{"include": "#containertypes"}, {"match": "(decimal|float|integer|string|boolean|any|listener|channel|context)", "name": "entity.name.type.epl"}]}, "using": {"patterns": [{"match": "(using|package)(\\s+)([a-zA-Z]+[.a-zA-Z]*)(;)", "captures": {"1": {"name": "keyword.epl"}, "2": {"name": "text.epl"}, "3": {"name": "variable.epl"}, "4": {"name": "text.epl"}}}]}, "while_loop": {"patterns": [{"match": "(\\s?)(while)(\\s?)", "captures": {"1": {"name": "text.epl"}, "2": {"name": "keyword.epl"}, "3": {"name": "text.epl"}}}]}}}
+{
+	"fileTypes": [
+		"epl",
+		"mon",
+		"evt"
+	],
+	"name": "apamaepl",
+	"patterns": [
+		{
+			"include": "#main"
+		}
+	],
+	"scopeName": "source.epl",
+	"uuid": "",
+	"repository": {
+		"main": {
+			"patterns": [
+				{
+					"include": "#using"
+				},
+				{
+					"include": "#event"
+				},
+				{
+					"include": "#monitor"
+				},
+				{
+					"include": "#keywords"
+				},
+				{
+					"include": "#array"
+				},
+				{
+					"include": "#action"
+				},
+				{
+					"include": "#while_loop"
+				},
+				{
+					"include": "#comments"
+				},
+				{
+					"include": "#string"
+				},
+				{
+					"include": "#assignment"
+				},
+				{
+					"include": "#punctuation"
+				},
+				{
+					"include": "#constants"
+				},
+				{
+					"include": "#types"
+				},
+				{
+					"include": "#containertypes"
+				},
+				{
+					"include": "#numeric"
+				},
+				{
+					"include": "#member"
+				},
+				{
+					"include": "#method"
+				},
+				{
+					"include": "#bareVariable"
+				}
+			]
+		},
+		"action": {
+			"patterns": [
+				{
+					"match": "(\\s?)(action)(\\s+)([a-zA-Z][0-9a-zA-Z]*(?:_[0-9a-zA-Z]+)*)(\\s?)",
+					"captures": {
+						"1": {
+							"name": "text.epl"
+						},
+						"2": {
+							"name": "entity.name.type.epl"
+						},
+						"3": {
+							"name": "text.epl"
+						},
+						"4": {
+							"name": "variable.epl"
+						},
+						"5": {
+							"name": "text.epl"
+						}
+					}
+				}
+			]
+		},
+		"array": {
+			"patterns": [
+				{
+					"begin": "(\\[)",
+					"beginCaptures": {
+						"1": {
+							"name": "punctuation.epl"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#uid_array"
+						}
+					],
+					"end": "(\\])",
+					"endCaptures": {
+						"1": {
+							"name": "punctuation.epl"
+						}
+					}
+				}
+			]
+		},
+		"assignment": {
+			"patterns": [
+				{
+					"match": "([a-zA-Z][0-9a-zA-Z]*(?:_[0-9a-zA-Z]+)*)(\\s?)(\\:=)",
+					"captures": {
+						"1": {
+							"name": "variable.epl"
+						},
+						"2": {
+							"name": "text.epl"
+						},
+						"3": {
+							"name": "keyword.operator.epl"
+						}
+					}
+				}
+			]
+		},
+		"bareVariable": {
+			"patterns": [
+				{
+					"match": "\\b([a-zA-Z][0-9a-zA-Z]*(?:_[0-9a-zA-Z]+)*)\\b",
+					"name": "variable.epl"
+				}
+			]
+		},
+		"comments": {
+			"patterns": [
+				{
+					"match": "(//.*)",
+					"name": "comment.line.epl"
+				},
+				{
+					"begin": "(/\\*)",
+					"beginCaptures": {
+						"1": {
+							"name": "comment.block.epl"
+						}
+					},
+					"contentName": "comment.block.epl",
+					"end": "(.*?\\*/)",
+					"endCaptures": {
+						"1": {
+							"name": "comment.block.epl"
+						}
+					}
+				}
+			]
+		},
+		"constants": {
+			"patterns": [
+				{
+					"match": "(\\b)(true|false|INFO|DEBUG|WARN|ERROR)(\\b)",
+					"name": "constant.language.epl"
+				}
+			]
+		},
+		"containertypes": {
+			"patterns": [
+				{
+					"match": "(sequence|optional|dictionary|stream)",
+					"name": "entity.name.type.epl"
+				},
+				{
+					"begin": "(\\<)",
+					"beginCaptures": {
+						"1": {
+							"name": "punctuation.epl"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#uid_containertypes_param"
+						}
+					],
+					"end": "(\\>)",
+					"endCaptures": {
+						"1": {
+							"name": "punctuation.epl"
+						}
+					}
+				}
+			]
+		},
+		"event": {
+			"patterns": [
+				{
+					"match": "(\\s?)(event)(\\s+)([a-zA-Z][0-9a-zA-Z]*(?:_[0-9a-zA-Z]+)*)",
+					"captures": {
+						"1": {
+							"name": "text.epl"
+						},
+						"2": {
+							"name": "entity.name.type.epl"
+						},
+						"3": {
+							"name": "text.epl"
+						},
+						"4": {
+							"name": "variable.epl"
+						}
+					}
+				}
+			]
+		},
+		"inside_quotes": {
+			"patterns": [
+				{
+					"match": "(\\\\(?:\\\\|\"))",
+					"name": "string.quoted.other.epl"
+				},
+				{
+					"match": "([^\\x{0022}\\x{005c}]+)",
+					"name": "string.quoted.epl"
+				}
+			]
+		},
+		"keywords": {
+			"patterns": [
+				{
+					"match": "(\\b)(import|rstream|with|from|in|partition|retain|every|group|by|having|unique|where|within|equals|join|or|and|xor|not|select|constant|as|at|if|then|else|spawn|emit|route|enqueue|send|to|print|log|die|while|do|return|break|continue|for|try|catch|ifpresent|switch|case|default|throw|new|on|all|wait)(\\b)",
+					"name": "keyword.epl"
+				}
+			]
+		},
+		"member": {
+			"patterns": [
+				{
+					"match": "\\b(\\.)([a-zA-Z][0-9a-zA-Z]*(?:_[0-9a-zA-Z]+)*)\\b",
+					"captures": {
+						"1": {
+							"name": "keyword.operator.epl"
+						},
+						"2": {
+							"name": "variable.epl"
+						}
+					}
+				}
+			]
+		},
+		"method": {
+			"patterns": [
+				{
+					"match": "(\\.)([a-zA-Z][0-9a-zA-Z]*(?:_[0-9a-zA-Z]+)*)(\\s?)(\\()",
+					"captures": {
+						"1": {
+							"name": "keyword.operator.epl"
+						},
+						"2": {
+							"name": "entity.name.function.epl"
+						},
+						"3": {
+							"name": "text.epl"
+						},
+						"4": {
+							"name": "punctuation.epl"
+						}
+					}
+				}
+			]
+		},
+		"monitor": {
+			"patterns": [
+				{
+					"match": "(\\s?)(monitor)(\\s+)([a-zA-Z][0-9a-zA-Z]*(?:_[0-9a-zA-Z]+)*)",
+					"captures": {
+						"1": {
+							"name": "text.epl"
+						},
+						"2": {
+							"name": "entity.name.type.epl"
+						},
+						"3": {
+							"name": "text.epl"
+						},
+						"4": {
+							"name": "variable.epl"
+						}
+					}
+				}
+			]
+		},
+		"numeric": {
+			"patterns": [
+				{
+					"match": "(\\b)([-\\x{002b}]?[0-9]*\\.?[0-9]+([eE][-\\x{002b}]?[0-9]+)?([df])?)(\\b)",
+					"name": "constant.numeric.epl"
+				}
+			]
+		},
+		"punctuation": {
+			"patterns": [
+				{
+					"match": "(\\+|\\-|\\*|=|,|>|<|;|\\s)",
+					"name": "keyword.operator.epl"
+				}
+			]
+		},
+		"string": {
+			"patterns": [
+				{
+					"begin": "(\")",
+					"beginCaptures": {
+						"1": {
+							"name": "punctuation.epl"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#inside_quotes"
+						}
+					],
+					"end": "(\")",
+					"endCaptures": {
+						"1": {
+							"name": "punctuation.epl"
+						}
+					}
+				}
+			]
+		},
+		"types": {
+			"patterns": [
+				{
+					"match": "(\\b)(decimal|float|integer|string|boolean|any|listener|channel|context)(\\b)",
+					"captures": {
+						"1": {
+							"name": "text.epl"
+						},
+						"2": {
+							"name": "entity.name.type.epl"
+						},
+						"3": {
+							"name": "text.epl"
+						}
+					}
+				}
+			]
+		},
+		"uid_array": {
+			"patterns": [
+				{
+					"include": "#string"
+				},
+				{
+					"include": "#punctuation"
+				},
+				{
+					"include": "#constants"
+				},
+				{
+					"include": "#numeric"
+				}
+			]
+		},
+		"uid_comments_block": {
+			"patterns": []
+		},
+		"uid_containertypes_param": {
+			"patterns": [
+				{
+					"include": "#containertypes"
+				},
+				{
+					"match": "(decimal|float|integer|string|boolean|any|listener|channel|context)",
+					"name": "entity.name.type.epl"
+				}
+			]
+		},
+		"using": {
+			"patterns": [
+				{
+					"match": "(using|package)(\\s+)([a-zA-Z]+[.a-zA-Z]*)(;)",
+					"captures": {
+						"1": {
+							"name": "keyword.epl"
+						},
+						"2": {
+							"name": "text.epl"
+						},
+						"3": {
+							"name": "variable.epl"
+						},
+						"4": {
+							"name": "text.epl"
+						}
+					}
+				}
+			]
+		},
+		"while_loop": {
+			"patterns": [
+				{
+					"match": "(\\s?)(while)(\\s?)",
+					"captures": {
+						"1": {
+							"name": "text.epl"
+						},
+						"2": {
+							"name": "keyword.epl"
+						},
+						"3": {
+							"name": "text.epl"
+						}
+					}
+				}
+			]
+		}
+	}
+}
