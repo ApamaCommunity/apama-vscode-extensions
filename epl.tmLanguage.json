@@ -238,7 +238,7 @@
 		"keywords": {
 			"patterns": [
 				{
-					"match": "(\\b)(import|rstream|from|in|partition|retain|group|by|having|or|and|xor|not|select|constant|as|at|if|then|else|spawn|emit|route|enqueue|send|to|print|log|die|while|do|return|break|continue|for|try|catch|ifpresent|switch|case|default|throw|new|on|all|wait)(\\b)",
+					"match": "(\\b)(import|rstream|with|from|in|partition|retain|every|group|by|having|unique|where|within|equals|join|or|and|xor|not|select|constant|as|at|if|then|else|spawn|emit|route|enqueue|send|to|print|log|die|while|do|return|break|continue|for|try|catch|ifpresent|switch|case|default|throw|new|on|all|wait)(\\b)",
 					"name": "keyword.epl"
 				}
 			]
