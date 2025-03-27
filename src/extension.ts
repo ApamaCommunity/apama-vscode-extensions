@@ -120,7 +120,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   workspace.onDidChangeConfiguration(async (configurationevent) => {
     if (configurationevent.affectsConfiguration("apama.apamaHome")) {
-      await resetLanguageServers(config, apamaEnv.getCommandAsInterface(ApamaExecutables.EPLBUDDY));
+      await resetLanguageServers(workspace.getConfiguration("apama"), apamaEnv.getCommandAsInterface(ApamaExecutables.EPLBUDDY));
     }
   });
 
