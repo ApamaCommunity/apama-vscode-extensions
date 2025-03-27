@@ -138,9 +138,10 @@ async function startLanguageServers(
   };
 
   const initializationOptions = {
-    "logLevels": (config.get<string>("logLevels", "").length > 0 ? config.get<string>("logLevels", "").split(",") : [])
-  }
-
+    // Copy the "apama.server" config directly to the server using this (undocumented) option, so we can configure undocumented or newly added features
+    ...config.get<object>("languageServer")
+  };
+  // We could also assign any top-level settings we want to here as well
 
   // TODO: to implement folder change detection, remove existing clients that do not match any current workspace folder AND if there was a singleton and now isn't restart it 
   // since it needs a different documentSelector pattern
