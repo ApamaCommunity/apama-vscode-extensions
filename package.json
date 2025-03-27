@@ -2,8 +2,9 @@
   "publisher": "ApamaCommunity",
   "name": "apama-extensions",
   "displayName": "apama-extensions",
-  "description": "An Extension for EPL applications",
+  "description": "Support for writing Apama Streaming Analytics applications in EPL",
   "version": "2.0.0",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ApamaCommunity/apama-vscode-extensions"
@@ -12,10 +13,17 @@
     "vscode": "^1.88.0"
   },
   "categories": [
-    "Other"
+    "Programming Languages"
   ],
+  "keywords": [
+    "epl",
+    "mon",
+    "Cumulocity",
+    "Apama",
+    "MonitorScript"
+  ],
+  "qna":"https://techcommunity.cumulocity.com/tag/streaming-analytics-apama",
   "activationEvents": [
-    "onDebug"
   ],
   "main": "./dist/extension",
   "contributes": {

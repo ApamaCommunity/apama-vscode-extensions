@@ -1,8 +1,8 @@
 # Apama extension for EPL development in VSCode
 
-A community-developed extension to support the development of Apama Streaming Analytics applications in VSCode.
+A community-developed extension for using VSCode to develop Apama Streaming Analytics applications.
 
-For more information about Apama and EPL please visit the [Apama Community](https://www.cumulocity.com/product/apama-community-edition/) website.
+For more information about Apama and EPL please visit the [Apama Community](https://www.cumulocity.com/product/apama-community-edition/) website. To ask questions about Apama or this extension, see the [Apama community forum](https://techcommunity.cumulocity.com/tag/streaming-analytics-apama).
 
 See also the [VSCode extension for PySys testing](https://marketplace.visualstudio.com/items?itemName=ApamaCommunity.pysys-vscode-extension).
 
