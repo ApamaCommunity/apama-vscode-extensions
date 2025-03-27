@@ -28,6 +28,8 @@ suite("Extension Test Suite", () => {
     // Update the configuration
     const configuration = vscode.workspace.getConfiguration();
     configuration.update("apama.apamaHome", fakeCorrPath, vscode.ConfigurationTarget.Global);
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
   });
 
   test("Extension should be present", () => {
