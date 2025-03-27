@@ -34,10 +34,10 @@ import { ExecutableResolver } from "./settings/ExecutableResolver";
 let languageClient: LanguageClient;
 const logger = new Logger("ApamaCommunity.apama-extensions");
 
+/**
+ * Extension entry point.
+ */
 export async function activate(context: ExtensionContext): Promise<void> {
-  /**
-   * Extension entry point.
-   */
   const commands: Disposable[] = [];
 
   logger.appendLine("Started EPL Extension");
@@ -119,14 +119,14 @@ export async function activate(context: ExtensionContext): Promise<void> {
   return Promise.resolve();
 }
 
+/**
+* Creates a Language Client instance for eplbuddy.
+*/
 async function createLanguageServer(
   config: WorkspaceConfiguration,
   eplBuddyCommand: ApamaExecutableInterface,
-): Promise<null> {
-  /**
-   * Spawns a language server, and then proceeds to connect the language client up to it.
-   */
-  const lsType: string | undefined = config.get<string>("type");
+): Promise<void> {
+    const lsType: string | undefined = config.get<string>("type");
   if (lsType === "disabled") {
     return Promise.reject("Apama Language Server disabled");
   }
@@ -166,7 +166,7 @@ async function createLanguageServer(
     clientOptions,
   );
   await languageClient.start();
-  return null;
+  return Promise.resolve();
 }
 
 export function deactivate() {
