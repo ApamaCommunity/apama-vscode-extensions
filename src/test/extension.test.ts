@@ -1,6 +1,5 @@
 import * as assert from "assert";
 import * as path from 'path';
-import * as fs from 'fs';
 
 // You can import and use all API from the 'vscode' module
 // as well as import your extension to test it
