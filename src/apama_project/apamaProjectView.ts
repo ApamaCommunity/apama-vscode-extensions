@@ -81,6 +81,11 @@ export class ApamaProjectView
     this.fsWatcher.onDidChange((_item) => {
       this.refresh();
     });
+    
+    // Listen for workspace folder changes (added or removed folders)
+    workspace.onDidChangeWorkspaceFolders(() => {
+      this.refresh();
+    });
 
     //the component
     this.treeView = window.createTreeView("apamaProjects", {
