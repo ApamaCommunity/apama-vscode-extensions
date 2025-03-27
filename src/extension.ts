@@ -36,10 +36,10 @@ const servers = new Map<string, LanguageClient>();
 
 const logger = new Logger("Apama Extension Client");
 
+/**
+ * Extension entry point.
+ */
 export async function activate(context: ExtensionContext): Promise<void> {
-  /**
-   * Extension entry point.
-   */
   const commands: Disposable[] = [];
 
   logger.appendLine("Started EPL Extension");
@@ -121,14 +121,12 @@ export async function activate(context: ExtensionContext): Promise<void> {
   return Promise.resolve();
 }
 
+/** Start language servers (eplbuddy) for each workspace folder */
 async function startLanguageServers(
   config: WorkspaceConfiguration,
   eplBuddyCommand: ApamaExecutableInterface,
-): Promise<null> {
-  /**
-   * Spawns a language server, and then proceeds to connect the language client up to it.
-   */
-  const lsType: string | undefined = config.get<string>("type");
+): Promise<void> {
+    const lsType: string | undefined = config.get<string>("type");
   if (lsType === "disabled") {
     return Promise.reject("Apama Language Server disabled");
   }
@@ -179,8 +177,9 @@ async function startLanguageServers(
       await languageClient.start();
     }
 
-  // TODO: check .initializeResult?.serverInfo?.version
-  return null;
+  // TODO: check .initializeResult?.serverInfo?.version ?
+
+  return Promise.resolve();
 }
 
 export function deactivate(): Thenable<void> {
