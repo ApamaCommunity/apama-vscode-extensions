@@ -118,7 +118,32 @@ export async function activate(context: ExtensionContext): Promise<void> {
   // client can be deactivated on extension deactivation
   commands.forEach((command) => context.subscriptions.push(command));
 
+  workspace.onDidChangeConfiguration(async () => {
+    await resetLanguageServers(config, apamaEnv.getCommandAsInterface(ApamaExecutables.EPLBUDDY));
+  });
+
+  workspace.onDidChangeWorkspaceFolders(async () => {
+    await resetLanguageServers(config, apamaEnv.getCommandAsInterface(ApamaExecutables.EPLBUDDY));
+  });
+
   return Promise.resolve();
+}
+
+/**
+ * Kills all existing Language Client instances, before telling it to start up again. 
+ * @param config
+ * @param eplBuddyCommand 
+ */
+async function resetLanguageServers(
+  config: WorkspaceConfiguration,
+  eplBuddyCommand: ApamaExecutableInterface
+): Promise<void> {
+    for (const client of servers.values()) {
+      await client.stop();
+    }
+    servers.clear();
+
+    startLanguageServers(config, eplBuddyCommand);
 }
 
 /** Start language servers (eplbuddy) for each workspace folder */
