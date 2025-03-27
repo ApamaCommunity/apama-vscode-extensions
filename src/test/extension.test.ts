@@ -16,6 +16,14 @@ suite("Extension Test Suite", () => {
 
     console.log(`Fake correlator path: ${fakeCorrPath}`);
     console.log(`Fake correlator exists: ${fs.existsSync(fakeCorrPath)}`);
+
+    const binPath = path.join(fakeCorrPath, "bin");
+    console.log(`Bin path: ${binPath}`);
+    console.log(`Bin exists: ${fs.existsSync(binPath)}`);
+
+    const corrPath = path.join(binPath, "correlator");
+    console.log(`Correlator path: ${corrPath}`);
+    console.log(`Correlator exists: ${fs.existsSync(corrPath)}`);
    
     // Update the configuration
     const configuration = vscode.workspace.getConfiguration();
