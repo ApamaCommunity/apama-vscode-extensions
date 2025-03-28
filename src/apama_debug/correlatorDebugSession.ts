@@ -19,7 +19,7 @@ import { basename } from "path";
 import * as vscode from "vscode";
 import {
   ApamaExecutables,
-  getCommandLine
+  getCommandLine,
 } from "../apama_util/apamaenvironment";
 import { ApamaRunner } from "../apama_util/apamarunner";
 import { Logger } from "../logger/logger";
@@ -48,56 +48,21 @@ export interface CorrelatorConfig {
 }
 
 export class CorrelatorDebugSession extends DebugSession {
-  private deployCmd: ApamaRunner;
-  private injectCmd: ApamaRunner;
-  private correlatorHttp!: CorrelatorHttpInterface;
-  private manager!: ApamaRunner;
-  private correlatorBreakPoints!: { [key: string]: string };
+  private correlatorHttp: CorrelatorHttpInterface;
+  private correlatorBreakPoints: { [key: string]: string };
   public constructor(
     private logger: Logger,
     private config: CorrelatorConfig,
   ) {
     super();
 
-    this.initializeRunners();
-  }
-
-  /**
-   * Initialize the ApamaRunner instances with the command lines
-   */
-  private async initializeRunners(): Promise<void> {
-    const managementCmd = await getCommandLine(ApamaExecutables.MANAGEMENT);
-    const deployCmd = await getCommandLine(ApamaExecutables.DEPLOY);
-    const injectCmd = await getCommandLine(ApamaExecutables.INJECT);
-    
-    if (managementCmd !== false) {
-      this.manager = new ApamaRunner("engine_management", managementCmd);
-    } else {
-      this.manager = new ApamaRunner("engine_management", "");
-      this.logger.error("Failed to initialize engine_management runner");
-    }
-    
-    if (deployCmd !== false) {
-      this.deployCmd = new ApamaRunner("engine_deploy", deployCmd);
-    } else {
-      this.deployCmd = new ApamaRunner("engine_deploy", "");
-      this.logger.error("Failed to initialize engine_deploy runner");
-    }
-    
-    if (injectCmd !== false) {
-      this.injectCmd = new ApamaRunner("engine_inject", injectCmd);
-    } else {
-      this.injectCmd = new ApamaRunner("engine_inject", "");
-      this.logger.error("Failed to initialize engine_inject runner");
-    }
-
-    console.log(
+      console.log(
       "Correlator interface host: " +
-        this.config.host.toString() +
+        config.host.toString() +
         " port " +
-        this.config.port.toString(),
+        config.port.toString(),
     );
-    this.correlatorHttp = new CorrelatorHttpInterface(this.config.host, this.config.port);
+    this.correlatorHttp = new CorrelatorHttpInterface(config.host, config.port);
     this.correlatorBreakPoints = {} as { [key: string]: string };
   }
 
@@ -128,7 +93,11 @@ export class CorrelatorDebugSession extends DebugSession {
     this.sendResponse(response);
   }
 
-  private async runCorrelator(extraargs: string[]): Promise<vscode.Task> {
+  private async runCorrelator(extraargs: string[]): Promise<vscode.Task | false> {
+    const corrCmd = await getCommandLine(ApamaExecutables.CORRELATOR);
+    if (corrCmd == false) {
+      return false;
+    }
     let localargs: string[] = this.config.args.concat([
       "-p",
       this.config.port.toString(),
@@ -137,26 +106,13 @@ export class CorrelatorDebugSession extends DebugSession {
     if (extraargs) {
       localargs = localargs.concat(extraargs);
     }
-    
-    const correlatorCmd = await getCommandLine(ApamaExecutables.CORRELATOR);
-    if (correlatorCmd === false) {
-      this.logger.error("Could not get correlator command line");
-      return new vscode.Task(
-        { type: "shell", task: "" },
-        "DebugCorrelator",
-        "correlator",
-        new vscode.ShellExecution("echo 'Could not find Apama'"),
-        []
-      );
-    }
-    
     //console.log(localargs);
     const correlator = new vscode.Task(
       { type: "shell", task: "" },
       "DebugCorrelator",
       "correlator",
       new vscode.ShellExecution(
-        correlatorCmd,
+        corrCmd,
         localargs,
       ),
       [],
@@ -259,11 +215,20 @@ export class CorrelatorDebugSession extends DebugSession {
             " port " +
             this.config.port.toString(),
         );
-        await vscode.tasks.executeTask(await this.runCorrelator([]));
+        const task = await this.runCorrelator([]);
+        if (task == false) {
+          return;
+        }
+        await vscode.tasks.executeTask(task);
         await this.correlatorHttp.enableDebugging();
         if (folder.uri.fsPath) {
           //console.log("Debug File(s) : " + folder.uri.fsPath );
-          await this.deployCmd.run(
+         const deployExe = await getCommandLine(ApamaExecutables.DEPLOY);
+         if (deployExe == false) {
+          return;
+         }
+         const deployCmd = new ApamaRunner(ApamaExecutables.DEPLOY, deployExe);
+          await deployCmd.run(
             ".",
             [
               "--inject",
@@ -483,8 +448,13 @@ export class CorrelatorDebugSession extends DebugSession {
     _args: DebugProtocol.DisconnectArguments,
   ): Promise<void> {
     try {
-      console.log("Stop requested to port " + this.config.port.toString());
-      this.manager.run(".", [
+      this.logger.info("Stop requested to port " + this.config.port.toString());
+      const managerExe = await getCommandLine(ApamaExecutables.MANAGEMENT);
+      if (managerExe == false) {
+        return
+      }
+      const manager = new ApamaRunner(ApamaExecutables.MANAGEMENT, ApamaExecutables.MANAGEMENT);
+      manager.run(".", [
         "-s",
         "debug_stop",
         "-p",
