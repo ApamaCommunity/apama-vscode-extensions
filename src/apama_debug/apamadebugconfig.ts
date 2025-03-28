@@ -14,9 +14,9 @@ import {
   normalizeCorrelatorFilePath,
 } from "./correlatorDebugSession";
 import {
-  ApamaEnvironment,
   ApamaExecutableInterface,
   ApamaExecutables,
+  getCommandAsInterface
 } from "../apama_util/apamaenvironment";
 import { Logger } from "../logger/logger";
 
@@ -27,7 +27,6 @@ export class ApamaDebugConfigurationProvider
 
   constructor(
     private logger: Logger,
-    private apamaEnv: ApamaEnvironment,
   ) {}
 
   /**
@@ -55,11 +54,11 @@ export class ApamaDebugConfigurationProvider
   /**
    * Add all missing config setting just before launch
    */
-  resolveDebugConfiguration(
+  async resolveDebugConfiguration(
     folder: WorkspaceFolder | undefined,
     config: DebugConfiguration,
     token?: CancellationToken,
-  ): ProviderResult<DebugConfiguration> {
+  ): Promise<DebugConfiguration | undefined> {
     // Can't continue if there's no workspace
     if (!folder) {
       this.logger.appendLine("no folder");
@@ -81,7 +80,7 @@ export class ApamaDebugConfigurationProvider
       config.type = "apama";
       config.name = "Debug Apama Application";
       config.request = "launch";
-      config.injectionList = getInjectionList(this.apamaEnv, folder.uri.fsPath);
+      config.injectionList = await getInjectionList(folder.uri.fsPath);
       config.correlator = {};
       config.correlator.host = "127.0.0.1";
       config.correlator.port = workspace
@@ -95,7 +94,6 @@ export class ApamaDebugConfigurationProvider
       this._server = Net.createServer((socket) => {
         const session = new CorrelatorDebugSession(
           this.logger,
-          this.apamaEnv,
           config.correlator,
         );
         session.setRunAsServer(true);
@@ -118,13 +116,14 @@ export class ApamaDebugConfigurationProvider
   }
 }
 
-function getInjectionList(
-  apamaEnv: ApamaEnvironment,
+async function getInjectionList(
   workspaceFolderPath: string,
-): string[] {
-  const cmd: ApamaExecutableInterface = apamaEnv.getCommandAsInterface(
-    ApamaExecutables.DEPLOY,
-  );
+): Promise<string[]> {
+  const cmd = await getCommandAsInterface(ApamaExecutables.DEPLOY);
+  if (cmd === false) {
+    return [];
+  }
+  
   const output: string = execFileSync(
     cmd.command,
     [...cmd.args, "--outputList", "stdout", workspaceFolderPath],

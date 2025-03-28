@@ -1,4 +1,7 @@
 import { platform } from "os";
+import { determineIfApamaExists } from "../extension";
+import { window } from "vscode";
+import * as path from 'path';
 
 export enum ApamaExecutables {
   CORRELATOR = "correlator",
@@ -18,27 +21,48 @@ export interface ApamaExecutableInterface {
   args: string[];
 }
 
-export class ApamaEnvironment {
-  // apama_env command
-  private apamaEnv: string;
-
-  constructor(apamaBin: string) {
+/**
+ * Gets the `apama_env` command for this platform.
+ * We reload this on every invocation because it should be relatively rare. 
+ * @returns False if Apama can't be found, `apama_env` otherwise.
+ */
+async function getApamaEnvCommand(showError=true): Promise<false | string> {
+  const apama = await determineIfApamaExists();
+  if (apama != false) {
+    const apamaBin = path.dirname(apama.path);
     if (platform() === "linux") {
-      this.apamaEnv = `${apamaBin}/apama_env`;
+      return Promise.resolve(`${apamaBin}/apama_env`);
     } else {
-      this.apamaEnv = `${apamaBin}/apama_env.bat`;
+      return Promise.resolve(`${apamaBin}/apama_env.bat`);
     }
   }
 
-  getCommandLine(command: ApamaExecutables) {
-    return `${this.apamaEnv} ${command}`;
+  if (showError) {
+    window.showErrorMessage("Could not find Apama, will not be running command");
   }
+  return Promise.resolve(false);
+}
 
-  getCommandAsList(command: ApamaExecutables) {
-    return [this.apamaEnv, command];
-  }
+export async function getCommandLine(command: ApamaExecutables, showError=true) {
+  const apama_env = await getApamaEnvCommand(showError);
+  if (apama_env != false) {
+    return `${apama_env} ${command}`;
+  }  
+  return false;
+}
 
-  getCommandAsInterface(command: ApamaExecutables): ApamaExecutableInterface {
-    return { command: this.apamaEnv, args: [command] };
-  }
+export async function getCommandAsList(command: ApamaExecutables, showError=true) {
+  const apama_env = await getApamaEnvCommand(showError);
+  if (apama_env != false) {
+    return [apama_env, command];
+  }   
+  return false;
+}
+
+export async function getCommandAsInterface(command: ApamaExecutables, showError=true): Promise<false | ApamaExecutableInterface> {
+  const apama_env = await getApamaEnvCommand(showError);
+  if (apama_env != false) {
+    return { command: apama_env, args: [command] };
+  }   
+  return false;
 }

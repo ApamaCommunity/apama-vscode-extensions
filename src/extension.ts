@@ -21,9 +21,9 @@ import {
 } from "vscode-languageclient/node";
 
 import {
-  ApamaEnvironment,
   ApamaExecutableInterface,
   ApamaExecutables,
+  getCommandAsInterface
 } from "./apama_util/apamaenvironment";
 import { ApamaTaskProvider } from "./apama_util/apamataskprovider";
 import { ApamaDebugConfigurationProvider } from "./apama_debug/apamadebugconfig";
@@ -58,10 +58,12 @@ export async function activate(context: ExtensionContext): Promise<void> {
         if (correlatorExe === false) {
           return Promise.resolve();
         } else {
-          const apamaEnv: ApamaEnvironment = new ApamaEnvironment(path.dirname(correlatorExe.path));
           const eplBuddyResolve: ResolveResult = await determineIfEplBuddyExists(path.dirname(correlatorExe.path));
           if (eplBuddyResolve.kind == "success") {
-            await resetLanguageServers(workspace.getConfiguration("apama"), apamaEnv.getCommandAsInterface(ApamaExecutables.EPLBUDDY));
+            const eplBuddyCommand = await getCommandAsInterface(ApamaExecutables.EPLBUDDY);
+            if (eplBuddyCommand !== false) {
+              await resetLanguageServers(workspace.getConfiguration("apama"), eplBuddyCommand);
+            }
           }
         }
     }
@@ -69,43 +71,45 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   workspace.onDidChangeWorkspaceFolders(async () => {
     logger.info("Workspace folders changes, reloading Language Server");
-    await resetLanguageServers(workspace.getConfiguration("apama"), apamaEnv.getCommandAsInterface(ApamaExecutables.EPLBUDDY));
+    const eplBuddyCommand = await getCommandAsInterface(ApamaExecutables.EPLBUDDY);
+    if (eplBuddyCommand !== false) {
+      await resetLanguageServers(workspace.getConfiguration("apama"), eplBuddyCommand);
+    }
   });
 
 
   // Gives the directory of $APAMA_HOME/bin.
   const correlatorExe = await determineIfApamaExists();
-  if (correlatorExe === false) {
-    return Promise.resolve();
+
+  if (correlatorExe != false) {
+    const eplBuddyResolve: ResolveResult = await determineIfEplBuddyExists(path.dirname(correlatorExe.path));
+      if (eplBuddyResolve.kind == "success") {
+      const eplBuddyCommand = await getCommandAsInterface(ApamaExecutables.EPLBUDDY);
+      if (eplBuddyCommand !== false) {
+        startLanguageServers(
+          workspace.getConfiguration("apama"),
+          eplBuddyCommand,
+        );
+      }
+    } else {
+      logger.info(
+        "Could not find eplbuddy, will not be launching Language Server.",
+      );
+    }
   }
-
-  const apamaEnv: ApamaEnvironment = new ApamaEnvironment(path.dirname(correlatorExe.path));
-
-  const eplBuddyResolve: ResolveResult = await determineIfEplBuddyExists(path.dirname(correlatorExe.path));
-  if (eplBuddyResolve.kind == "success") {
-    startLanguageServers(
-      workspace.getConfiguration("apama"),
-      apamaEnv.getCommandAsInterface(ApamaExecutables.EPLBUDDY),
-    );
-  } else {
-    logger.info(
-      "Could not find eplbuddy, will not be launching Language Server.",
-    );
-  }
-
-  const taskprov = new ApamaTaskProvider(logger, apamaEnv);
+  
+  const taskprov = new ApamaTaskProvider(logger);
   context.subscriptions.push(tasks.registerTaskProvider("apama", taskprov));
 
-  const provider = new ApamaDebugConfigurationProvider(logger, apamaEnv);
+  const provider = new ApamaDebugConfigurationProvider(logger);
   context.subscriptions.push(
     debug.registerDebugConfigurationProvider("apama", provider),
   );
   context.subscriptions.push(provider);
-  const commandprov = new ApamaCommandProvider(logger, apamaEnv, context);
+  const commandprov = new ApamaCommandProvider(logger, context);
   commands.push(commandprov);
 
   const projView = new ApamaProjectView(
-    apamaEnv,
     logger,
     context,
   );
@@ -120,9 +124,9 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
 /**
  * Determines whether an Apama can be found on this system.
- * @returns 
+ * @returns
  */
-async function determineIfApamaExists(): Promise<false | ResolveSuccess> {
+export async function determineIfApamaExists(): Promise<false | ResolveSuccess> {
   // Note: the initial value of `workspace.getConfiguration` for "machine"-scoped values will
   // pick up values from the "user" config, if an appropriate value doesn't exist on the host 
   // config. However, following that initial load, it'll only pick up values from the host machine.
@@ -134,16 +138,10 @@ async function determineIfApamaExists(): Promise<false | ResolveSuccess> {
   // See if we can find a correlator.
   const correlatorResolver = new ExecutableResolver("correlator", logger);
 
-  let correlatorResolve;
-
-  if (userApamaHome != undefined) {
-    // If the user has specified an Apama Home, we only use that.
-    correlatorResolve = await correlatorResolver.resolve(
-      path.join(userApamaHome as string, "bin"),
-    );
-  } else {
-    correlatorResolve = await correlatorResolver.resolve();
-  }
+  // If the user has specified an Apama Home, we only use that.
+  const correlatorResolve = await correlatorResolver.resolve(
+    path.join(userApamaHome as string, "bin"),
+  );
 
   if (correlatorResolve.kind == "success") {
     logger.info(`Found the correlator at ${correlatorResolve.path}`);
