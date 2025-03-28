@@ -2,36 +2,19 @@
 import { ApamaRunner } from "../apama_util/apamarunner";
 import { ExtensionContext, workspace, commands, window } from "vscode";
 import {
-  ApamaEnvironment,
-  ApamaExecutableInterface,
   ApamaExecutables,
+  getCommandLine,
+  getCommandAsInterface
 } from "../apama_util/apamaenvironment";
 import { ChildProcess, spawn } from "child_process";
 import { Writable } from "stream";
 import { Logger } from "../logger/logger";
 
 export class ApamaCommandProvider {
-  private injectCmd: ApamaRunner;
-  private sendCmd: ApamaRunner;
-  private deleteCmd: ApamaRunner;
-
   public constructor(
     private logger: Logger,
-    private apamaEnv: ApamaEnvironment,
     private context: ExtensionContext,
   ) {
-    this.injectCmd = new ApamaRunner(
-      "engine_inject",
-      apamaEnv.getCommandLine(ApamaExecutables.INJECT),
-    );
-    this.sendCmd = new ApamaRunner(
-      "engine_send",
-      apamaEnv.getCommandLine(ApamaExecutables.SEND),
-    );
-    this.deleteCmd = new ApamaRunner(
-      "engine_delete",
-      apamaEnv.getCommandLine(ApamaExecutables.DELETE),
-    );
     this.registerCommands();
   }
 
@@ -52,7 +35,13 @@ export class ApamaCommandProvider {
                 placeHolder: "What port is the target correlator running on",
               });
               if (userInput) {
-                this.injectCmd.run(
+                const injectCmd = await getCommandLine(ApamaExecutables.INJECT);
+                if (injectCmd === false) {
+                  return;
+                }
+                
+                const runner = new ApamaRunner("engine_inject", injectCmd);
+                runner.run(
                   ".",
                   ["-p", userInput.toString()].concat(monFile.fsPath),
                 );
@@ -77,7 +66,13 @@ export class ApamaCommandProvider {
               // From explorer/context menu
               if (evtFile !== undefined) {
                 // Specify engine_send command WITH evt file
-                this.sendCmd.run(
+                const sendCmd = await getCommandLine(ApamaExecutables.SEND);
+                if (sendCmd === false) {
+                  return;
+                }
+                
+                const runner = new ApamaRunner("engine_send", sendCmd);
+                runner.run(
                   ".",
                   ["-p", portInput.toString()].concat(evtFile.fsPath),
                 );
@@ -91,8 +86,11 @@ export class ApamaCommandProvider {
                 });
                 if (userInput !== undefined) {
                   // Specify engine_send command with NO evt files (but specify port)
-                  const command: ApamaExecutableInterface =
-                    this.apamaEnv.getCommandAsInterface(ApamaExecutables.SEND);
+                  const command = await getCommandAsInterface(ApamaExecutables.SEND);
+                  if (command === false) {
+                    return;
+                  }
+                  
                   const childProcess = spawn(
                     command.command,
                     [...command.args, "-p", userInput.toString()],
@@ -131,7 +129,13 @@ export class ApamaCommandProvider {
                 "Specify the names of zero or more EPL, JMon, monitors and/or event types to delete from correlator.",
             });
             if (userInput !== undefined) {
-              this.deleteCmd.run(
+              const deleteCmd = await getCommandLine(ApamaExecutables.DELETE);
+              if (deleteCmd === false) {
+                return;
+              }
+              
+              const runner = new ApamaRunner("engine_delete", deleteCmd);
+              runner.run(
                 ".",
                 ["-p", port.toString()].concat(userInput),
               );
