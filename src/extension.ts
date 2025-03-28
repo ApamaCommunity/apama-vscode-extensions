@@ -56,6 +56,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
       // We have no idea if the new `apamaHome` value is usable, so we go through the entire validation process again.
         const correlatorExe = await determineIfApamaExists();
         if (correlatorExe === false) {
+          window.showErrorMessage("Could not locate Apama, exiting existing language servers");
+          killLanguageServers();
           return Promise.resolve();
         } else {
           const eplBuddyResolve: ResolveResult = await determineIfEplBuddyExists(path.dirname(correlatorExe.path));
@@ -174,14 +176,17 @@ async function resetLanguageServers(
   config: WorkspaceConfiguration,
   eplBuddyCommand: ApamaExecutableInterface
 ): Promise<void> {
-    logger.info("Killing existing language servers");
-    for (const client of servers.values()) {
-      await client.stop();
-    }
-    logger.info("Killed all previous language servers, starting up new ones");
-    servers.clear();
+  await killLanguageServers();
+  startLanguageServers(config, eplBuddyCommand);
+}
 
-    startLanguageServers(config, eplBuddyCommand);
+async function killLanguageServers() {
+  logger.info("Killing existing language servers");
+  for (const client of servers.values()) {
+    await client.stop();
+  }
+  logger.info("Killed all previous language servers, starting up new ones");
+  servers.clear();
 }
 
 /** Start language servers (eplbuddy) for each workspace folder */
