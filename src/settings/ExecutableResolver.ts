@@ -41,7 +41,7 @@ export class ExecutableResolver {
     this.logger = logger;
   }
 
-  public async resolve(userSpecifiedPath?: string) {
+  public async resolve(userSpecifiedPath?: string): Promise<Ok<string, never> | Err<never, ResolveError>> {
     if (userSpecifiedPath) {
       return await this.validatePath(
         path.join(path.normalize(userSpecifiedPath), this.executableName),
@@ -62,7 +62,7 @@ export class ExecutableResolver {
       : name;
   }
 
-  private async validatePath(filePath: string) {
+  private async validatePath(filePath: string): Promise<Ok<string, never> | Err<never, ResolveError>> {
     try {
       const stats = await fs.promises.stat(filePath);
 
@@ -90,7 +90,7 @@ export class ExecutableResolver {
     return Boolean(stats.mode & 0o111);
   }
 
-  private async findInPath() {
+  private async findInPath(): Promise<Ok<string, never> | Err<never, ResolveError>> {
     const envPath = process.env.PATH || "";
     const pathDirs = envPath
       .split(path.delimiter)
@@ -108,7 +108,7 @@ export class ExecutableResolver {
 
   }
 
-  private async findInCommonLocations() {
+  private async findInCommonLocations(): Promise<Ok<string, never> | Err<never, ResolveError>> {
     for (const location of this.commonLocations) {
       const fullPath = path.join(location, this.executableName);
       const result = await this.validatePath(fullPath);
