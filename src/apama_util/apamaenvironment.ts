@@ -51,14 +51,6 @@ export async function getCommandLine(command: ApamaExecutables, showError=true) 
   return false;
 }
 
-export async function getCommandAsList(command: ApamaExecutables, showError=true) {
-  const apama_env = await getApamaEnvCommand(showError);
-  if (apama_env != false) {
-    return [apama_env, command];
-  }   
-  return false;
-}
-
 export async function getCommandAsInterface(command: ApamaExecutables, showError=true): Promise<false | ApamaExecutableInterface> {
   const apama_env = await getApamaEnvCommand(showError);
   if (apama_env != false) {
