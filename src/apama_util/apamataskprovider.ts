@@ -28,7 +28,7 @@ export class ApamaTaskProvider implements TaskProvider {
     // Substitute the executable with the current known Apama executable.
     const executable = await getCommandLine(cmdline);
 
-    if (port && executable != false) {
+    if (port && !executable) {
       this.logger.appendLine("Running on port " + port);
       const finalTask = new Task(
         _task.definition,

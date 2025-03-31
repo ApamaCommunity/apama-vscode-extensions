@@ -63,7 +63,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
           const eplBuddyResolve: ResolveResult = await determineIfEplBuddyExists(path.dirname(correlatorExe.path));
           if (eplBuddyResolve.kind == "success") {
             const eplBuddyCommand = await getCommandAsInterface(ApamaExecutables.EPLBUDDY);
-            if (eplBuddyCommand !== false) {
+            if (eplBuddyCommand) {
               await resetLanguageServers(workspace.getConfiguration("apama"), eplBuddyCommand);
             }
           }
@@ -74,7 +74,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
   workspace.onDidChangeWorkspaceFolders(async () => {
     logger.info("Workspace folders changes, reloading Language Server");
     const eplBuddyCommand = await getCommandAsInterface(ApamaExecutables.EPLBUDDY);
-    if (eplBuddyCommand !== false) {
+    if (eplBuddyCommand) {
       await resetLanguageServers(workspace.getConfiguration("apama"), eplBuddyCommand);
     }
   });
@@ -87,7 +87,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
     const eplBuddyResolve: ResolveResult = await determineIfEplBuddyExists(path.dirname(correlatorExe.path));
       if (eplBuddyResolve.kind == "success") {
       const eplBuddyCommand = await getCommandAsInterface(ApamaExecutables.EPLBUDDY);
-      if (eplBuddyCommand !== false) {
+      if (eplBuddyCommand) {
         startLanguageServers(
           workspace.getConfiguration("apama"),
           eplBuddyCommand,

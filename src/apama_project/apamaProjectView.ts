@@ -90,9 +90,7 @@ export class ApamaProjectView
           "apama.apamaToolCreateProject",
           async () => {
             const apamaProjectCommand = await getCommandLine(ApamaExecutables.PROJECT);
-            if (apamaProjectCommand == false) {
-              return Promise.resolve();
-            }
+            if (!apamaProjectCommand) { return Promise.resolve(); }
             const apama_project = new ApamaRunner(
               "apama_project",
               apamaProjectCommand
@@ -152,9 +150,7 @@ export class ApamaProjectView
           "apama.apamaToolAddBundles",
           async (project: ApamaProject) => {
             const apamaProjectCommand = await getCommandLine(ApamaExecutables.PROJECT);
-            if (apamaProjectCommand == false) {
-              return Promise.resolve();
-            }
+            if (!apamaProjectCommand) {return Promise.resolve();}
             const apama_project = new ApamaRunner(
               "apama_project",
               apamaProjectCommand
@@ -209,9 +205,7 @@ export class ApamaProjectView
           "apama.apamaToolRemoveBundle",
           async (bundle: BundleItem) => {
             const apamaProjectCommand = await getCommandLine(ApamaExecutables.PROJECT);
-            if (apamaProjectCommand == false) {
-              return Promise.resolve();
-            }
+            if (!apamaProjectCommand) {return Promise.resolve();}
             const apama_project = new ApamaRunner(
               "apama_project",
               apamaProjectCommand
@@ -252,9 +246,7 @@ export class ApamaProjectView
     this.logger.info("Initializing projects");
 
     const apamaProjectCommand = await getCommandLine(ApamaExecutables.PROJECT, false);
-    if (apamaProjectCommand == false) {
-      return Promise.resolve();
-    }
+    if (!apamaProjectCommand) {return Promise.resolve();}
     const apama_project = new ApamaRunner(
       "apama_project",
       apamaProjectCommand

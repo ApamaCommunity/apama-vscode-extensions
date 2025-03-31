@@ -120,9 +120,7 @@ async function getInjectionList(
   workspaceFolderPath: string,
 ): Promise<string[]> {
   const cmd = await getCommandAsInterface(ApamaExecutables.DEPLOY);
-  if (cmd === false) {
-    return [];
-  }
+  if (!cmd) {return [];}
   
   const output: string = execFileSync(
     cmd.command,

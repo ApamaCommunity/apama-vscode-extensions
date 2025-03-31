@@ -36,9 +36,7 @@ export class ApamaCommandProvider {
               });
               if (userInput) {
                 const injectCmd = await getCommandLine(ApamaExecutables.INJECT);
-                if (injectCmd === false) {
-                  return;
-                }
+                if (!injectCmd) {return;}
                 
                 const runner = new ApamaRunner("engine_inject", injectCmd);
                 runner.run(
@@ -67,9 +65,7 @@ export class ApamaCommandProvider {
               if (evtFile !== undefined) {
                 // Specify engine_send command WITH evt file
                 const sendCmd = await getCommandLine(ApamaExecutables.SEND);
-                if (sendCmd === false) {
-                  return;
-                }
+                if (!sendCmd) {return;}
                 
                 const runner = new ApamaRunner("engine_send", sendCmd);
                 runner.run(
@@ -87,9 +83,7 @@ export class ApamaCommandProvider {
                 if (userInput !== undefined) {
                   // Specify engine_send command with NO evt files (but specify port)
                   const command = await getCommandAsInterface(ApamaExecutables.SEND);
-                  if (command === false) {
-                    return;
-                  }
+                  if (!command) {return;}
                   
                   const childProcess = spawn(
                     command.command,
@@ -130,9 +124,7 @@ export class ApamaCommandProvider {
             });
             if (userInput !== undefined) {
               const deleteCmd = await getCommandLine(ApamaExecutables.DELETE);
-              if (deleteCmd === false) {
-                return;
-              }
+              if (!deleteCmd) {return;}
               
               const runner = new ApamaRunner("engine_delete", deleteCmd);
               runner.run(
