@@ -22,9 +22,8 @@
     "Apama",
     "MonitorScript"
   ],
-  "qna":"https://techcommunity.cumulocity.com/tag/streaming-analytics-apama",
-  "activationEvents": [
-  ],
+  "qna": "https://techcommunity.cumulocity.com/tag/streaming-analytics-apama",
+  "activationEvents": [],
   "main": "./dist/extension",
   "contributes": {
     "configuration": {
@@ -34,7 +33,7 @@
           "type": "string",
           "default": null,
           "markdownDescription": "The location where Apama is installed (the `Apama/` directory). \n\nMust be a full edition of Apama that includes `bin/apama_project`. If not specified, the default install location will be assumed. You must reload this VS Code window after changing this setting.",
-          "scope":"machine-overridable"
+          "scope": "machine-overridable"
         },
         "apama.debugPort": {
           "type": "integer",
@@ -98,7 +97,7 @@
         "path": "./snippets.json"
       }
     ],
-    "commands": [ 
+    "commands": [
       {
         "command": "apama.apamaToolCreateProject",
         "title": "Create Project",
@@ -270,6 +269,7 @@
     "@xmldom/xmldom": "^0.8.10",
     "axios": "^1.7.7",
     "glob": "^11.0.0",
+    "neverthrow": "^8.2.0",
     "semver": "^7.6.3",
     "shelljs": "^0.8.5",
     "vscode-languageclient": "^9.0.1",

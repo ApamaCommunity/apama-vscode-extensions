@@ -72,8 +72,9 @@ export async function activate(context: ExtensionContext): Promise<void> {
     eplbuddyResolve = await eplbuddyResolver.resolve();
   }
 
-  if (correlatorResolve.kind == "success") {
-    logger.info(`Found the correlator at ${correlatorResolve.path}`);
+
+  if (correlatorResolve.isOk()) {
+    logger.info(`Found the correlator at ${correlatorResolve.value}`);
   } else {
     logger.info(
       `Could not find Apama in your environment: you can configure the "Apama Home" preference to specify an install location.`,
@@ -81,11 +82,12 @@ export async function activate(context: ExtensionContext): Promise<void> {
     return Promise.resolve();
   }
 
+
   // Gives the directory of $APAMA_HOME/bin.
-  const apamaBin = path.dirname(correlatorResolve.path);
+  const apamaBin = path.dirname(correlatorResolve.value);
   const apamaEnv: ApamaEnvironment = new ApamaEnvironment(apamaBin);
 
-  if (eplbuddyResolve.kind == "success") {
+  if (eplbuddyResolve.isOk()) {
     startLanguageServers(
       config,
       apamaEnv.getCommandAsInterface(ApamaExecutables.EPLBUDDY),
