@@ -26,6 +26,8 @@ import {
   ApamaExecutables,
 } from "../apama_util/apamaenvironment";
 import { Logger } from "../logger/logger";
+
+import * as path from "path";
 export class ApamaProjectView
   implements TreeDataProvider<string | ApamaProject | BundleItem>
 {
@@ -202,9 +204,57 @@ export class ApamaProjectView
          */ 
         commands.registerCommand(
           "apama.addRelativeBundle",
-          (project: ApamaProject) => {
-            this.logger.info("Add Relative Bundle command called");
-            return;
+          async (project: ApamaProject) => {
+            // Open file picker that only allows .bnd files
+            const fileUri = await window.showOpenDialog({
+              canSelectFiles: true,
+              canSelectFolders: false,
+              canSelectMany: false,
+              filters: {
+                'Bundle Files': ['bnd']
+              },
+              title: 'Select a bundle (.bnd) file to add'
+            });
+            
+            // If user cancelled the picker, return
+            if (!fileUri || fileUri.length === 0) {
+              return;
+            }
+            
+            const selectedFile = fileUri[0];
+            
+            // Get the path relative to the project directory
+            let relativePath = workspace.asRelativePath(selectedFile);
+            
+            // If the path is still absolute (happens when file is outside workspace),
+            // we need to calculate the relative path manually
+            if (selectedFile.fsPath === relativePath) {
+              try {
+                // Calculate relative path from project directory to the selected file
+                relativePath = path.relative(project.fsDir, selectedFile.fsPath);
+              } catch (error) {
+                window.showErrorMessage(`Failed to determine relative path: ${error}`);
+                return;
+              }
+            }
+            
+            this.logger.info(`Adding bundle from: ${relativePath}`);
+            
+            // Run the apama_project command with the relative path
+            this.apama_project
+              .run(project.fsDir, [
+                "add",
+                "bundle",
+                relativePath
+              ])
+              .then((result) => {
+                window.showInformationMessage(`Bundle added: ${result.stdout}`);
+                this.refresh(); // Refresh the view to show the new bundle
+              })
+              .catch((err) => {
+                window.showErrorMessage(`Failed to add bundle: ${err.stderr}`);
+                this.logger.error(err);
+              });
           },
         ),
 
