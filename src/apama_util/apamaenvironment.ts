@@ -29,7 +29,7 @@ export interface ApamaExecutableInterface {
 async function getApamaEnvCommand(showError=true): Promise<false | string> {
   const apama = await determineIfApamaExists();
   if (apama != false) {
-    const apamaBin = path.dirname(apama.path);
+    const apamaBin = path.dirname(apama);
     if (platform() === "linux") {
       return Promise.resolve(`${apamaBin}/apama_env`);
     } else {
