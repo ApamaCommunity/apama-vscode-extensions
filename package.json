@@ -202,14 +202,6 @@
       ],
       "commandPalette": [
         {
-          "command": "apama.apamaToolAddBundles",
-          "when": "false"
-        },
-        {
-          "command": "apama.addRelativeBundle",
-          "when": "false"
-        },
-        {
           "command": "apama.apamaToolRemoveBundle",
           "when": "false"
         },

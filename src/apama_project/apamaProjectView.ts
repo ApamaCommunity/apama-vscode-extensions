@@ -155,7 +155,15 @@ export class ApamaProjectView
         //
         commands.registerCommand(
           "apama.apamaToolAddBundles",
-          (project: ApamaProject) => {
+          async (project?: ApamaProject) => {
+            // If project is not provided (called from Command Palette), prompt user to select one
+            if (!project) {
+              project = await this.promptForProject("Select a project to add a bundle to");
+              if (!project) {
+                return; // User cancelled the selection
+              }
+            }
+
             this.apama_project
               .run(project.fsDir, ["list", "bundles"])
               .then((result) => {
@@ -184,14 +192,14 @@ export class ApamaProjectView
                 }
 
                 this.apama_project
-                  .run(project.fsDir, [
+                  .run(project!.fsDir, [
                     "add",
                     "bundle",
                     '"' + picked.label.trim() + '"',
                   ])
-                  .then((result) =>
-                    window.showInformationMessage(`${result.stdout}`),
-                  )
+                  .then((result) => {
+                    window.showInformationMessage(`${result.stdout}`);
+                  })
                   .catch((err) => window.showErrorMessage(`${err.stderr}`));
               })
               .catch((err) => window.showErrorMessage(`${err.stderr}`));
@@ -204,7 +212,15 @@ export class ApamaProjectView
          */ 
         commands.registerCommand(
           "apama.addRelativeBundle",
-          async (project: ApamaProject) => {
+          async (project?: ApamaProject) => {
+            // If project is not provided (called from Command Palette), prompt user to select one
+            if (!project) {
+              project = await this.promptForProject("Select a project to add a relative bundle to");
+              if (!project) {
+                return; // User cancelled the selection
+              }
+            }
+            
             // Open file picker that only allows .bnd files
             const fileUri = await window.showOpenDialog({
               canSelectFiles: true,
@@ -249,7 +265,6 @@ export class ApamaProjectView
               ])
               .then((result) => {
                 window.showInformationMessage(`Bundle added: ${result.stdout}`);
-                this.refresh(); // Refresh the view to show the new bundle
               })
               .catch((err) => {
                 window.showErrorMessage(`Failed to add bundle: ${err.stderr}`);
@@ -291,6 +306,41 @@ export class ApamaProjectView
         }),
       ]);
     }
+  }
+
+  /**
+   * Helper method to prompt the user to select a project
+   * Used when commands are invoked from the Command Palette without a project context
+   */
+  private async promptForProject(placeHolder: string): Promise<ApamaProject | undefined> {
+    // Make sure projects are initialized
+    await this.initializeProjects();
+    
+    // If no projects found, show error message
+    if (this.projects.length === 0) {
+      window.showErrorMessage("No Apama projects found in the workspace");
+      return undefined;
+    }
+    
+    // If only one project, return it directly
+    if (this.projects.length === 1) {
+      return this.projects[0];
+    }
+    
+    // Create items for quick pick
+    const projectItems = this.projects.map(project => ({
+      label: project.label,
+      description: project.fsDir,
+      project: project
+    }));
+    
+    // Show quick pick to select a project
+    const selected = await window.showQuickPick(projectItems, {
+      placeHolder: placeHolder
+    });
+    
+    // Return the selected project or undefined if cancelled
+    return selected ? selected.project : undefined;
   }
   
   /** Initialize projects from workspaces */
