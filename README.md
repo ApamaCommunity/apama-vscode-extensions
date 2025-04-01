@@ -25,6 +25,7 @@ The extension can run on Linux. It can also be installed on Windows, either dire
 If you do not have a Windows installation package or simply prefer to develop on Linux, installing the VS Code [WSL](https://code.visualstudio.com/docs/remote/wsl) extension allows VS Code running on Windows to use a Linux-based Apama installation package. 
 
 See the VS Code documentation for detailed guidance on setting up WSL but the main steps are:
+
 * Install the latest version of [WSL](https://learn.microsoft.com/en-us/windows/wsl/install), using the **Debian** distribution of Linux:  `wsl --install -d Debian` (hint: this must be run from an Administrator terminal; it may take some time and require a restart).
 * Open a WSL terminal (for example by opening `Debian` from the Start Menu) and install one of the "full edition" Apama packages for Linux. In more detail, for 10.15:
   * Identify the required package from the [download site](https://download.cumulocity.com/Apama/10.15), for example `apama-c8y-dev_10.15.*.*_amd64_linux.tar.gz`
@@ -78,8 +79,6 @@ There are various settings available for the extension. All the Apama configurat
 * debugHost is the default host for a correlator started for debug (allowing remote instance).
 * debugPort is the default port for a correlator started for debug.
 
-![settings](images/settings.png)
-
 ## Advanced syntax highlighting and error reporting
 
 This extension supports using a Language Server for advanced syntax highlighting and error reporting for users using Apama 10.15.6.1 and later. 
@@ -114,7 +113,7 @@ The animation below shows how to create a non-default tasks (allowing multiple c
 
 ## Create Project
 
-The apama_project tool can be used to create projects which are compatible with the eclipse-based IDE, and will also allow you to edit Designer created projects in vscode.
+The `apama_project` tool can be used to create projects which are compatible with all of Apama's development tooling.
 
 ![project support](images/4-project-create.gif)
 
