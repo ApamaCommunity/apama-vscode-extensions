@@ -98,7 +98,7 @@
         "path": "./snippets.json"
       }
     ],
-    "commands": [ 
+    "commands": [
       {
         "command": "apama.apamaToolCreateProject",
         "title": "Create Project",
@@ -124,6 +124,15 @@
         "icon": {
           "light": "resources/light/add.svg",
           "dark": "resources/dark/add.svg"
+        }
+      },
+      {
+        "command": "apama.addRelativeBundle",
+        "title": "Add Relative Bundle",
+        "category": "Apama",
+        "icon": {
+          "light": "resources/light/file.svg",
+          "dark": "resources/dark/file.svg"
         }
       },
       {
@@ -181,6 +190,11 @@
           "group": "inline@2"
         },
         {
+          "when": "view == apamaProjects && viewItem == project",
+          "command": "apama.addRelativeBundle",
+          "group": "inline@3"
+        },
+        {
           "when": "view == apamaProjects && viewItem == bundle",
           "command": "apama.apamaToolRemoveBundle",
           "group": "inline"
@@ -189,6 +203,10 @@
       "commandPalette": [
         {
           "command": "apama.apamaToolAddBundles",
+          "when": "false"
+        },
+        {
+          "command": "apama.addRelativeBundle",
           "when": "false"
         },
         {

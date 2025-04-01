@@ -196,6 +196,18 @@ export class ApamaProjectView
           },
         ),
 
+        /** 
+         *  Add relative bundle.
+         *  This supports adding a bundle from the file system.
+         */ 
+        commands.registerCommand(
+          "apama.addRelativeBundle",
+          (project: ApamaProject) => {
+            this.logger.info("Add Relative Bundle command called");
+            return;
+          },
+        ),
+
         //
         // Remove Bundle
         //
