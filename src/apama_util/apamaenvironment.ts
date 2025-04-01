@@ -38,7 +38,7 @@ async function getApamaEnvCommand(showError=true): Promise<false | string> {
   }
 
   if (showError) {
-    window.showErrorMessage(`Could not find Apama in your environment: you can configure the "Apama Home" preference to specify an install location.`);
+    window.showErrorMessage(`Could not find Apama in your environment: you can configure the "Apama Home" setting to specify an install location.`);
   }
   return Promise.resolve(false);
 }

@@ -150,7 +150,7 @@ export async function determineIfApamaExists(): Promise<false | ResolveSuccess> 
     return Promise.resolve(correlatorResolve);
   } else {
     logger.info(
-      `Could not find Apama in your environment: you can configure the "Apama Home" preference to specify an install location.`,
+      `Could not find Apama in your environment: you can configure the "Apama Home" setting to specify an install location.`,
     );
   }
 
