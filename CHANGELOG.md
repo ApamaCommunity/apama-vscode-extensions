@@ -1,3 +1,7 @@
+## v2.1.0
+* Add support for automatically reloading the extension when the "Apama Home" configuration option is changed.
+
+
 ## v2.0.0
 
 * Stop the extension startup from stealing application focus.
