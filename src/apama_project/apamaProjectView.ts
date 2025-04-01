@@ -158,7 +158,7 @@ export class ApamaProjectView
           async (project?: ApamaProject) => {
             // If project is not provided (called from Command Palette), prompt user to select one
             if (!project) {
-              project = await this.promptForProject("Select a project to add a bundle to");
+              project = await this.promptForProject("Select a project to add bundles to");
               if (!project) {
                 return; // User cancelled the selection
               }
@@ -182,21 +182,25 @@ export class ApamaProjectView
                     displayList.push({ label: item });
                   }
                 });
+                // Allow multiple selections
                 return window.showQuickPick(displayList, {
-                  placeHolder: "Choose a bundle to add",
+                  placeHolder: "Choose bundles to add",
+                  canPickMany: true
                 });
               })
               .then((picked) => {
-                if (picked === undefined) {
+                if (!picked || picked.length === 0) {
                   return;
                 }
 
+                // Build command arguments with all selected bundles
+                const commandArgs = ["add", "bundle"];
+                picked.forEach(bundle => {
+                  commandArgs.push('"' + bundle.label.trim() + '"');
+                });
+
                 this.apama_project
-                  .run(project!.fsDir, [
-                    "add",
-                    "bundle",
-                    '"' + picked.label.trim() + '"',
-                  ])
+                  .run(project!.fsDir, commandArgs)
                   .then((result) => {
                     window.showInformationMessage(`${result.stdout}`);
                   })
