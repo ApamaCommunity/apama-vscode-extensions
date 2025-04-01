@@ -386,7 +386,6 @@ export class ApamaProjectView
   
   /** Initialize projects from workspaces */
   async initializeProjects(): Promise<void> {
-    this.logger.info("Initializing projects");
     // Clear existing projects
     this.projects = [];
     
