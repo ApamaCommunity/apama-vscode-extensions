@@ -278,12 +278,53 @@ export class ApamaProjectView
         //
         commands.registerCommand(
           "apama.apamaToolRemoveBundle",
-          (bundle: BundleItem) => {
+          async (bundle?: BundleItem) => {
+            // If bundle is not provided (called from Command Palette), prompt user to select a project and bundle
+            if (!bundle) {
+              // First, select a project
+              const project = await this.promptForProject("Select a project to remove a bundle from");
+              if (!project) {
+                return; // User cancelled the project selection
+              }
+              
+              // Then, get the bundles for that project
+              try {
+                const bundles = await project.getBundlesFromProject();
+                
+                if (bundles.length === 0) {
+                  window.showInformationMessage(`No bundles found in project ${project.label}`);
+                  return;
+                }
+                
+                // Create items for quick pick
+                const bundleItems = bundles.map(bundle => ({
+                  label: bundle.label,
+                  bundle: bundle
+                }));
+                
+                // Show quick pick to select a bundle
+                const selected = await window.showQuickPick(bundleItems, {
+                  placeHolder: "Select a bundle to remove"
+                });
+                
+                // If user cancelled, return
+                if (!selected) {
+                  return;
+                }
+                
+                bundle = selected.bundle;
+              } catch (error) {
+                window.showErrorMessage(`Failed to get bundles: ${error}`);
+                return;
+              }
+            }
+            
+            // Now remove the selected bundle
             this.apama_project
               .run(bundle.fsDir, ["remove", "bundle", '"' + bundle.label + '"'])
-              .then((result) =>
-                window.showInformationMessage(`${result.stdout}`),
-              )
+              .then((result) => {
+                window.showInformationMessage(`${result.stdout}`);
+              })
               .catch((err) => window.showErrorMessage(`${err.stderr}`));
           },
         ),

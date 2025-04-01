@@ -202,10 +202,6 @@
       ],
       "commandPalette": [
         {
-          "command": "apama.apamaToolRemoveBundle",
-          "when": "false"
-        },
-        {
           "command": "apama.engine_inject",
           "when": "false"
         },
