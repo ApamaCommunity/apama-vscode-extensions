@@ -46,7 +46,6 @@ If you want to **create a new project**, make a directory for your project and o
 ## Limitations
 
 * Completion proposal are not yet available (except for basic snippet and history suggestions).
-* Configuration changes are not automatically applied - for example after reconfiguring the Apama Home directory you need to reload the VSCode window (press `Ctrl+Shift+P` and type `Reload Window`). 
 * No support for multiple folders per workspace - there should be just one folder per workspace, and it should contain an Apama project (i.e. a `.project` and `.dependencies` file at the top level)
 * No incremental builds - all EPL files are rebuilt every time there is a change (although there is caching of the parsing phase for files that did not change). This may result in slow error markers (and high CPU utilization) when working on a large project on a low-powered laptop 
 
