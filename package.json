@@ -33,7 +33,7 @@
         "apama.apamaHome": {
           "type": "string",
           "default": "",
-          "markdownDescription": "The location where Apama is installed (the `Apama/` directory). \n\nMust be a full edition of Apama that includes `bin/apama_project`. If not specified, the default install location will be assumed.",
+          "markdownDescription": "The location where Apama is installed (the `Apama/` directory). \n\nMust be a 'dev' package (or a 'builder' image) of Apama that includes tools such as `bin/apama_project`. If not specified, the default install location will be used.",
           "scope": "machine-overridable"
         },
         "apama.debugPort": {
