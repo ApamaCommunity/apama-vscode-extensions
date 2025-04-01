@@ -32,9 +32,9 @@
       "properties": {
         "apama.apamaHome": {
           "type": "string",
-          "default": null,
-          "markdownDescription": "The location where Apama is installed (the `Apama/` directory). \n\nMust be a full edition of Apama that includes `bin/apama_project`. If not specified, the default install location will be assumed. You must reload this VS Code window after changing this setting.",
-          "scope":"machine-overridable"
+          "default": "",
+          "markdownDescription": "The location where Apama is installed (the `Apama/` directory). \n\nMust be a full edition of Apama that includes `bin/apama_project`. If not specified, the default install location will be assumed.",
+          "scope": "machine-overridable"
         },
         "apama.debugPort": {
           "type": "integer",
