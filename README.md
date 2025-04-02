@@ -36,13 +36,13 @@ For the 10.15 release:
 For Apama 26.x and higher there is no Windows installation package of Apama, so we recomend using the VS Code [WSL](https://code.visualstudio.com/docs/remote/wsl) extension which allows VS Code running on Windows to use a Linux-based Apama installation package. 
 
 1. Install the latest version of [WSL](https://learn.microsoft.com/en-us/windows/wsl/install), using the **Debian** distribution of Linux. This may take some time and often requires a restart. See the WSL and also VS Code instructions for full details, but typical steps on a recent version of Windows would be:
-  * Open a PowerShell terminal "as Administrator"
-  * `wsl --install`
-  * `wsl --install -d Debian`
-2 Once installed, open a WSL terminal (for example by opening `Debian` from the Start Menu) and install Apama using the "dev" package for Linux using the instructions above. 
-3. Open VS Code, and install the [Visual Studio Code Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack), and the [Apama Extension for VS Code](https://marketplace.visualstudio.com/items?itemName=ApamaCommunity.apama-extensions).
-4. Using the command palette (`Ctrl+Shift+P`), select `Connect to WSL`
-5. You can now create a new project, or clone an existing project from your version control system (e.g. Git). For WSL, it is recommended to use a location under your Linux home directory (`~`) to store your Apama projects (this provides faster performance than mounting locations such as `C:\` from the Windows file system; don't worry, the Linux file system can still be accessed from Windows - see the WSL documentation for details)
+    * Open a PowerShell terminal "as Administrator"
+    * `wsl --install`
+    * `wsl --install -d Debian`
+3. Once installed, open a WSL terminal (for example by opening `Debian` from the Start Menu) and install Apama using the "dev" package for Linux using the instructions above. 
+4. Open VS Code, and install the [Visual Studio Code Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack), and the [Apama Extension for VS Code](https://marketplace.visualstudio.com/items?itemName=ApamaCommunity.apama-extensions).
+5. Using the command palette (`Ctrl+Shift+P`), select `Connect to WSL`
+6. You can now create a new project, or clone an existing project from your version control system (e.g. Git). For WSL, it is recommended to use a location under your Linux home directory (`~`) to store your Apama projects (this provides faster performance than mounting locations such as `C:\` from the Windows file system; don't worry, the Linux file system can still be accessed from Windows - see the WSL documentation for details)
 
 ### Opening your first Apama project
 
