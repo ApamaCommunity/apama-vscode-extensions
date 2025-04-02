@@ -26,28 +26,34 @@ If you do not have a Windows installation package or simply prefer to develop on
 
 See the VS Code documentation for detailed guidance on setting up WSL but the main steps are:
 
-* Install the latest version of [WSL](https://learn.microsoft.com/en-us/windows/wsl/install), using the **Debian** distribution of Linux:  `wsl --install -d Debian` (hint: this must be run from an Administrator terminal; it may take some time and require a restart).
-* Open a WSL terminal (for example by opening `Debian` from the Start Menu) and install one of the "full edition" Apama packages for Linux. In more detail, for 10.15:
-  * Identify the required package from the [download site](https://download.cumulocity.com/Apama/10.15), for example `apama-c8y-dev_10.15.*.*_amd64_linux.tar.gz`
-  * Download the package by passing this URL to `wget` (you may need to run `sudo apt install wget` first, if it is not yet installed). 
-  * Then unpack it to the default directory using: `sudo mkdir -p /opt/cumulocity && sudo tar -xf apama-dev_10.15.*_amd64_linux.tar.gz -C /opt/cumulocity` (hint: you will need to enter the password for the root account you created during WSL setup). 
-* Open VS Code, and install the [Visual Studio Code Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)
-* Using the command palette (`Ctrl+Shift+P`), select `Connect to WSL`. 
-* You can now create a new project, or clone an existing project from your version control system (e.g. Git). For WSL, it is recommended to use a location under your Linux home directory (`~`) to store your Apama projects (this provides faster performance than mounting locations such as `C:\` from the Windows file system; don't worry, the Linux file system can still be accessed from Windows - see the WSL documentation for details).
+* Install the latest version of [WSL](https://learn.microsoft.com/en-us/windows/wsl/install), using the **Debian** distribution of Linux. This may take some time and often requires a restart. Typical steps would be:
+  * Open a PowerShell terminal "as Administrator"
+  * `Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux`
+  * `wsl --install`
+  * `wsl --install -d Debian`
+* Open a WSL terminal (for example by opening `Debian` from the Start Menu) and install an Apama "dev" package for Linux.
+  * For 10.15:
+    * Identify the required package from the [download site](https://download.cumulocity.com/Apama/10.15), for example `apama-c8y-dev_10.15.*.*_amd64_linux.tar.gz`
+    * Download the package by passing this URL to `wget` (you may need to run `sudo apt install wget` first, if it is not yet installed)
+    * Then unpack it to the default directory using: `sudo mkdir -p /opt/cumulocity && sudo tar -xf apama-dev_10.15.*_amd64_linux.tar.gz -C /opt/cumulocity` (hint: you will need to enter the password for the root account you created during WSL setup)
+  * For later releases (26.x onwards), install the `dev` (and optionally `apama-python`) Debian packages from the [Apama Repository](https://download.cumulocity.com/Apama/Debian/)
+* Open VS Code, and install the [Visual Studio Code Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack), and the [Apama Extension for VS Code](https://marketplace.visualstudio.com/items?itemName=ApamaCommunity.apama-extensions).
+* Using the command palette (`Ctrl+Shift+P`), select `Connect to WSL`
+* You can now create a new project, or clone an existing project from your version control system (e.g. Git). For WSL, it is recommended to use a location under your Linux home directory (`~`) to store your Apama projects (this provides faster performance than mounting locations such as `C:\` from the Windows file system; don't worry, the Linux file system can still be accessed from Windows - see the WSL documentation for details)
 
 ### Opening your first Apama project
 
-Where possible, install Apama to the default installation directory `/opt/cumulocity/Apama`, so that the location can be detected automatically. If you use a different location, you will need to configure the location of Apama home in the Apama extension's settings, and then reload the VSCode window before proceeding.
+First ensure the Apama Extensions for Visual Studio Code are installed, and that you have an installation of Apama. Where possible, ensure Apama is installed to the default installation directory `/opt/cumulocity/Apama`, so that the location can be detected automatically. If you use a different location, you will need to configure the location of Apama home in the Apama extension's settings, and then reload the VSCode window before proceeding.
 
-If you want to start with an **existing Apama project** you were already working on (or clone of a sample project), simply open the folder containing the project (the folder containing the `.project` and `.dependencies` files) in your VS Code workspace. Note that at present only the first folder opened in the workspace is used as an Apama project, and that you must have the Apama project files in the top level of that folder.
+If you want to start with an **existing Apama project** you were already working on (or clone of a sample project), simply open the Apama project folder (that is, the directory with the `.project` and `.dependencies` files) in your VS Code workspace. Note that the Apama project files must be in the top level of that folder.
 
-If you want to **create a new project**, make a directory for your project and open it in VS Code. Then open the `Apama Projects` view and click the icon near the top right to `Create Project`. You can now use that view to add any bundles required for your project (such as the Cumulocity bundle), and then use the main menu to create one or more `.mon` files for your EPL application. 
+If you want to **create a new project**, make a directory for your project and open it in VS Code. Then open the `Apama Projects` view and click the icon near the top right to `Create Project`. You can now use that view to add any bundles required for your project, for example the Cumulocity bundle, or for Analytics Kit block development a relative path such as `../apama-analytics-builder-block-sdk/bundles/AnalyticsBuilder.bnd`. Then use the main menu to create one or more `.mon` files for your EPL application or block. 
 
 ## Limitations
 
 * Completion proposal are not yet available (except for basic snippet and history suggestions).
 * No support for multiple folders per workspace - there should be just one folder per workspace, and it should contain an Apama project (i.e. a `.project` and `.dependencies` file at the top level)
-* No incremental builds - all EPL files are rebuilt every time there is a change (although there is caching of the parsing phase for files that did not change). This may result in slow error markers (and high CPU utilization) when working on a large project on a low-powered laptop 
+* No incremental builds - all EPL files are rebuilt every time there is a change (although there is caching of the parsing phase for files that did not change). This may result in slow error markers (and high CPU utilization) when working on a large project on a low-powered laptop.
 
 ## License
 
