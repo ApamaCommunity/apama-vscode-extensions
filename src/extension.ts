@@ -31,7 +31,7 @@ import { ApamaProjectView } from "./apama_project/apamaProjectView";
 import { ApamaCommandProvider } from "./apama_util/commands";
 import { Logger } from "./logger/logger";
 
-import { ExecutableResolver, ResolveResult, ResolveSuccess } from "./settings/ExecutableResolver";
+import { ExecutableResolver } from "./settings/ExecutableResolver";
 
 /** VSCode clients for talking to each language server, keyed by workspace folder URI */
 const servers = new Map<string, LanguageClient>();
@@ -60,8 +60,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
           killLanguageServers();
           return Promise.resolve();
         } else {
-          const eplBuddyResolve: ResolveResult = await determineIfEplBuddyExists(path.dirname(correlatorExe.path));
-          if (eplBuddyResolve.kind == "success") {
+          const eplBuddyResolve = await determineIfEplBuddyExists(path.dirname(correlatorExe));
+          if (eplBuddyResolve.isOk()) {
             const eplBuddyCommand = await getCommandAsInterface(ApamaExecutables.EPLBUDDY);
             if (eplBuddyCommand) {
               await resetLanguageServers(workspace.getConfiguration("apama"), eplBuddyCommand);
@@ -80,12 +80,13 @@ export async function activate(context: ExtensionContext): Promise<void> {
   });
 
 
+
   // Gives the directory of $APAMA_HOME/bin.
   const correlatorExe = await determineIfApamaExists();
 
   if (correlatorExe != false) {
-    const eplBuddyResolve: ResolveResult = await determineIfEplBuddyExists(path.dirname(correlatorExe.path));
-      if (eplBuddyResolve.kind == "success") {
+    const eplBuddyResolve = await determineIfEplBuddyExists(path.dirname(correlatorExe));
+      if (eplBuddyResolve.isOk()) {
       const eplBuddyCommand = await getCommandAsInterface(ApamaExecutables.EPLBUDDY);
       if (eplBuddyCommand) {
         startLanguageServers(
@@ -128,7 +129,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
  * Determines whether an Apama can be found on this system.
  * @returns
  */
-export async function determineIfApamaExists(): Promise<false | ResolveSuccess> {
+export async function determineIfApamaExists(): Promise<false | string> {
   // Note: the initial value of `workspace.getConfiguration` for "machine"-scoped values will
   // pick up values from the "user" config, if an appropriate value doesn't exist on the host 
   // config. However, following that initial load, it'll only pick up values from the host machine.
@@ -145,9 +146,9 @@ export async function determineIfApamaExists(): Promise<false | ResolveSuccess> 
     path.join(userApamaHome as string, "bin"),
   );
 
-  if (correlatorResolve.kind == "success") {
-    logger.info(`Found the correlator at ${correlatorResolve.path}`);
-    return Promise.resolve(correlatorResolve);
+  if (correlatorResolve.isOk()) {
+    logger.info(`Found the correlator at ${correlatorResolve.value}`);
+    return Promise.resolve(correlatorResolve.value);
   } else {
     logger.info(
       `Could not find Apama in your environment: you can configure the "Apama Home" setting to specify an install location.`,
@@ -163,7 +164,7 @@ export async function determineIfApamaExists(): Promise<false | ResolveSuccess> 
  * @param apamaHome 
  * @returns 
  */
-async function determineIfEplBuddyExists(apamaHome: string): Promise<ResolveResult> {
+async function determineIfEplBuddyExists(apamaHome: string) {
     return Promise.resolve(new ExecutableResolver("eplbuddy", logger).resolve(apamaHome));
 } 
 

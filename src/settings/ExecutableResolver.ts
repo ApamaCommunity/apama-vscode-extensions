@@ -2,25 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
 import { Logger } from "../logger/logger";
-
-export enum ResolveErrorKind {
-  NotFound = "NOT_FOUND",
-  NotExecutable = "NOT_EXECUTABLE",
-  NotAccessible = "NOT_ACCESSIBLE",
-}
-
-export interface ResolveError {
-  kind: ResolveErrorKind;
-  path: string;
-  details?: string;
-}
-
-export interface ResolveSuccess {
-  kind: "success";
-  path: string;
-}
-
-export type ResolveResult = ResolveSuccess | ResolveError;
+import { ok, err } from 'neverthrow';
 
 /**
  * ExecutableResolver aims to find the provided executable on the system.
@@ -48,7 +30,7 @@ export class ExecutableResolver {
     this.logger = logger;
   }
 
-  public async resolve(userSpecifiedPath?: string): Promise<ResolveResult> {
+  public async resolve(userSpecifiedPath?: string) {
     if (userSpecifiedPath) {
       return await this.validatePath(
         path.join(path.normalize(userSpecifiedPath), this.executableName),
@@ -56,8 +38,8 @@ export class ExecutableResolver {
     }
 
     const pathResolved = await this.findInPath();
-    if (pathResolved.kind === "success") {
-      return pathResolved;
+    if (pathResolved.isOk()) {
+      return pathResolved; // Return the Result directly, don't wrap it in another ok()
     }
 
     return await this.findInCommonLocations();
@@ -69,43 +51,21 @@ export class ExecutableResolver {
       : name;
   }
 
-  private async validatePath(filePath: string): Promise<ResolveResult> {
+  private async validatePath(filePath: string) {
     try {
       const stats = await fs.promises.stat(filePath);
 
       if (!stats.isFile()) {
-        return {
-          kind: ResolveErrorKind.NotFound,
-          path: filePath,
-          details: "Path exists but is not a file",
-        };
+        return err({path: filePath, error: "Not a file"});
       }
 
       if (!this.isExecutable(stats)) {
-        return {
-          kind: ResolveErrorKind.NotExecutable,
-          path: filePath,
-          details: "File exists but is not executable",
-        };
+        return err({path: filePath, error: "Not an executable"});
       }
 
-      return {
-        kind: "success",
-        path: path.resolve(filePath),
-      };
+      return ok(path.resolve(filePath))
     } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === "ENOENT") {
-        return {
-          kind: ResolveErrorKind.NotFound,
-          path: filePath,
-          details: "File does not exist",
-        };
-      }
-      return {
-        kind: ResolveErrorKind.NotAccessible,
-        path: filePath,
-        details: (error as Error).message,
-      };
+      return err({path: filePath, error: error})
     }
   }
 
@@ -116,7 +76,7 @@ export class ExecutableResolver {
     return Boolean(stats.mode & 0o111);
   }
 
-  private async findInPath(): Promise<ResolveResult> {
+  private async findInPath() {
     const envPath = process.env.PATH || "";
     const pathDirs = envPath
       .split(path.delimiter)
@@ -125,31 +85,24 @@ export class ExecutableResolver {
     for (const dir of pathDirs) {
       const fullPath = path.join(dir, this.executableName);
       const result = await this.validatePath(fullPath);
-      if (result.kind === "success") {
+      if (result.isOk()) {
         return result;
-      }
+      }     
     }
 
-    return {
-      kind: ResolveErrorKind.NotFound,
-      path: envPath,
-      details: "Executable not found in any PATH location",
-    };
+    return err({path: envPath, error: "Executable not found in any PATH location"})
+
   }
 
-  private async findInCommonLocations(): Promise<ResolveResult> {
+  private async findInCommonLocations() {
     for (const location of this.commonLocations) {
       const fullPath = path.join(location, this.executableName);
       const result = await this.validatePath(fullPath);
-      if (result.kind === "success") {
+      if (result.isOk()) { 
         return result;
       }
     }
 
-    return {
-      kind: ResolveErrorKind.NotFound,
-      path: this.commonLocations.join(path.delimiter),
-      details: "Executable not found in any common location",
-    };
+    return err({error: "Executable not found in any common location", path: this.commonLocations.join(path.delimiter)});
   }
 }
