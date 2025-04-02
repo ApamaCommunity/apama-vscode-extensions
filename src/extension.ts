@@ -21,9 +21,9 @@ import {
 } from "vscode-languageclient/node";
 
 import {
-  ApamaEnvironment,
   ApamaExecutableInterface,
   ApamaExecutables,
+  getCommandAsInterface
 } from "./apama_util/apamaenvironment";
 import { ApamaTaskProvider } from "./apama_util/apamataskprovider";
 import { ApamaDebugConfigurationProvider } from "./apama_debug/apamadebugconfig";
@@ -50,65 +50,69 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   logger.appendLine("Started Apama Extension");
 
-  const config = workspace.getConfiguration("apama");
-  const userApamaHome = config.get("apamaHome");
+  workspace.onDidChangeConfiguration(async (configurationevent) => {
+    if (configurationevent.affectsConfiguration("apama.apamaHome")) {
+      logger.info("Detected configuration change on `apama.apamaHome` variable, reloading");
+      // We have no idea if the new `apamaHome` value is usable, so we go through the entire validation process again.
+        const correlatorExe = await determineIfApamaExists();
+        if (correlatorExe === false) {
+          window.showErrorMessage("Could not locate Apama, exiting existing language servers");
+          killLanguageServers();
+          return Promise.resolve();
+        } else {
+          const eplBuddyResolve = await determineIfEplBuddyExists(path.dirname(correlatorExe));
+          if (eplBuddyResolve.isOk()) {
+            const eplBuddyCommand = await getCommandAsInterface(ApamaExecutables.EPLBUDDY);
+            if (eplBuddyCommand) {
+              await resetLanguageServers(workspace.getConfiguration("apama"), eplBuddyCommand);
+            }
+          }
+        }
+    }
+  });
 
-  // See if we can find a correlator.
-  const correlatorResolver = new ExecutableResolver("correlator", logger);
-  const eplbuddyResolver = new ExecutableResolver("eplbuddy", logger);
+  workspace.onDidChangeWorkspaceFolders(async () => {
+    logger.info("Workspace folders changes, reloading Language Server");
+    const eplBuddyCommand = await getCommandAsInterface(ApamaExecutables.EPLBUDDY);
+    if (eplBuddyCommand) {
+      await resetLanguageServers(workspace.getConfiguration("apama"), eplBuddyCommand);
+    }
+  });
 
-  let correlatorResolve;
-  let eplbuddyResolve;
-  if (userApamaHome != undefined) {
-    // If the user has specified an Apama Home, we only use that.
-    correlatorResolve = await correlatorResolver.resolve(
-      path.join(userApamaHome as string, "bin"),
-    );
-    eplbuddyResolve = await eplbuddyResolver.resolve(
-      path.join(userApamaHome as string, "bin"),
-    );
-  } else {
-    correlatorResolve = await correlatorResolver.resolve();
-    eplbuddyResolve = await eplbuddyResolver.resolve();
-  }
 
-  if (correlatorResolve.kind == "success") {
-    logger.info(`Found the correlator at ${correlatorResolve.path}`);
-  } else {
-    logger.info(
-      `Could not find Apama in your environment: you can configure the "Apama Home" preference to specify an install location.`,
-    );
-    return Promise.resolve();
-  }
 
   // Gives the directory of $APAMA_HOME/bin.
-  const apamaBin = path.dirname(correlatorResolve.path);
-  const apamaEnv: ApamaEnvironment = new ApamaEnvironment(apamaBin);
+  const correlatorExe = await determineIfApamaExists();
 
-  if (eplbuddyResolve.kind == "success") {
-    startLanguageServers(
-      config,
-      apamaEnv.getCommandAsInterface(ApamaExecutables.EPLBUDDY),
-    );
-  } else {
-    logger.info(
-      "Could not find eplbuddy, will not be launching Language Server.",
-    );
+  if (correlatorExe != false) {
+    const eplBuddyResolve = await determineIfEplBuddyExists(path.dirname(correlatorExe));
+      if (eplBuddyResolve.isOk()) {
+      const eplBuddyCommand = await getCommandAsInterface(ApamaExecutables.EPLBUDDY);
+      if (eplBuddyCommand) {
+        startLanguageServers(
+          workspace.getConfiguration("apama"),
+          eplBuddyCommand,
+        );
+      }
+    } else {
+      logger.info(
+        "Could not find eplbuddy, will not be launching Language Server.",
+      );
+    }
   }
-
-  const taskprov = new ApamaTaskProvider(logger, apamaEnv);
+  
+  const taskprov = new ApamaTaskProvider(logger);
   context.subscriptions.push(tasks.registerTaskProvider("apama", taskprov));
 
-  const provider = new ApamaDebugConfigurationProvider(logger, apamaEnv);
+  const provider = new ApamaDebugConfigurationProvider(logger);
   context.subscriptions.push(
     debug.registerDebugConfigurationProvider("apama", provider),
   );
   context.subscriptions.push(provider);
-  const commandprov = new ApamaCommandProvider(logger, apamaEnv, context);
+  const commandprov = new ApamaCommandProvider(logger, context);
   commands.push(commandprov);
 
   const projView = new ApamaProjectView(
-    apamaEnv,
     logger,
     context,
   );
@@ -119,6 +123,71 @@ export async function activate(context: ExtensionContext): Promise<void> {
   commands.forEach((command) => context.subscriptions.push(command));
 
   return Promise.resolve();
+}
+
+/**
+ * Determines whether an Apama can be found on this system.
+ * @returns
+ */
+export async function determineIfApamaExists(): Promise<false | string> {
+  // Note: the initial value of `workspace.getConfiguration` for "machine"-scoped values will
+  // pick up values from the "user" config, if an appropriate value doesn't exist on the host 
+  // config. However, following that initial load, it'll only pick up values from the host machine.
+  // This seems like a bug, but we're not going to deal with this, because the likelihood of this
+  // breaking users seems far-fetched.
+  const config = workspace.getConfiguration("apama");
+  const userApamaHome = config.get("apamaHome");
+
+  // See if we can find a correlator.
+  const correlatorResolver = new ExecutableResolver("correlator", logger);
+
+  // If the user has specified an Apama Home, we only use that.
+  const correlatorResolve = await correlatorResolver.resolve(
+    path.join(userApamaHome as string, "bin"),
+  );
+
+  if (correlatorResolve.isOk()) {
+    logger.info(`Found the correlator at ${correlatorResolve.value}`);
+    return Promise.resolve(correlatorResolve.value);
+  } else {
+    logger.info(
+      `Could not find Apama in your environment: you can configure the "Apama Home" setting to specify an install location.`,
+    );
+  }
+
+  return Promise.resolve(false);
+}
+
+/**
+ * Determines if an Apama Home directory contains an EPL Buddy executable, as some editions of Apama don't.
+ * Assumes that Apama Home has already been validated.
+ * @param apamaHome 
+ * @returns 
+ */
+async function determineIfEplBuddyExists(apamaHome: string) {
+    return Promise.resolve(new ExecutableResolver("eplbuddy", logger).resolve(apamaHome));
+} 
+
+/**
+ * Kills all existing Language Client instances, before telling it to start up again. 
+ * @param config
+ * @param eplBuddyCommand 
+ */
+async function resetLanguageServers(
+  config: WorkspaceConfiguration,
+  eplBuddyCommand: ApamaExecutableInterface
+): Promise<void> {
+  await killLanguageServers();
+  startLanguageServers(config, eplBuddyCommand);
+}
+
+async function killLanguageServers() {
+  logger.info("Killing existing language servers");
+  for (const client of servers.values()) {
+    await client.stop();
+  }
+  logger.info("Killed all previous language servers, starting up new ones");
+  servers.clear();
 }
 
 /** Start language servers (eplbuddy) for each workspace folder */

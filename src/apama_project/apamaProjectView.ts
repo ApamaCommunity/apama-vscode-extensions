@@ -22,8 +22,8 @@ import {
 } from "./apamaProject";
 import { ApamaRunner } from "../apama_util/apamarunner";
 import {
-  ApamaEnvironment,
   ApamaExecutables,
+  getCommandLine,
 } from "../apama_util/apamaenvironment";
 import { Logger } from "../logger/logger";
 
@@ -44,28 +44,16 @@ export class ApamaProjectView
 
   private fsWatcher: FileSystemWatcher;
   private delWatcher: FileSystemWatcher;
-  private apama_project: ApamaRunner;
-  private apama_deploy: ApamaRunner;
-
   //
   // Added facilities for multiple workspaces - this will hopefully allow
   // ssh remote etc to work better later on, plus allows some extra organisational
   // facilities....
   constructor(
-    private apamaEnv: ApamaEnvironment,
     private logger: Logger,
     private context: ExtensionContext,
   ) {
     const subscriptions: Disposable[] = [];
 
-    this.apama_project = new ApamaRunner(
-      "apama_project",
-      apamaEnv.getCommandLine(ApamaExecutables.PROJECT),
-    );
-    this.apama_deploy = new ApamaRunner(
-      "apama_deploy",
-      apamaEnv.getCommandLine(ApamaExecutables.DEPLOY),
-    );
     //project commands
     this.registerCommands();
 
@@ -103,6 +91,13 @@ export class ApamaProjectView
         commands.registerCommand(
           "apama.apamaToolCreateProject",
           async () => {
+            const apamaProjectCommand = await getCommandLine(ApamaExecutables.PROJECT);
+            if (!apamaProjectCommand) { return Promise.resolve(); }
+            const apama_project = new ApamaRunner(
+              "apama_project",
+              apamaProjectCommand
+            );
+
             // Dynamically get current workspace folders
             const workspaceFolders = workspace.workspaceFolders;
             
@@ -137,7 +132,7 @@ export class ApamaProjectView
             }
             
             // Create the project in the selected workspace
-            this.apama_project
+            apama_project
               .run(targetWorkspace.uri.fsPath, ["create", '.'])
               .then((result) => {
                 window.showInformationMessage(result.stdout);
@@ -156,6 +151,12 @@ export class ApamaProjectView
         commands.registerCommand(
           "apama.apamaToolAddBundles",
           async (project?: ApamaProject) => {
+            const apamaProjectCommand = await getCommandLine(ApamaExecutables.PROJECT);
+            if (!apamaProjectCommand) { return; }
+            const apama_project = new ApamaRunner(
+              "apama_project",
+              apamaProjectCommand
+            );
             // If project is not provided (called from Command Palette), prompt user to select one
             if (!project) {
               project = await this.promptForProject("Select a project to add bundles to");
@@ -164,7 +165,7 @@ export class ApamaProjectView
               }
             }
 
-            this.apama_project
+            apama_project
               .run(project.fsDir, ["list", "bundles"])
               .then((result) => {
                 const lines: string[] = result.stdout.split(/\r?\n/);
@@ -199,7 +200,7 @@ export class ApamaProjectView
                   commandArgs.push('"' + bundle.label.trim() + '"');
                 });
 
-                this.apama_project
+                apama_project
                   .run(project!.fsDir, commandArgs)
                   .then((result) => {
                     window.showInformationMessage(`${result.stdout}`);
@@ -217,6 +218,13 @@ export class ApamaProjectView
         commands.registerCommand(
           "apama.addRelativeBundle",
           async (project?: ApamaProject) => {
+            const apamaProjectCommand = await getCommandLine(ApamaExecutables.PROJECT);
+            if (!apamaProjectCommand) { return; }
+            const apama_project = new ApamaRunner(
+              "apama_project",
+              apamaProjectCommand
+            );
+
             // If project is not provided (called from Command Palette), prompt user to select one
             if (!project) {
               project = await this.promptForProject("Select a project to add a relative bundle to");
@@ -261,7 +269,7 @@ export class ApamaProjectView
             this.logger.info(`Adding bundle from: ${relativePath}`);
             
             // Run the apama_project command with the relative path
-            this.apama_project
+            apama_project
               .run(project.fsDir, [
                 "add",
                 "bundle",
@@ -323,8 +331,14 @@ export class ApamaProjectView
               }
             }
             
-            // Now remove the selected bundle
-            this.apama_project
+            const apamaProjectCommand = await getCommandLine(ApamaExecutables.PROJECT);
+            if (!apamaProjectCommand) {return Promise.resolve();}
+            const apama_project = new ApamaRunner(
+              "apama_project",
+              apamaProjectCommand
+            );
+
+            apama_project
               .run(bundle.fsDir, ["remove", "bundle", '"' + bundle.label + '"'])
               .then((result) => {
                 window.showInformationMessage(`${result.stdout}`);
@@ -390,6 +404,13 @@ export class ApamaProjectView
   
   /** Initialize projects from workspaces */
   async initializeProjects(): Promise<void> {
+    const apamaProjectCommand = await getCommandLine(ApamaExecutables.PROJECT, false);
+    if (!apamaProjectCommand) {return Promise.resolve();}
+    const apama_project = new ApamaRunner(
+      "apama_project",
+      apamaProjectCommand
+    );
+
     // Clear existing projects
     this.projects = [];
     
@@ -406,7 +427,7 @@ export class ApamaProjectView
       const workspaceProjects = await ApamaProject.scanProjects(
         this.logger,
         ws,
-        this.apama_project,
+        apama_project,
         this.context.asAbsolutePath("resources")
       );
 
