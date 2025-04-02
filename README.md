@@ -15,9 +15,9 @@ See also the [VSCode extension for PySys testing](https://marketplace.visualstud
 
 ## Getting started
 
-To use all the functionality provided by this extension, you need a full installation of Apama. If Apama is not installed, basic syntax highlighting is available but most other other features will not work. 
+To use all the functionality provided by this extension, you need a full installation of Apama that includes the "dev" tooling (e.g. one that includes `bin/engine_deploy`). If Apama is not installed, basic syntax highlighting is available but most other other features will not work. 
 
-It is strongly recommended to use the latest version of Apama. Support for Apama versions before 10.15.6.0 is not guaranteed (consider reverting to an older version of the extension if you are using an old version). You need to use an edition of Apama that include the "builder" tooling (e.g. `engine_deploy`), for example the "full edition" of 10.15. 
+It is strongly recommended to use the _latest_ version of Apama. Support for Apama versions before 10.15.6.1 is not guaranteed (consider reverting to an older version of the extension if you are using an old version). 
 
 The extension can run on Linux. It can also be installed on Windows, either directly (for Apama versions that have a Windows installation package) or using WSL (Windows Subsystem for Linux). 
 
@@ -26,12 +26,11 @@ If you do not have a Windows installation package or simply prefer to develop on
 
 See the VS Code documentation for detailed guidance on setting up WSL but the main steps are:
 
-* Install the latest version of [WSL](https://learn.microsoft.com/en-us/windows/wsl/install), using the **Debian** distribution of Linux. This may take some time and often requires a restart. Typical steps would be:
+* Install the latest version of [WSL](https://learn.microsoft.com/en-us/windows/wsl/install), using the **Debian** distribution of Linux. This may take some time and often requires a restart. See the Microsoft instructions for full details, but typical steps on a recent version of Windows would be:
   * Open a PowerShell terminal "as Administrator"
-  * `Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux`
   * `wsl --install`
   * `wsl --install -d Debian`
-* Open a WSL terminal (for example by opening `Debian` from the Start Menu) and install an Apama "dev" package for Linux.
+* Once installed, open a WSL terminal (for example by opening `Debian` from the Start Menu) and install Apama using the "dev" package for Linux.
   * For 10.15:
     * Identify the required package from the [download site](https://download.cumulocity.com/Apama/10.15), for example `apama-c8y-dev_10.15.*.*_amd64_linux.tar.gz`
     * Download the package by passing this URL to `wget` (you may need to run `sudo apt install wget` first, if it is not yet installed)
