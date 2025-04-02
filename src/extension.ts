@@ -32,7 +32,6 @@ import { ApamaCommandProvider } from "./apama_util/commands";
 import { Logger } from "./logger/logger";
 
 import { ExecutableResolver } from "./settings/ExecutableResolver";
-import { Err, Ok } from "neverthrow";
 
 /** VSCode clients for talking to each language server, keyed by workspace folder URI */
 const servers = new Map<string, LanguageClient>();
