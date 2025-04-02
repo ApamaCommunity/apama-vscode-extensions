@@ -2,18 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
 import { Logger } from "../logger/logger";
-import { ok, err, Ok, Err } from 'neverthrow';
-
-export enum ResolveErrorKind {
-  NotFound = "NOT_FOUND",
-  NotExecutable = "NOT_EXECUTABLE",
-  NotAccessible = "NOT_ACCESSIBLE",
-}
-
-export interface ResolveError {
-  path: string,
-  errorKind: ResolveErrorKind
-}
+import { ok, err } from 'neverthrow';
 
 /**
  * ExecutableResolver aims to find the provided executable on the system.
@@ -41,7 +30,7 @@ export class ExecutableResolver {
     this.logger = logger;
   }
 
-  public async resolve(userSpecifiedPath?: string): Promise<Ok<string, never> | Err<never, ResolveError>> {
+  public async resolve(userSpecifiedPath?: string) {
     if (userSpecifiedPath) {
       return await this.validatePath(
         path.join(path.normalize(userSpecifiedPath), this.executableName),
@@ -62,24 +51,21 @@ export class ExecutableResolver {
       : name;
   }
 
-  private async validatePath(filePath: string): Promise<Ok<string, never> | Err<never, ResolveError>> {
+  private async validatePath(filePath: string) {
     try {
       const stats = await fs.promises.stat(filePath);
 
       if (!stats.isFile()) {
-        return err({path: filePath, errorKind: ResolveErrorKind.NotFound});
+        return err({path: filePath, error: "Not a file"});
       }
 
       if (!this.isExecutable(stats)) {
-        return err({path: filePath, errorKind: ResolveErrorKind.NotExecutable});
+        return err({path: filePath, error: "Not an executable"});
       }
 
       return ok(path.resolve(filePath))
     } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === "ENOENT") {
-        return err({path: filePath, errorKind: ResolveErrorKind.NotFound})
-      }
-      return err({path: filePath, errorKind: ResolveErrorKind.NotAccessible})
+      return err({path: filePath, error: error})
     }
   }
 
@@ -90,7 +76,7 @@ export class ExecutableResolver {
     return Boolean(stats.mode & 0o111);
   }
 
-  private async findInPath(): Promise<Ok<string, never> | Err<never, ResolveError>> {
+  private async findInPath() {
     const envPath = process.env.PATH || "";
     const pathDirs = envPath
       .split(path.delimiter)
@@ -104,11 +90,11 @@ export class ExecutableResolver {
       }     
     }
 
-    return err({path: envPath, errorKind: ResolveErrorKind.NotFound})
+    return err({path: envPath, error: "Executable not found in any PATH location"})
 
   }
 
-  private async findInCommonLocations(): Promise<Ok<string, never> | Err<never, ResolveError>> {
+  private async findInCommonLocations() {
     for (const location of this.commonLocations) {
       const fullPath = path.join(location, this.executableName);
       const result = await this.validatePath(fullPath);
@@ -117,6 +103,6 @@ export class ExecutableResolver {
       }
     }
 
-    return err({errorKind: ResolveErrorKind.NotFound, path: this.commonLocations.join(path.delimiter)});
+    return err({error: "Executable not found in any common location", path: this.commonLocations.join(path.delimiter)});
   }
 }

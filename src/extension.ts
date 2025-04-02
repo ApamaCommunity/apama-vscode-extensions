@@ -31,7 +31,7 @@ import { ApamaProjectView } from "./apama_project/apamaProjectView";
 import { ApamaCommandProvider } from "./apama_util/commands";
 import { Logger } from "./logger/logger";
 
-import { ExecutableResolver, ResolveError } from "./settings/ExecutableResolver";
+import { ExecutableResolver } from "./settings/ExecutableResolver";
 import { Err, Ok } from "neverthrow";
 
 /** VSCode clients for talking to each language server, keyed by workspace folder URI */
@@ -165,7 +165,7 @@ export async function determineIfApamaExists(): Promise<false | string> {
  * @param apamaHome 
  * @returns 
  */
-async function determineIfEplBuddyExists(apamaHome: string): Promise<Ok<string, never> | Err<never, ResolveError>>{
+async function determineIfEplBuddyExists(apamaHome: string) {
     return Promise.resolve(new ExecutableResolver("eplbuddy", logger).resolve(apamaHome));
 } 
 
