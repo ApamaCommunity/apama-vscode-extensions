@@ -46,7 +46,7 @@ For Apama 26.x and higher there is no Windows installation package of Apama, so 
 
 ### Opening your first Apama project
 
-First ensure the Apama Extensions for Visual Studio Code are installed, and that you have an installation of Apama. Where possible, ensure Apama is installed to the default installation directory `/opt/cumulocity/Apama`, so that the location can be detected automatically. If you use a different location, you will need to configure the location of Apama home in the Apama extension's settings, and then reload the VSCode window before proceeding.
+First ensure the Apama Extensions for Visual Studio Code are installed, and that you have an installation of Apama. Where possible, ensure Apama is installed to the default installation directory `/opt/cumulocity/Apama`, so that the location can be detected automatically. If you use a different location, you will need to configure the location of Apama home in the Apama extension's settings.
 
 If you want to start with an **existing Apama project** you were already working on (or clone of a sample project), simply open the Apama project folder (that is, the directory with the `.project` and `.dependencies` files) in your VS Code workspace. Note that the Apama project files must be in the top level of that folder.
 
