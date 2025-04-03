@@ -87,7 +87,7 @@ export class ApamaProjectView
     if (this.context !== undefined) {
       this.context.subscriptions.push.apply(this.context.subscriptions, [
         
-        /** Create project */
+        /** Create project in existing workspace */
         commands.registerCommand(
           "apama.apamaToolCreateProject",
           async () => {
@@ -134,6 +134,65 @@ export class ApamaProjectView
             // Create the project in the selected workspace
             apama_project
               .run(targetWorkspace.uri.fsPath, ["create", '.'])
+              .then((result) => {
+                window.showInformationMessage(result.stdout);
+                this.logger.info(result);
+              })
+              .catch((err) => {
+                window.showErrorMessage(err.stderr);
+                this.logger.error(err);
+              });
+          },
+        ),
+        
+        /** Create project in a new folder */
+        commands.registerCommand(
+          "apama.apamaToolCreateProjectInNewFolder",
+          async () => {
+            const apamaProjectCommand = await getCommandLine(ApamaExecutables.PROJECT);
+            if (!apamaProjectCommand) { return Promise.resolve(); }
+            const apama_project = new ApamaRunner(
+              "apama_project",
+              apamaProjectCommand
+            );
+            
+            // First, use file picker to select the parent directory
+            const folderUri = await window.showOpenDialog({
+              canSelectFiles: false,
+              canSelectFolders: true,
+              canSelectMany: false,
+              openLabel: "Select Parent Directory",
+              title: "Select Parent Directory for New Apama Project"
+            });
+            
+            if (!folderUri || folderUri.length === 0) {
+              return; // User cancelled the folder selection
+            }
+            
+            const parentDir = folderUri[0].fsPath;
+            
+            // Then prompt for new folder name
+            const folderName = await window.showInputBox({
+              prompt: "Enter name for the new folder",
+              placeHolder: "folder-name"
+            });
+            
+            if (!folderName) {
+              return; // User cancelled the input
+            }
+            
+            // Set the parent directory as the working directory
+            const targetWorkspace = {
+              uri: folderUri[0],
+              name: path.basename(parentDir),
+              index: 0
+            };
+            
+            this.logger.info(`Creating project in new folder: ${path.join(parentDir, folderName)}`);
+            
+            // Create the project in the new folder
+            apama_project
+              .run(targetWorkspace.uri.fsPath, ["create", folderName])
               .then((result) => {
                 window.showInformationMessage(result.stdout);
                 this.logger.info(result);

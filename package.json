@@ -108,6 +108,15 @@
         }
       },
       {
+        "command": "apama.apamaToolCreateProjectInNewFolder",
+        "title": "Create Project in New Folder",
+        "category": "Apama",
+        "icon": {
+          "light": "resources/light/folder.svg",
+          "dark": "resources/dark/folder.svg"
+        }
+      },
+      {
         "command": "apama.refreshProjects",
         "title": "Refresh",
         "category": "Apama",
