@@ -26,6 +26,8 @@ import {
   getCommandLine,
 } from "../apama_util/apamaenvironment";
 import { Logger } from "../logger/logger";
+
+import * as path from "path";
 export class ApamaProjectView
   implements TreeDataProvider<string | ApamaProject | BundleItem>
 {
@@ -85,7 +87,7 @@ export class ApamaProjectView
     if (this.context !== undefined) {
       this.context.subscriptions.push.apply(this.context.subscriptions, [
         
-        /** Create project */
+        /** Create project in existing workspace */
         commands.registerCommand(
           "apama.apamaToolCreateProject",
           async () => {
@@ -142,19 +144,85 @@ export class ApamaProjectView
               });
           },
         ),
+        
+        /** Create project in a new folder */
+        commands.registerCommand(
+          "apama.apamaToolCreateProjectInNewFolder",
+          async () => {
+            const apamaProjectCommand = await getCommandLine(ApamaExecutables.PROJECT);
+            if (!apamaProjectCommand) { return Promise.resolve(); }
+            const apama_project = new ApamaRunner(
+              "apama_project",
+              apamaProjectCommand
+            );
+            
+            // First, use file picker to select the parent directory
+            const folderUri = await window.showOpenDialog({
+              canSelectFiles: false,
+              canSelectFolders: true,
+              canSelectMany: false,
+              openLabel: "Select Parent Directory",
+              title: "Select Parent Directory for New Apama Project"
+            });
+            
+            if (!folderUri || folderUri.length === 0) {
+              return; // User cancelled the folder selection
+            }
+            
+            const parentDir = folderUri[0].fsPath;
+            
+            // Then prompt for new folder name
+            const folderName = await window.showInputBox({
+              prompt: "Enter name for the new folder",
+              placeHolder: "folder-name"
+            });
+            
+            if (!folderName) {
+              return; // User cancelled the input
+            }
+            
+            // Set the parent directory as the working directory
+            const targetWorkspace = {
+              uri: folderUri[0],
+              name: path.basename(parentDir),
+              index: 0
+            };
+            
+            this.logger.info(`Creating project in new folder: ${path.join(parentDir, folderName)}`);
+            
+            // Create the project in the new folder
+            apama_project
+              .run(targetWorkspace.uri.fsPath, ["create", folderName])
+              .then((result) => {
+                window.showInformationMessage(result.stdout);
+                this.logger.info(result);
+              })
+              .catch((err) => {
+                window.showErrorMessage(err.stderr);
+                this.logger.error(err);
+              });
+          },
+        ),
 
         //
         // Add Bundle
         //
         commands.registerCommand(
           "apama.apamaToolAddBundles",
-          async (project: ApamaProject) => {
+          async (project?: ApamaProject) => {
             const apamaProjectCommand = await getCommandLine(ApamaExecutables.PROJECT);
-            if (!apamaProjectCommand) {return Promise.resolve();}
+            if (!apamaProjectCommand) { return; }
             const apama_project = new ApamaRunner(
               "apama_project",
               apamaProjectCommand
             );
+            // If project is not provided (called from Command Palette), prompt user to select one
+            if (!project) {
+              project = await this.promptForProject("Select a project to add bundles to");
+              if (!project) {
+                return; // User cancelled the selection
+              }
+            }
 
             apama_project
               .run(project.fsDir, ["list", "bundles"])
@@ -174,27 +242,105 @@ export class ApamaProjectView
                     displayList.push({ label: item });
                   }
                 });
+                // Allow multiple selections
                 return window.showQuickPick(displayList, {
-                  placeHolder: "Choose a bundle to add",
+                  placeHolder: "Choose bundles to add",
+                  canPickMany: true
                 });
               })
               .then((picked) => {
-                if (picked === undefined) {
+                if (!picked || picked.length === 0) {
                   return;
                 }
 
+                // Build command arguments with all selected bundles
+                const commandArgs = ["add", "bundle"];
+                picked.forEach(bundle => {
+                  commandArgs.push('"' + bundle.label.trim() + '"');
+                });
+
                 apama_project
-                  .run(project.fsDir, [
-                    "add",
-                    "bundle",
-                    '"' + picked.label.trim() + '"',
-                  ])
-                  .then((result) =>
-                    window.showInformationMessage(`${result.stdout}`),
-                  )
+                  .run(project!.fsDir, commandArgs)
+                  .then((result) => {
+                    window.showInformationMessage(`${result.stdout}`);
+                  })
                   .catch((err) => window.showErrorMessage(`${err.stderr}`));
               })
               .catch((err) => window.showErrorMessage(`${err.stderr}`));
+          },
+        ),
+
+        /** 
+         *  Add relative bundle.
+         *  This supports adding a bundle from the file system.
+         */ 
+        commands.registerCommand(
+          "apama.addRelativeBundle",
+          async (project?: ApamaProject) => {
+            const apamaProjectCommand = await getCommandLine(ApamaExecutables.PROJECT);
+            if (!apamaProjectCommand) { return; }
+            const apama_project = new ApamaRunner(
+              "apama_project",
+              apamaProjectCommand
+            );
+
+            // If project is not provided (called from Command Palette), prompt user to select one
+            if (!project) {
+              project = await this.promptForProject("Select a project to add a relative bundle to");
+              if (!project) {
+                return; // User cancelled the selection
+              }
+            }
+            
+            // Open file picker that only allows .bnd files
+            const fileUri = await window.showOpenDialog({
+              canSelectFiles: true,
+              canSelectFolders: false,
+              canSelectMany: false,
+              filters: {
+                'Bundle Files': ['bnd']
+              },
+              title: 'Select a bundle (.bnd) file to add'
+            });
+            
+            // If user cancelled the picker, return
+            if (!fileUri || fileUri.length === 0) {
+              return;
+            }
+            
+            const selectedFile = fileUri[0];
+            
+            // Get the path relative to the project directory
+            let relativePath = workspace.asRelativePath(selectedFile);
+            
+            // If the path is still absolute (happens when file is outside workspace),
+            // we need to calculate the relative path manually
+            if (selectedFile.fsPath === relativePath) {
+              try {
+                // Calculate relative path from project directory to the selected file
+                relativePath = path.relative(project.fsDir, selectedFile.fsPath);
+              } catch (error) {
+                window.showErrorMessage(`Failed to determine relative path: ${error}`);
+                return;
+              }
+            }
+            
+            this.logger.info(`Adding bundle from: ${relativePath}`);
+            
+            // Run the apama_project command with the relative path
+            apama_project
+              .run(project.fsDir, [
+                "add",
+                "bundle",
+                relativePath
+              ])
+              .then((result) => {
+                window.showInformationMessage(`Bundle added: ${result.stdout}`);
+              })
+              .catch((err) => {
+                window.showErrorMessage(`Failed to add bundle: ${err.stderr}`);
+                this.logger.error(err);
+              });
           },
         ),
 
@@ -203,7 +349,47 @@ export class ApamaProjectView
         //
         commands.registerCommand(
           "apama.apamaToolRemoveBundle",
-          async (bundle: BundleItem) => {
+          async (bundle?: BundleItem) => {
+            // If bundle is not provided (called from Command Palette), prompt user to select a project and bundle
+            if (!bundle) {
+              // First, select a project
+              const project = await this.promptForProject("Select a project to remove a bundle from");
+              if (!project) {
+                return; // User cancelled the project selection
+              }
+              
+              // Then, get the bundles for that project
+              try {
+                const bundles = await project.getBundlesFromProject();
+                
+                if (bundles.length === 0) {
+                  window.showInformationMessage(`No bundles found in project ${project.label}`);
+                  return;
+                }
+                
+                // Create items for quick pick
+                const bundleItems = bundles.map(bundle => ({
+                  label: bundle.label,
+                  bundle: bundle
+                }));
+                
+                // Show quick pick to select a bundle
+                const selected = await window.showQuickPick(bundleItems, {
+                  placeHolder: "Select a bundle to remove"
+                });
+                
+                // If user cancelled, return
+                if (!selected) {
+                  return;
+                }
+                
+                bundle = selected.bundle;
+              } catch (error) {
+                window.showErrorMessage(`Failed to get bundles: ${error}`);
+                return;
+              }
+            }
+            
             const apamaProjectCommand = await getCommandLine(ApamaExecutables.PROJECT);
             if (!apamaProjectCommand) {return Promise.resolve();}
             const apama_project = new ApamaRunner(
@@ -211,12 +397,11 @@ export class ApamaProjectView
               apamaProjectCommand
             );
 
-
             apama_project
               .run(bundle.fsDir, ["remove", "bundle", '"' + bundle.label + '"'])
-              .then((result) =>
-                window.showInformationMessage(`${result.stdout}`),
-              )
+              .then((result) => {
+                window.showInformationMessage(`${result.stdout}`);
+              })
               .catch((err) => window.showErrorMessage(`${err.stderr}`));
           },
         ),
@@ -240,11 +425,44 @@ export class ApamaProjectView
       ]);
     }
   }
+
+  /**
+   * Helper method to prompt the user to select a project
+   * Used when commands are invoked from the Command Palette without a project context
+   */
+  private async promptForProject(placeHolder: string): Promise<ApamaProject | undefined> {
+    // Make sure projects are initialized
+    await this.initializeProjects();
+    
+    // If no projects found, show error message
+    if (this.projects.length === 0) {
+      window.showErrorMessage("No Apama projects found in the workspace");
+      return undefined;
+    }
+    
+    // If only one project, return it directly
+    if (this.projects.length === 1) {
+      return this.projects[0];
+    }
+    
+    // Create items for quick pick
+    const projectItems = this.projects.map(project => ({
+      label: project.label,
+      description: project.fsDir,
+      project: project
+    }));
+    
+    // Show quick pick to select a project
+    const selected = await window.showQuickPick(projectItems, {
+      placeHolder: placeHolder
+    });
+    
+    // Return the selected project or undefined if cancelled
+    return selected ? selected.project : undefined;
+  }
   
   /** Initialize projects from workspaces */
   async initializeProjects(): Promise<void> {
-    this.logger.info("Initializing projects");
-
     const apamaProjectCommand = await getCommandLine(ApamaExecutables.PROJECT, false);
     if (!apamaProjectCommand) {return Promise.resolve();}
     const apama_project = new ApamaRunner(
