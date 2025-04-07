@@ -188,13 +188,13 @@ export class ApamaProjectView
               apamaProjectCommand
             );
             
-            // First, use file picker to select the parent directory
+            // Then use file picker to select the parent directory only
             const folderUri = await window.showOpenDialog({
               canSelectFiles: false,
               canSelectFolders: true,
               canSelectMany: false,
-              openLabel: "Select Parent Directory",
-              title: "Select Parent Directory for New Apama Project"
+              openLabel: "Select Parent Directory Only",
+              title: "Step 1/2: Select Parent Directory (NOT the project folder itself)"
             });
             
             if (!folderUri || folderUri.length === 0) {
@@ -203,10 +203,10 @@ export class ApamaProjectView
             
             const parentDir = folderUri[0].fsPath;
             
-            // Then prompt for new folder name
+            // Then prompt for new folder name (Step 2)
             const folderName = await window.showInputBox({
-              prompt: "Enter name for the new folder",
-              placeHolder: "folder-name"
+              prompt: "Step 2/2: Enter name for the new project folder (will be created inside the parent directory)",
+              placeHolder: "project-name"
             });
             
             if (!folderName) {
