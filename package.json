@@ -127,7 +127,7 @@
       },
       {
         "command": "apama.apamaToolAddBundles",
-        "title": "Add Bundle",
+        "title": "Add product bundle",
         "category": "Apama",
         "icon": {
           "light": "resources/light/add.svg",
@@ -136,7 +136,7 @@
       },
       {
         "command": "apama.addRelativeBundle",
-        "title": "Add Relative Bundle",
+        "title": "Add custom bundle",
         "category": "Apama",
         "icon": {
           "light": "resources/light/file.svg",
