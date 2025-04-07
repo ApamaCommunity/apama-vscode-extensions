@@ -15,6 +15,7 @@ import {
   TreeItemCollapsibleState,
   TreeItem,
   WorkspaceFolder,
+  Uri,
 } from "vscode";
 import {
   ApamaProject,
@@ -227,6 +228,24 @@ export class ApamaProjectView
               .then((result) => {
                 window.showInformationMessage(result.stdout);
                 this.logger.info(result);
+                
+                const newProjectPath = path.join(parentDir, folderName);
+                window.showInformationMessage(
+                  `Project created successfully. Add to workspace?`,
+                  "Yes",
+                  "No"
+                ).then(answer => {
+                  if (answer === "Yes") {
+                    // Add the folder to workspace
+                    const uri = Uri.file(newProjectPath);
+                    workspace.updateWorkspaceFolders(
+                      workspace.workspaceFolders ? workspace.workspaceFolders.length : 0,
+                      0,
+                      { uri: uri }
+                    );
+                    this.logger.info(`Added ${newProjectPath} to workspace`);
+                  }
+                });
               })
               .catch((err) => {
                 window.showErrorMessage(err.stderr);
