@@ -126,8 +126,8 @@
         }
       },
       {
-        "command": "apama.apamaToolAddBundles",
-        "title": "Add product bundle",
+        "command": "apama.bundleMenu",
+        "title": "Add bundle",
         "category": "Apama",
         "icon": {
           "light": "resources/light/add.svg",
@@ -135,13 +135,14 @@
         }
       },
       {
+        "command": "apama.apamaToolAddBundles",
+        "title": "Add product bundle",
+        "category": "Apama"
+      },
+      {
         "command": "apama.addRelativeBundle",
         "title": "Add custom bundle",
-        "category": "Apama",
-        "icon": {
-          "light": "resources/light/file.svg",
-          "dark": "resources/dark/file.svg"
-        }
+        "category": "Apama"
       },
       {
         "command": "apama.apamaToolRemoveBundle",
@@ -194,13 +195,8 @@
       "view/item/context": [
         {
           "when": "view == apamaProjects && viewItem == project",
-          "command": "apama.apamaToolAddBundles",
+          "command": "apama.bundleMenu",
           "group": "inline@2"
-        },
-        {
-          "when": "view == apamaProjects && viewItem == project",
-          "command": "apama.addRelativeBundle",
-          "group": "inline@3"
         },
         {
           "when": "view == apamaProjects && viewItem == bundle",
@@ -215,6 +211,10 @@
         },
         {
           "command": "apama.refreshProjects",
+          "when": "false"
+        },
+        {
+          "command": "apama.bundleMenu",
           "when": "false"
         }
       ]

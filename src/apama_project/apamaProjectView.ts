@@ -85,6 +85,37 @@ export class ApamaProjectView
 
   registerCommands(): void {
     if (this.context !== undefined) {
+      // Register the bundle menu command
+      this.context.subscriptions.push(
+        commands.registerCommand(
+          "apama.bundleMenu",
+          async (project?: ApamaProject) => {
+            // If project is not provided (called from Command Palette), prompt user to select one
+            if (!project) {
+              project = await this.promptForProject("Select a project to add bundles to");
+              if (!project) {
+                return; // User cancelled the selection
+              }
+            }
+
+            // Show quick pick with bundle options
+            const options = [
+              { label: "Add product bundle", command: "apama.apamaToolAddBundles" },
+              { label: "Add custom bundle", command: "apama.addRelativeBundle" }
+            ];
+
+            const selected = await window.showQuickPick(options, {
+              placeHolder: "Select bundle type to add"
+            });
+
+            if (selected) {
+              // Execute the selected command and pass the project
+              commands.executeCommand(selected.command, project);
+            }
+          }
+        )
+      );
+
       this.context.subscriptions.push.apply(this.context.subscriptions, [
         
         /** Create project in existing workspace */
