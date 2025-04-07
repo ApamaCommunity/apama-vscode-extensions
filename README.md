@@ -21,6 +21,17 @@ It is strongly recommended to use the _latest_ version of Apama. Support for Apa
 
 The extension can run on Linux. It can also be installed on Windows, typically using either directly (for the older Apama 10.15 release, which has a Windows installation package) or on any version of Apama using WSL (Windows Subsystem for Linux). 
 
+### Using with Development Containers
+[Development Containers](https://containers.dev/) (DevContainers) provide a consistent, isolated development environment inside a Docker container. 
+
+We provide a ready-to-use [DevContainer](https://github.com/Cumulocity-IoT/cumulocity-analytics-vsc-devcontainer) that includes:
+
+* The latest version of Apama
+* [EPL Apps Tools](https://github.com/Cumulocity-IoT/apama-eplapps-tools) for EPL Apps development
+* [Block SDK](https://github.com/Cumulocity-IoT/apama-analytics-builder-block-sdk) for Analytics Builder block development
+
+The versions of Apama & the SDKs can be configured: see the DevContainer README for more information.
+
 ### Installing on Linux
 
 Many features of this extension require installing the "dev" package of Apama.
