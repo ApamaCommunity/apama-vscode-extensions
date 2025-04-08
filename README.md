@@ -68,8 +68,9 @@ If you want to **create a new project**, make a directory for your project and o
 ## Limitations
 
 * Completion proposal are not yet available (except for basic snippet and history suggestions).
-* No support for multiple folders per workspace - there should be just one folder per workspace, and it should contain an Apama project (i.e. a `.project` and `.dependencies` file at the top level)
-* No incremental builds - all EPL files are rebuilt every time there is a change (although there is caching of the parsing phase for files that did not change). This may result in slow error markers (and high CPU utilization) when working on a large project on a low-powered laptop.
+* Files with non-ASCII characters may not work correctly since VSCode only supports utf-16 currently and EPL files are encoded in UTF-8
+* No incremental builds - all EPL files are rebuilt every time there is a change (although there is caching of the parsing phase for files that did not change). This may result in slow error markers (and high CPU utilization) when working on a large project on a low-powered laptop 
+
 
 ## License
 
