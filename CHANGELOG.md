@@ -1,5 +1,9 @@
 ## v2.1.0
-* Add support for automatically reloading the extension when the "Apama Home" configuration option is changed.
+* Added new Command Palette option `Create in Project New Folder` for easily creating a new project directory. 
+* Added support for automatically reloading the extension when the "Apama Home" configuration option is changed.
+* Added support for adding custom/non-product bundles such as the Analytics Builder Block SDK (by specifying a `bnd` file in a path relative to the project directory). 
+* Added commands to the Command Palette for adding/removing different kinds of bundles. 
+* Added the ability to add multiple product bundles at at time. 
 
 ## v2.0.0
 
