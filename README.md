@@ -10,7 +10,7 @@ See also the [VSCode extension for PySys testing](https://marketplace.visualstud
 
 * Syntax highlighting
 * Error/warn messages and problems
-* Adding bundles to an Apama project
+* Adding bundles to an Apama project, including product bundles and custom bundles such as the Analytics Builder Block SDK
 * Support for debugging and launching pure single-file and multi-file EPL applications in a correlator
 
 ## Getting started
@@ -63,7 +63,7 @@ First ensure the Apama Extensions for Visual Studio Code are installed, and that
 
 If you want to start with an **existing Apama project** you were already working on (or clone of a sample project), simply open the Apama project folder (that is, the directory with the `.project` and `.dependencies` files) in your VS Code workspace. Note that the Apama project files must be in the top level of that folder.
 
-If you want to **create a new project**, make a directory for your project and open it in VS Code. Then open the `Apama Projects` view and click the icon near the top right to `Create Project`. You can now use that view to add any bundles required for your project, for example the Cumulocity bundle, or for Analytics Kit block development a relative path such as `../apama-analytics-builder-block-sdk/bundles/AnalyticsBuilder.bnd`. Then use the main menu to create one or more `.mon` files for your EPL application or block. 
+If you want to **create a new project**, open the Command Palette and type `Apama: Create Project in New Folder` (alternatively you can create the empty folder outside of VS Code, add it to the workspace and click `Create Project` in the `Apama Projects` view). You can now use the `Apama Projects` view to add any bundles required for your project, whether product bundles (such as the Cumulocity bundle) or custom bundles (such as the Analytics Builder Block SDK). Then use the main menu to create one or more `.mon` files for your EPL application. 
 
 ## Limitations
 
