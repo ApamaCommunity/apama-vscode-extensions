@@ -44,7 +44,7 @@ For Apama 26.x and higher there is no Windows installation package of Apama, so 
 5. Using the command palette (`Ctrl+Shift+P`), select `Connect to WSL`
 6. You can now create a new project, or clone an existing project from your version control system (e.g. Git). For WSL, it is recommended to use a location under your Linux home directory (`~`) to store your Apama projects (this provides faster performance than mounting locations such as `C:\` from the Windows file system; don't worry, the Linux file system can still be accessed from Windows - see the WSL documentation for details)
 
-### Using Development Containers
+### Using a Development Container
 [Development Containers](https://containers.dev/) (DevContainers) provide a consistent, isolated development environment inside a Docker container. 
 
 We provide a ready-to-use [DevContainer](https://github.com/Cumulocity-IoT/cumulocity-analytics-vsc-devcontainer) that includes:
