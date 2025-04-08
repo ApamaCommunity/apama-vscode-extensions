@@ -19,9 +19,9 @@ To use all the functionality provided by this extension, you need a full install
 
 It is strongly recommended to use the _latest_ version of Apama. Support for Apama versions before 10.15.6.1 is not guaranteed (consider reverting to an older version of the extension if you are using an old version). 
 
-The extension can run on Linux. It can also be installed on Windows, typically using either directly (for the older Apama 10.15 release, which has a Windows installation package) or on any version of Apama using WSL (Windows Subsystem for Linux). 
+The extension can run on Linux. It can also be installed on Windows, typically using either directly (for the older Apama 10.15 release, which has a Windows installation package) or on any version of Apama using WSL (Windows Subsystem for Linux). The extension also works within a Development Container (DevContainer).
 
-### Installing on Linux
+### Using a Linux installation
 
 Many features of this extension require installing the "dev" package of Apama.
 
@@ -32,7 +32,7 @@ For the 10.15 release:
 2. Download the package by passing this URL to `wget` (you may need to run `sudo apt install wget` first, if it is not yet installed)
 3. Then unpack it to the default directory using: `sudo mkdir -p /opt/cumulocity && sudo tar -xf apama-dev_10.15.*_amd64_linux.tar.gz -C /opt/cumulocity` (hint: if using WSL as described below, you will need to enter the password for the root account you created during WSL setup)
 
-### Installing on Windows with WSL
+### Using a WSL installation on Windows
 For Apama 26.x and higher there is no Windows installation package of Apama, so we recomend using the VS Code [WSL](https://code.visualstudio.com/docs/remote/wsl) extension which allows VS Code running on Windows to use a Linux-based Apama installation package. 
 
 1. Install the latest version of [WSL](https://learn.microsoft.com/en-us/windows/wsl/install), using the **Debian** distribution of Linux. This may take some time and often requires a restart. See the WSL and also VS Code instructions for full details, but typical steps on a recent version of Windows would be:
@@ -44,7 +44,7 @@ For Apama 26.x and higher there is no Windows installation package of Apama, so 
 5. Using the command palette (`Ctrl+Shift+P`), select `Connect to WSL`
 6. You can now create a new project, or clone an existing project from your version control system (e.g. Git). For WSL, it is recommended to use a location under your Linux home directory (`~`) to store your Apama projects (this provides faster performance than mounting locations such as `C:\` from the Windows file system; don't worry, the Linux file system can still be accessed from Windows - see the WSL documentation for details)
 
-### Using with Development Containers
+### Using Development Containers
 [Development Containers](https://containers.dev/) (DevContainers) provide a consistent, isolated development environment inside a Docker container. 
 
 We provide a ready-to-use [DevContainer](https://github.com/Cumulocity-IoT/cumulocity-analytics-vsc-devcontainer) that includes:
