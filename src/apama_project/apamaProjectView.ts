@@ -288,7 +288,7 @@ export class ApamaProjectView
                       (_cap1, _cap2, cap3) => {
                         return cap3;
                       },
-                    );
+                    ).trim();
                     displayList.push({ label: item });
                   }
                 });
