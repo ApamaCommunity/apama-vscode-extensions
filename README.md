@@ -21,17 +21,6 @@ It is strongly recommended to use the _latest_ version of Apama. Support for Apa
 
 The extension can run on Linux. It can also be installed on Windows, typically using either directly (for the older Apama 10.15 release, which has a Windows installation package) or on any version of Apama using WSL (Windows Subsystem for Linux). 
 
-### Using with Development Containers
-[Development Containers](https://containers.dev/) (DevContainers) provide a consistent, isolated development environment inside a Docker container. 
-
-We provide a ready-to-use [DevContainer](https://github.com/Cumulocity-IoT/cumulocity-analytics-vsc-devcontainer) that includes:
-
-* The latest version of Apama
-* [EPL Apps Tools](https://github.com/Cumulocity-IoT/apama-eplapps-tools) for EPL Apps development
-* [Block SDK](https://github.com/Cumulocity-IoT/apama-analytics-builder-block-sdk) for Analytics Builder block development
-
-The versions of Apama & the SDKs can be configured: see the DevContainer README for more information.
-
 ### Installing on Linux
 
 Many features of this extension require installing the "dev" package of Apama.
@@ -54,6 +43,19 @@ For Apama 26.x and higher there is no Windows installation package of Apama, so 
 4. Open VS Code, and install the [Visual Studio Code Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack), and the [Apama Extension for VS Code](https://marketplace.visualstudio.com/items?itemName=ApamaCommunity.apama-extensions).
 5. Using the command palette (`Ctrl+Shift+P`), select `Connect to WSL`
 6. You can now create a new project, or clone an existing project from your version control system (e.g. Git). For WSL, it is recommended to use a location under your Linux home directory (`~`) to store your Apama projects (this provides faster performance than mounting locations such as `C:\` from the Windows file system; don't worry, the Linux file system can still be accessed from Windows - see the WSL documentation for details)
+
+### Using with Development Containers
+[Development Containers](https://containers.dev/) (DevContainers) provide a consistent, isolated development environment inside a Docker container. 
+
+We provide a ready-to-use [DevContainer](https://github.com/Cumulocity-IoT/cumulocity-analytics-vsc-devcontainer) that includes:
+
+* The latest version of Apama
+* [EPL Apps Tools](https://github.com/Cumulocity-IoT/apama-eplapps-tools) for EPL Apps development
+* [Block SDK](https://github.com/Cumulocity-IoT/apama-analytics-builder-block-sdk) for Analytics Builder block development
+
+The versions of Apama & the SDKs can be configured: see the DevContainer README for more information.
+
+To use DevContainers, you will need a containerization environment on your computer. [Microsoft's documentation](https://code.visualstudio.com/remote/advancedcontainers/docker-options) should give you some guidance in that area.
 
 ### Opening your first Apama project
 
