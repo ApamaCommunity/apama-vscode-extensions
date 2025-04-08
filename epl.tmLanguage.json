@@ -25,7 +25,7 @@
 					"include": "#monitor"
 				},
 				{
-					"include": "#keywords"
+					"include": "#specialaction"
 				},
 				{
 					"include": "#array"
@@ -67,7 +67,35 @@
 					"include": "#method"
 				},
 				{
+					"include": "#keywords"
+				},
+
+				{
 					"include": "#bareVariable"
+				}
+			]
+		},
+		"specialaction": {
+			"patterns": [
+				{
+					"match": "(\\s?)(action)(\\s+)(onload|ondie|onunload|onBeginRecovery|onConcludeRecovery)(\\s?)",
+					"captures": {
+						"1": {
+							"name": "text.epl"
+						},
+						"2": {
+							"name": "entity.name.type.epl"
+						},
+						"3": {
+							"name": "text.epl"
+						},
+						"4": {
+							"name": "keyword.epl"
+						},
+						"5": {
+							"name": "text.epl"
+						}
+					}
 				}
 			]
 		},
@@ -238,7 +266,7 @@
 		"keywords": {
 			"patterns": [
 				{
-					"match": "(\\b)(import|rstream|with|from|in|partition|retain|every|group|by|having|unique|where|within|equals|join|or|and|xor|not|select|constant|as|at|if|then|else|spawn|emit|route|enqueue|send|to|print|log|die|while|do|return|break|continue|for|try|catch|ifpresent|switch|case|default|throw|new|on|all|wait)(\\b)",
+					"match": "(\\b)(action|aggregate|all|and|any|as|at|boolean|bounded|break|by|case|catch|completed|constant|continue|currentTime|decimal|default|dictionary|die|else|emit|enqueue|equals|event|every|false|float|for|from|group|having|if|ifpresent|import|in|integer|join|log|monitor|new|not|on|optional|or|package|partition|persistent|print|retain|return|returns|route|rstream|select|send|sequence|spawn|static|stream|string|switch|then|throw|to|true|try|unbounded|unique|unmatched|using|wait|where|while|wildcard|with|within|xor)(\\b)",
 					"name": "keyword.epl"
 				}
 			]
@@ -342,7 +370,7 @@
 		"types": {
 			"patterns": [
 				{
-					"match": "(\\b)(decimal|float|integer|string|boolean|any|listener|channel|context)(\\b)",
+					"match": "(\\b)(decimal|float|integer|string|boolean|any|listener|channel|context|returns)(\\b)",
 					"captures": {
 						"1": {
 							"name": "text.epl"
