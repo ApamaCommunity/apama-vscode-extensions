@@ -193,8 +193,8 @@ export class ApamaProjectView
               canSelectFiles: false,
               canSelectFolders: true,
               canSelectMany: false,
-              openLabel: "Select Parent Directory Only",
-              title: "Step 1/2: Select Parent Directory (NOT the project folder itself)"
+              openLabel: "Select Parent Directory",
+              title: "Step 1/2: Select an existing directory to use as the parent for the new project directory"
             });
             
             if (!folderUri || folderUri.length === 0) {
