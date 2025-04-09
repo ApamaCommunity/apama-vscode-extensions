@@ -138,13 +138,9 @@ The animation below shows how to create a non-default tasks (allowing multiple c
 
 The `apama_project` tool can be used to create projects which are compatible with all of Apama's development tooling.
 
-![project support](images/4-project-create.gif)
-
 ## Add bundles
 
 You can add Bundles and instances to the project using the UI.
-
-![tasks](images/6-project-addbundle.gif)
 
 ## Remove bundles
 
@@ -157,15 +153,3 @@ You can remove Bundles and instances from the project using the UI.
 You can deploy the project using the UI and then run that project in a correlator. N.B. currently you may need to create or move a configuration file into the root of the deployed directory.
 
 ![tasks](images/8-project-deploy.gif)
-
-## Add breakpoints
-
-You can add breakpoints to the code for debugging. These are limited to line-based breakpoints currently.
-
-![tasks](images/9-set-breakpoints.gif)
-
-## Debug
-
-Debugging the application also follows the standard vscode patterns.
-
-![tasks](images/10-debug.gif)
