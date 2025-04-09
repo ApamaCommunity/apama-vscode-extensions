@@ -147,11 +147,11 @@ export async function determineIfApamaExists(): Promise<false | string> {
   );
 
   if (correlatorResolve.isOk()) {
-    logger.info(`Found the correlator at ${correlatorResolve.value}`);
+    logger.debug(`Found the correlator at ${correlatorResolve.value}`);
     return Promise.resolve(correlatorResolve.value);
   } else {
     logger.info(
-      `Could not find Apama in your environment: you can configure the "Apama Home" setting to specify an install location.`,
+      `Could not find Apama in your environment: you can configure the "Apama Home" setting to specify the install location.`,
     );
   }
 
@@ -212,9 +212,6 @@ async function startLanguageServers(
   };
   // We could also assign any top-level settings we want to here as well
 
-  // TODO: to implement folder change detection, remove existing clients that do not match any current workspace folder AND if there was a singleton and now isn't restart it 
-  // since it needs a different documentSelector pattern
-
   if (workspace.workspaceFolders) {
     let serverVersion = undefined;
     for (const folder of workspace.workspaceFolders)
@@ -247,14 +244,23 @@ async function startLanguageServers(
       serverVersion = languageClient.initializeResult?.serverInfo?.version;
     }
 
+    if (!serverVersion) serverVersion = "(unknown older version)";
+
+    logger.info(`XXStarted ${workspace.workspaceFolders.length} language servers, using Apama v${serverVersion} at ${path.dirname(path.dirname(eplBuddyCommand.command))}`);
+
     // We won't keep incrementing this forever - this is to just nudge people towards the latest Apama version that has "decent" VSCode support 
     // to give the best impression of what this extension can do. 
-    // Currently 10.15.6.1 is the best, but we will likely end up resting on 10.15.6.2 or .3.
-    if (!serverVersion || ["10.15.6.0"].includes(serverVersion)) { 
+    // Currently 10.15.6.2 is the best, and may be where we land
+    // NB: the intention is to permit both 10.15 and later (26.x) versions without a warning, but if someone if using one of the really 
+    // old versions that doesn't really work with this extension version then we should discourage them
+    // We use a startsWith approach since the version numbers here are not semver, vary in length across major releases, and contain extra build number we don't want to check
+    if (serverVersion == "(unknown older version)" 
+      || serverVersion.startsWith("10.15.6.1") 
+    ) { 
       logger.warn(`Old Apama version detected: ${serverVersion}`);
-      if (!globalState.get<boolean>("apama.alreadyShownNotification.oldApama")) {
-        globalState.update("apama.alreadyShownNotification.oldApama", true);
-        window.showInformationMessage("You are using an old version - consider installing the latest Apama version to get a better experience in Visual Studio Code");
+      if (globalState.get<string>("apama.alreadyShownNotification.oldApamaVersion") != serverVersion) {
+        globalState.update("apama.alreadyShownNotification.oldApamaVersion", serverVersion);
+        window.showWarningMessage("You are using an old version of Apama - please install the latest version to get a better experience with this extension");
       }
     }
   }
