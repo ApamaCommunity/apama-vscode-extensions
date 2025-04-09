@@ -51,7 +51,6 @@ export class ApamaTaskProvider implements TaskProvider {
   }
 
   private runCorrelator(): Task {
-    //default options for running
     const correlator = new Task(
       {
         type: "apama",
@@ -73,8 +72,7 @@ export class ApamaTaskProvider implements TaskProvider {
   }
 
   private runReceive(): Task {
-    //default options for running
-    const correlator = new Task(
+    const engine_receive = new Task(
       {
         type: "apama",
         task: "engine_receive",
@@ -89,13 +87,11 @@ export class ApamaTaskProvider implements TaskProvider {
       ),
       [],
     );
-    correlator.group = TaskGroup.Test;
-    return correlator;
+    engine_receive.group = TaskGroup.Test;
+    return engine_receive;
   }
 
-  runEngineWatch(): Task {
-    //TODO: get user defined options?
-    //let options = windows.showInputBox(...etc...);
+  private runEngineWatch(): Task {
     const engine_watch = new Task(
       {
         type: "apama",
