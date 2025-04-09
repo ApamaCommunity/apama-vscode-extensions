@@ -1,8 +1,7 @@
 {
 	"fileTypes": [
 		"epl",
-		"mon",
-		"evt"
+		"mon"
 	],
 	"name": "apamaepl",
 	"patterns": [
