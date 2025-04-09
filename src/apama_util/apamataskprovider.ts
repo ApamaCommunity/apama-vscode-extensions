@@ -5,10 +5,10 @@ import {
   Task,
   ShellExecution,
   TaskGroup,
+  TaskScope,
 } from "vscode";
 import { ApamaExecutables, getCommandLine } from "./apamaenvironment";
 import { Logger } from "../logger/logger";
-
 export class ApamaTaskProvider implements TaskProvider {
   constructor(
     private logger: Logger,
@@ -19,27 +19,31 @@ export class ApamaTaskProvider implements TaskProvider {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _token?: CancellationToken | undefined,
   ) {
+
     // The actual task will start on the correct port
     // it will change the name to add the port as a suffix
     const port = _task.definition.port;
     const task = _task.definition.task;
     const cmdline = _task.definition.cmdline;
+    let scope = _task.scope;
+
+    if (scope === undefined) {
+      scope = TaskScope.Workspace;
+    }
 
     // Substitute the executable with the current known Apama executable.
     const executable = await getCommandLine(cmdline);
 
-    if (port && !executable) {
-      this.logger.appendLine("Running on port " + port);
-      const finalTask = new Task(
-        _task.definition,
-        task + "-" + port,
-        "apama",
-        new ShellExecution(executable + [" -p", port].join(" ")),
-        [],
-      );
-      return finalTask;
-    }
-    return undefined;
+    this.logger.appendLine("Running on port " + port);
+    const finalTask = new Task(
+      _task.definition,
+      scope,
+      task + "-" + port,
+      "apama",
+      new ShellExecution(executable + [" -p", port].join(" ")),
+      [],
+    );
+    return finalTask;
   }
 
   provideTasks(): ProviderResult<Task[]> {
@@ -54,7 +58,8 @@ export class ApamaTaskProvider implements TaskProvider {
         task: ApamaExecutables.CORRELATOR,
         port: "15903",
         cmdline: ApamaExecutables.CORRELATOR,
-      },
+      }, 
+      TaskScope.Workspace,
       "correlator",
       "apama",
       new ShellExecution(
@@ -62,6 +67,7 @@ export class ApamaTaskProvider implements TaskProvider {
       ),
       [],
     );
+
     correlator.group = TaskGroup.Test;
     return correlator;
   }
@@ -75,6 +81,7 @@ export class ApamaTaskProvider implements TaskProvider {
         port: "15903",
         cmdline: ApamaExecutables.RECEIVE,
       },
+      TaskScope.Workspace,
       "engine_receive",
       "apama",
       new ShellExecution(
@@ -96,6 +103,7 @@ export class ApamaTaskProvider implements TaskProvider {
         port: "15903",
         cmdline: ApamaExecutables.WATCH,
       },
+      TaskScope.Workspace,
       "engine_watch",
       "apama",
       new ShellExecution(ApamaExecutables.WATCH),
