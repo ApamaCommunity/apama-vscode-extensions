@@ -10,8 +10,8 @@ See also the [VSCode extension for PySys testing](https://marketplace.visualstud
 
 * Syntax highlighting
 * Error/warn messages and problems
+* Creating an Apama project
 * Adding bundles to an Apama project, including product bundles and custom bundles such as the Analytics Builder Block SDK
-* Support for debugging and launching pure single-file and multi-file EPL applications in a correlator
 
 ## Getting started
 
@@ -71,7 +71,6 @@ If you want to **create a new project**, open the Command Palette and type `Apam
 * Files with non-ASCII characters may not work correctly since VSCode only supports utf-16 currently and EPL files are encoded in UTF-8
 * No incremental builds - all EPL files are rebuilt every time there is a change (although there is caching of the parsing phase for files that did not change). This may result in slow error markers (and high CPU utilization) when working on a large project on a low-powered laptop 
 
-
 ## License
 
 Copyright (c) 2020-present Cumulocity GmbH
@@ -87,69 +86,3 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
-## Features
-
-### EPL Syntax highlighting
-
-![example code](images/mainpage.PNG)
-
-### Settings
-
-There are various settings available for the extension. All the Apama configuration entries are prefixed 'Apama', and searching for 'Apama' will show all of them.
-
-* apamaHome contains the path to the installation directory of the version you wish to use.
-* debugHost is the default host for a correlator started for debug (allowing remote instance).
-* debugPort is the default port for a correlator started for debug.
-
-### Advanced syntax highlighting and error reporting
-
-This extension supports using a Language Server for advanced syntax highlighting and error reporting for users using Apama 10.15.6.1 and later. 
-
-![tasks](images/11-diagnostics.gif)
-
-### Snippets
-
-There are various snippets defined in the extension to make writing code easier.
-
-![Snippets](images/1-snippets.gif)
-
-### Tasks: correlator, inject monitor, and send event
-
-Tasks can be created for running correlators on specific ports. The commands to inject EPL and send events also support these ports. Additionally there are tasks for engine_watch and engine_receive that can also be set up.
-
-The animation below shows the default operation of the tasks.
-
-![correlator](images/2-runcorr-inject.gif)
-
-### Send Event file
-
-Once you have a correlator executing some EPL then you can send event files to it with a right-click.
-
-![events](images/3-evtfile-send.gif)
-
-### Create Tasks
-
-The animation below shows how to create a non-default tasks (allowing multiple correlators on different ports for example).
-
-![tasks](images/5-tasks-create.gif)
-
-### Create Project
-
-The `apama_project` tool can be used to create projects which are compatible with all of Apama's development tooling.
-
-### Add bundles
-
-You can add Bundles and instances to the project using the UI.
-
-### Remove bundles
-
-You can remove Bundles and instances from the project using the UI.
-
-![tasks](images/7-project-rmbundle.gif)
-
-### Deploy project
-
-You can deploy the project using the UI and then run that project in a correlator. N.B. currently you may need to create or move a configuration file into the root of the deployed directory.
-
-![tasks](images/8-project-deploy.gif)
