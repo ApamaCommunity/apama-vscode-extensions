@@ -42,7 +42,13 @@ export class ApamaCommandProvider {
                 runner.run(
                   ".",
                   ["-p", userInput.toString()].concat(monFile.fsPath),
-                );
+                ).then( (result) => {
+                  window.showInformationMessage(result.stdout);
+                  this.logger.info(result.stdout);
+                }).catch( (err) => {
+                  window.showErrorMessage(err);
+                  this.logger.error(err);
+                })
               }
             }
             // TODO?: add option to specify mon file name to inject in command palette
@@ -71,7 +77,13 @@ export class ApamaCommandProvider {
                 runner.run(
                   ".",
                   ["-p", portInput.toString()].concat(evtFile.fsPath),
-                );
+                ).then( (result) => {
+                  window.showInformationMessage(result.stdout);
+                  this.logger.info(result.stdout);
+                }).catch( (err) => {
+                  window.showErrorMessage(err);
+                  this.logger.error(err);
+                });
               }
               // Calling engine send from command palette
               else {
@@ -130,7 +142,13 @@ export class ApamaCommandProvider {
               runner.run(
                 ".",
                 ["-p", port.toString()].concat(userInput),
-              );
+              ).then( (result) => {
+                window.showInformationMessage(result.stdout);
+                this.logger.info(result.stdout);
+              }).catch( (err) => {
+                window.showErrorMessage(err);
+                this.logger.error(err);
+              });
             }
           }
         }),
