@@ -49,25 +49,12 @@ export async function activate(context: ExtensionContext): Promise<void> {
   const commands: Disposable[] = [];
 
   logger.appendLine("Started Apama Extension");
-
+  
   workspace.onDidChangeConfiguration(async (configurationevent) => {
     if (configurationevent.affectsConfiguration("apama.apamaHome")) {
       logger.info("Detected configuration change on `apama.apamaHome` variable, reloading");
       // We have no idea if the new `apamaHome` value is usable, so we go through the entire validation process again.
-        const correlatorExe = await determineIfApamaExists();
-        if (correlatorExe === false) {
-          window.showErrorMessage("Could not locate Apama, exiting existing language servers");
-          killLanguageServers();
-          return Promise.resolve();
-        } else {
-          const eplBuddyResolve = await determineIfEplBuddyExists(path.dirname(correlatorExe));
-          if (eplBuddyResolve.isOk()) {
-            const eplBuddyCommand = await getCommandAsInterface(ApamaExecutables.EPLBUDDY);
-            if (eplBuddyCommand) {
-              await resetLanguageServers(workspace.getConfiguration("apama"), eplBuddyCommand);
-            }
-          }
-        }
+      await resetLanguageServers(true);
     }
   });
 
@@ -75,31 +62,12 @@ export async function activate(context: ExtensionContext): Promise<void> {
     logger.info("Workspace folders changes, reloading Language Server");
     const eplBuddyCommand = await getCommandAsInterface(ApamaExecutables.EPLBUDDY);
     if (eplBuddyCommand) {
-      await resetLanguageServers(workspace.getConfiguration("apama"), eplBuddyCommand);
+      await resetLanguageServers(false);
     }
   });
 
 
-
-  // Gives the directory of $APAMA_HOME/bin.
-  const correlatorExe = await determineIfApamaExists();
-
-  if (correlatorExe != false) {
-    const eplBuddyResolve = await determineIfEplBuddyExists(path.dirname(correlatorExe));
-      if (eplBuddyResolve.isOk()) {
-      const eplBuddyCommand = await getCommandAsInterface(ApamaExecutables.EPLBUDDY);
-      if (eplBuddyCommand) {
-        startLanguageServers(
-          workspace.getConfiguration("apama"),
-          eplBuddyCommand,
-        );
-      }
-    } else {
-      logger.info(
-        "Could not find eplbuddy, will not be launching Language Server.",
-      );
-    }
-  }
+  resetLanguageServers(false);
   
   const taskprov = new ApamaTaskProvider(logger);
   context.subscriptions.push(tasks.registerTaskProvider("apama", taskprov));
@@ -169,24 +137,38 @@ async function determineIfEplBuddyExists(apamaHome: string) {
 } 
 
 /**
- * Kills all existing Language Client instances, before telling it to start up again. 
- * @param config
- * @param eplBuddyCommand 
+ * Kills any existing Language Client instances, before telling it to start up again. 
+ * @param showMessageIfNoInstallation Whether to display a message ot the user if the install dir does not exist. e.g. We would do this after a change in install dir, but not on startup 
  */
-async function resetLanguageServers(
-  config: WorkspaceConfiguration,
-  eplBuddyCommand: ApamaExecutableInterface
-): Promise<void> {
-  await killLanguageServers();
-  startLanguageServers(config, eplBuddyCommand);
+export async function resetLanguageServers(showMessageIfNoInstallation: boolean): Promise<void> {
+
+  // Gives the directory of $APAMA_HOME/bin.
+  const correlatorExe = await determineIfApamaExists();
+  if (correlatorExe === false) {
+    if (showMessageIfNoInstallation) window.showErrorMessage("Could not locate Apama - enhanced language capabilities are disabled");
+    await killLanguageServers();
+    return Promise.resolve();
+  } else {
+    const eplBuddyResolve = await determineIfEplBuddyExists(path.dirname(correlatorExe));
+    if (eplBuddyResolve.isOk()) {
+      const eplBuddyCommand = await getCommandAsInterface(ApamaExecutables.EPLBUDDY);
+      if (eplBuddyCommand) {
+        await killLanguageServers();
+        startLanguageServers(workspace.getConfiguration("apama"), eplBuddyCommand);
+      }
+    }
+  }
 }
 
 async function killLanguageServers() {
-  logger.info("Killing existing language servers");
+  if (servers.size === 0) return;
+
+  logger.info(`Stopping ${servers.size} existing language servers`);
   for (const client of servers.values()) {
     await client.stop();
+    await client.dispose();
   }
-  logger.info("Killed all previous language servers, starting up new ones");
+  logger.info("All previous language servers stopped");
   servers.clear();
 }
 
@@ -246,7 +228,7 @@ async function startLanguageServers(
 
     if (!serverVersion) serverVersion = "(unknown older version)";
 
-    logger.info(`XXStarted ${workspace.workspaceFolders.length} language servers, using Apama v${serverVersion} at ${path.dirname(path.dirname(eplBuddyCommand.command))}`);
+    logger.info(`Started ${workspace.workspaceFolders.length} language servers, using Apama v${serverVersion} at ${path.dirname(path.dirname(eplBuddyCommand.command))}`);
 
     // We won't keep incrementing this forever - this is to just nudge people towards the latest Apama version that has "decent" VSCode support 
     // to give the best impression of what this extension can do. 
