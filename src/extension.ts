@@ -138,7 +138,7 @@ async function determineIfEplBuddyExists(apamaHome: string) {
 
 /**
  * Kills any existing Language Client instances, before telling it to start up again. 
- * @param showMessageIfNoInstallation Whether to display a message ot the user if the install dir does not exist. e.g. We would do this after a change in install dir, but not on startup 
+ * @param showMessageIfNoInstallation Whether to display a message to the user if the install dir does not exist. e.g. We would do this after a change in install dir, but not on startup 
  */
 export async function resetLanguageServers(showMessageIfNoInstallation: boolean): Promise<void> {
 
