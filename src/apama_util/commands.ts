@@ -42,7 +42,13 @@ export class ApamaCommandProvider {
                 runner.run(
                   ".",
                   ["-p", userInput.toString()].concat(monFile.fsPath),
-                );
+                ).then( (result) => {
+                  window.showInformationMessage(result.stdout);
+                  this.logger.info(result.stdout);
+                }).catch( (err) => {
+                  window.showErrorMessage(err);
+                  this.logger.error(err);
+                })
               }
             }
             // TODO?: add option to specify mon file name to inject in command palette
