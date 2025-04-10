@@ -78,8 +78,7 @@
         "id": "apamaepl",
         "extensions": [
           ".mon",
-          ".epl",
-          ".evt"
+          ".epl"
         ],
         "configuration": "./language-configuration.json"
       }
@@ -118,7 +117,16 @@
       },
       {
         "command": "apama.refreshProjects",
-        "title": "Refresh",
+        "title": "Refresh Projects View",
+        "category": "Apama",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "apama.forceRebuild",
+        "title": "Force Rebuild",
         "category": "Apama",
         "icon": {
           "light": "resources/light/refresh.svg",

@@ -9,6 +9,7 @@ import {
 import { ChildProcess, spawn } from "child_process";
 import { Writable } from "stream";
 import { Logger } from "../logger/logger";
+import { resetLanguageServers } from "../extension";
 
 export class ApamaCommandProvider {
   public constructor(
@@ -22,6 +23,16 @@ export class ApamaCommandProvider {
     if (this.context !== undefined) {
       const port: any = workspace.getConfiguration("apama").get("debugPort");
       this.context.subscriptions.push.apply(this.context.subscriptions, [
+
+
+        commands.registerCommand(
+          "apama.forceRebuild",
+          async () => {
+            await resetLanguageServers(true);
+          },
+        ),
+
+
         //
         // engine_inject command
         //
