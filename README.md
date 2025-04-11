@@ -67,6 +67,15 @@ The versions of Apama and the SDKs can be configured: see the DevContainer READM
 
 To use DevContainers, you will need a containerization environment on your computer. [Microsoft's VS Code documentation](https://code.visualstudio.com/remote/advancedcontainers/docker-options) should give you some guidance in that area.
 
+### macOS
+For users on macOS (Intel or Apple Silicon), we recommend using [colima](https://github.com/abiosoft/colima) and the DevContainer approach mentioned above.
+
+This is currently an x86 image, but Apama will eventually distribute an ARM64 image. 
+
+An alternative for users wanting a more permament installation would be use [lima](https://github.com/lima-vm/lima) to create a x86 Debian VM, and to follow the instructions in "Using a WSL installation on Windows" to configure the environment. In the future, it will be possible to use a native ARM64 VM.
+
+This [page](https://github.com/lima-vm/lima/discussions/1890) contains information on connecting via SSH to your Lima VM.
+
 ### Opening your first Apama project
 
 First ensure the Apama Extension for Visual Studio Code is installed, and that you have an installation of Apama. Where possible, ensure Apama is installed to the default installation directory `/opt/cumulocity/Apama`, so that the location can be detected automatically. If you use a different location, you will need to configure the location of Apama home in the Apama extension's settings.
