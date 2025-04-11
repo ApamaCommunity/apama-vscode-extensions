@@ -72,22 +72,6 @@ For users on macOS (Intel or Apple Silicon), we recommend using [colima](https:/
 
 This is currently an x86 image.
 
-#### Advanced macOS setup
-
-An alternative for users wanting a more permament installation would be use [lima](https://github.com/lima-vm/lima) to create a x86 Debian VM, and to follow the instructions in "Using a WSL installation on Windows" to configure the environment. 
-
-To create a Debian x86 VM using Lima:
-
-```
-limactl create --name debian-x86 --arch x86_64 --rosetta template://debian-12
-```
-
-To connect to your Lima VM using VS Code, run the following command, and then connect to "lima-debian-x86" using the "Remote SSH" extension. ([Source](https://github.com/lima-vm/lima/discussions/1890) for this information).
-
-```
-echo -e "\nInclude ${LIMA_HOME:-$HOME/.lima}/debian-x86/ssh.config" >> ~/.ssh/config
-```
-
 ### Opening your first Apama project
 
 First ensure the Apama Extension for Visual Studio Code is installed, and that you have an installation of Apama. Where possible, ensure Apama is installed to the default installation directory `/opt/cumulocity/Apama`, so that the location can be detected automatically. If you use a different location, you will need to configure the location of Apama home in the Apama extension's settings.
