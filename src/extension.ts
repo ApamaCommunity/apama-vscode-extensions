@@ -108,11 +108,15 @@ export async function determineIfApamaExists(): Promise<false | string> {
 
   // See if we can find a correlator.
   const correlatorResolver = new ExecutableResolver("correlator", logger);
+  let correlatorResolve;
+  
+  if (userApamaHome != undefined && userApamaHome != "") {
+    // If the user has specified an Apama Home, we only use that.
+    correlatorResolve = await correlatorResolver.resolve(path.join(userApamaHome as string, "bin"));
+  } else {
+    correlatorResolve = await correlatorResolver.resolve();
+  }
 
-  // If the user has specified an Apama Home, we only use that.
-  const correlatorResolve = await correlatorResolver.resolve(
-    path.join(userApamaHome as string, "bin"),
-  );
 
   if (correlatorResolve.isOk()) {
     logger.debug(`Found the correlator at ${correlatorResolve.value}`);

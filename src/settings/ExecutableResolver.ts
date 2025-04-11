@@ -37,11 +37,6 @@ export class ExecutableResolver {
       );
     }
 
-    const pathResolved = await this.findInPath();
-    if (pathResolved.isOk()) {
-      return pathResolved; // Return the Result directly, don't wrap it in another ok()
-    }
-
     return await this.findInCommonLocations();
   }
 
