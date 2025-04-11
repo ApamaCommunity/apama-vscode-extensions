@@ -72,6 +72,8 @@ For users on macOS (Intel or Apple Silicon), we recommend using [colima](https:/
 
 This is currently an x86 image.
 
+#### Advanced macOS setup
+
 An alternative for users wanting a more permament installation would be use [lima](https://github.com/lima-vm/lima) to create a x86 Debian VM, and to follow the instructions in "Using a WSL installation on Windows" to configure the environment. 
 
 To create a Debian x86 VM using Lima:
