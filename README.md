@@ -6,6 +6,8 @@ For more information about Apama and EPL please visit the [Apama Community](http
 
 This extension is provided as-is and without warranty or support. It does not constitute part of any product. Users are free to use, fork and modify it, subject to the license agreement. We welcome contributions (though we may not include every contribution in the main project).
 
+![Overview screenshot](images/overview.png)
+
 ## Features of the plugin
 
 * Syntax highlighting
@@ -17,12 +19,8 @@ This extension is provided as-is and without warranty or support. It does not co
 
 There are some known limitations:
 * Advanced content assist features such as completion proposals are not currently provided (except for basic snippet and history suggestions)
-* Files with non-ASCII characters may not work correctly (since VSCode only supports UTF-16 currently and EPL files are encoded in UTF-8)
+* Files with non-ASCII characters may not work correctly
 * No incremental builds - all EPL files are rebuilt every time there is a change (although there is caching of the parsing phase for files that did not change). This may result in slow problem markers (and high CPU utilization) when working on very large projects on a low-powered laptop, though performance is reasonable for most cases. Also note that each project opened in VS Code will likely consume a few hundred MB of memory
-
-Here's a screenshot showing how the extension looks:
-
-![Overview screenshot](images/feature-overview.gif)
 
 ## Getting started
 
