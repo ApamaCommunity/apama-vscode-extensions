@@ -1,6 +1,6 @@
-# Apama extension for EPL development in VSCode
+# Apama Extensions for Visual Studio Code
 
-A community-developed extension for using Visual Studio Code to develop Apama Streaming Analytics applications.
+A community-developed extension for using Visual Studio Code to develop Apama Streaming Analytics applications in EPL.
 
 For more information about Apama and EPL please visit the [Apama Community](https://www.cumulocity.com/product/apama-community-edition/) website or the [Apama product documentation](https://cumulocity.com/apama/docs/latest). To ask questions about Apama or this extension, use the [Apama community forum](https://techcommunity.cumulocity.com/tag/streaming-analytics-apama).
 
@@ -71,7 +71,7 @@ To use DevContainers, you will need a containerization environment on your compu
 
 ### Opening your first Apama project
 
-First ensure the Apama Extensions for Visual Studio Code are installed, and that you have an installation of Apama. Where possible, ensure Apama is installed to the default installation directory `/opt/cumulocity/Apama`, so that the location can be detected automatically. If you use a different location, you will need to configure the location of Apama home in the Apama extension's settings.
+First ensure the Apama Extension for Visual Studio Code is installed, and that you have an installation of Apama. Where possible, ensure Apama is installed to the default installation directory `/opt/cumulocity/Apama`, so that the location can be detected automatically. If you use a different location, you will need to configure the location of Apama home in the Apama extension's settings.
 
 If you want to start with an **existing Apama project** you were already working on (or clone of a sample project), simply open the Apama project folder (that is, the directory with the `.project` and `.dependencies` files) in your VS Code workspace. Note that the Apama project files must be in the top level of that folder.
 
