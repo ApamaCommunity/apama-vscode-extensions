@@ -32,5 +32,16 @@ If working on `eplbuddy`, adding the following to `.vscode/settings.json` in the
 ## Testing
 More effort needs to be put into building a suitable testsuite for the extension. 
 
+## Documentation
+Use README to tell users about supported features (this will be used as the content in the marketplace for end-users), and CHANGELOG to list changes to this extension. 
+
+Note that the marketplace uses links to the images from the default (main) GitHub branch, so if we remove any existing images they will disappear from both current and previous marketplace versions. 
+
 ## Releasing
-TODO: describe how to publish to the marketplace
+1. Perform manual sanity testing for all changed aspects
+2. Check the README and CHANGELOG are up to date (and free of spelling/formatting errors), including any screenshots in the README
+3. Ensure the proposed version follows semver guidelines for the proposed set of changes since the last release (in `package.json` and `CHANGELOG.md`)
+4. Go to the [Releases](https://github.com/ApamaCommunity/apama-vscode-extensions/releases) tag and create a new release named "vX.X.X" using the same version as `package.json`
+5. Copy the list of changes from the CHANGELOG, the publish the release
+6. Monitor the GitHub Action for publishing to ensure it succeeded. After it completes note that it often takes a long time (maybe an hour or so) before the new version is shown in the marketplace
+7. Set the next (planned) version number in `package.json` and `CHANGELOG.md`
