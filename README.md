@@ -70,11 +70,21 @@ To use DevContainers, you will need a containerization environment on your compu
 ### macOS
 For users on macOS (Intel or Apple Silicon), we recommend using [colima](https://github.com/abiosoft/colima) and the DevContainer approach mentioned above.
 
-This is currently an x86 image, but Apama will eventually distribute an ARM64 image. 
+This is currently an x86 image.
 
-An alternative for users wanting a more permament installation would be use [lima](https://github.com/lima-vm/lima) to create a x86 Debian VM, and to follow the instructions in "Using a WSL installation on Windows" to configure the environment. In the future, it will be possible to use a native ARM64 VM.
+An alternative for users wanting a more permament installation would be use [lima](https://github.com/lima-vm/lima) to create a x86 Debian VM, and to follow the instructions in "Using a WSL installation on Windows" to configure the environment. 
 
-This [page](https://github.com/lima-vm/lima/discussions/1890) contains information on connecting via SSH to your Lima VM.
+To create a Debian x86 VM using Lima:
+
+```
+limactl create --name debian-x86 --arch x86_64 --rosetta template://debian-12
+```
+
+To connect to your Lima VM using VS Code, run the following command, and then connect to "lima-debian-x86" using the "Remote SSH" extension. ([Source](https://github.com/lima-vm/lima/discussions/1890) for this information).
+
+```
+echo -e "\nInclude ${LIMA_HOME:-$HOME/.lima}/debian-x86/ssh.config" >> ~/.ssh/config
+```
 
 ### Opening your first Apama project
 
