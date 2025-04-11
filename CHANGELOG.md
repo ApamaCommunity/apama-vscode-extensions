@@ -5,7 +5,7 @@
 * Added commands to the Command Palette for adding/removing different kinds of bundles. 
 * Added `Force Rebuild` to the Command Palette, which restarts the Apama language servers in case something went wrong. 
 * Added the ability to add multiple product bundles at once.
-* Fix the EPL syntax highlighting to use the correct set of keywords. 
+* Fixed the EPL syntax highlighting to use the correct set of keywords. 
 
 ## v2.0.0
 
