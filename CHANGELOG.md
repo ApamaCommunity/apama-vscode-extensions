@@ -4,7 +4,7 @@
 * Added support for adding custom/non-product bundles such as the Analytics Builder Block SDK (by specifying a `bnd` file in a path relative to the project directory). 
 * Added commands to the Command Palette for adding/removing different kinds of bundles. 
 * Added `Force Rebuild` to the Command Palette, which restarts the Apama language servers in case something went wrong. 
-* Added the ability to add multiple product bundles at at time. 
+* Added the ability to add multiple product bundles at once. 
 
 ## v2.0.0
 
