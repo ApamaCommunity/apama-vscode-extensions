@@ -1,4 +1,4 @@
-# Apama Extensions for Visual Studio Code
+# Apama Extension for Visual Studio Code
 
 A community-developed extension for using Visual Studio Code to develop Apama Streaming Analytics applications in EPL.
 
