@@ -4,9 +4,9 @@ A community-developed extension for using Visual Studio Code to develop Apama St
 
 For more information about Apama and EPL please visit the [Apama Community](https://www.cumulocity.com/product/apama-community-edition/) website or the [Apama product documentation](https://cumulocity.com/apama/docs/latest). To ask questions about Apama or this extension, use the [Apama community forum](https://techcommunity.cumulocity.com/tag/streaming-analytics-apama).
 
-This extension is provided as-is and without warranty or support. It does not constitute part of any product. Users are free to use, fork and modify it, subject to the license agreement. We welcome contributions (though we may not include every contribution in the main project).
-
 ![Overview screenshot](images/overview.png)
+
+This extension is provided as-is and without warranty or support. It does not constitute part of any product. Users are free to use, fork and modify it, subject to the license agreement. We welcome contributions (though we may not include every contribution in the main project).
 
 ## Features of the plugin
 
