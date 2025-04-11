@@ -67,6 +67,11 @@ The versions of Apama and the SDKs can be configured: see the DevContainer READM
 
 To use DevContainers, you will need a containerization environment on your computer. [Microsoft's VS Code documentation](https://code.visualstudio.com/remote/advancedcontainers/docker-options) should give you some guidance in that area.
 
+### Using the extension on macOS
+For users on macOS (Intel or Apple Silicon), we recommend using [colima](https://github.com/abiosoft/colima) and the DevContainer approach mentioned above.
+
+This is currently an x86 image.
+
 ### Opening your first Apama project
 
 First ensure the Apama Extension for Visual Studio Code is installed, and that you have an installation of Apama. Where possible, ensure Apama is installed to the default installation directory `/opt/cumulocity/Apama`, so that the location can be detected automatically. If you use a different location, you will need to configure the location of Apama home in the Apama extension's settings.
