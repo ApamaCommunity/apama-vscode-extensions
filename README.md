@@ -11,7 +11,7 @@ This extension is provided as-is and without warranty or support. It does not co
 ## Features of the plugin
 
 * Syntax highlighting
-* Error/warning messages in the "Problems" view
+* Error/warning messages in the `Problems` view
 * Inserting some common EPL code snippets - e.g. start typing `monitor`, `event` or `for` and you will be prompted to automatically insert the boilerplate code for a new monitor, event declaration or `for` loop
 * Creating an "Apama project", and adding bundles to it from the `Apama Projects` view or the command palette. This can be used for both product EPL/connectivity bundles and custom bundles such as the Analytics Builder Block SDK
 * Displaying EPL monitors, events, actions and fields for the current file in the "Outline" view 
