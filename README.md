@@ -14,7 +14,7 @@ This extension is provided as-is and without warranty or support. It does not co
 * Error/warning messages in the `Problems` view
 * Inserting some common EPL code snippets - e.g. start typing `monitor`, `event` or `for` and you will be prompted to automatically insert the boilerplate code for a new monitor, event declaration or `for` loop
 * Creating an "Apama project", and adding bundles to it from the `Apama Projects` view or the command palette. This can be used for both product EPL/connectivity bundles and custom bundles such as the Analytics Builder Block SDK
-* Displaying EPL monitors, events, actions and fields for the current file in the "Outline" view 
+* Displaying EPL monitors, events, actions and fields for the current file in the `Outline` view 
 * Jumping to the definition of any top-level EPL symbol (events, actions, monitors etc) by name. For example press `Ctrl+T` and begin typing the name of any action or event in the current workspace and you can quickly jump to the line and position where it is defined in the editor. This is a great way to quickly navigate around your codebase, and also to view the ApamaDoc for the EPL API you are using
 
 There are some known limitations:
