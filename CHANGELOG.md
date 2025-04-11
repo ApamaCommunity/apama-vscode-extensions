@@ -1,3 +1,6 @@
+## v2.1.1
+* Fixed a bug where the default install location for Apama was never searched.
+
 ## v2.1.0
 * Added new Command Palette option `Create in Project New Folder` for easily creating a new project directory. 
 * Added support for automatically reloading the extension when the "Apama Home" configuration option is changed.
