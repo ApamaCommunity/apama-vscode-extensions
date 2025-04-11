@@ -67,7 +67,7 @@ The versions of Apama and the SDKs can be configured: see the DevContainer READM
 
 To use DevContainers, you will need a containerization environment on your computer. [Microsoft's VS Code documentation](https://code.visualstudio.com/remote/advancedcontainers/docker-options) should give you some guidance in that area.
 
-### macOS
+### Using the extension on macOS
 For users on macOS (Intel or Apple Silicon), we recommend using [colima](https://github.com/abiosoft/colima) and the DevContainer approach mentioned above.
 
 This is currently an x86 image.
