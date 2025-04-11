@@ -26,8 +26,7 @@ Here's a screenshot showing how the extension looks:
 
 ## Getting started
 
-To use all the functionality provided by this extension, you need a full installation of Apama that includes the "dev"/"builder" tooling (it must include `bin/engine_deploy`). If Apama is not installed, basic syntax highlighting is available but most other other features will not work. 
-
+To use all the functionality provided by this extension, you need a full installation of Apama that includes the "dev"/"builder" tooling (it must include `bin/engine_deploy`). If Apama is not installed, basic syntax highlighting is available but most other features will not work. 
 It is strongly recommended to use the _latest_ version of Apama, and the minimum recommended version is **Apama 10.15.6.2**. The current extension version is not intended to be used with earlier versions of Apama. 
 
 The extension can run on Linux. It can also be used on Windows, typically with WSL (Windows Subsystem for Linux)... or if using the older Apama 10.15 release which has a Windows installation package it can be used directly with a local Windows installation. The extension can also be used with a Development Container (DevContainer).
