@@ -1,7 +1,7 @@
 {
   "publisher": "ApamaCommunity",
   "name": "apama-extensions",
-  "displayName": "Apama Extension for Visual Studio Code",
+  "displayName": "Apama",
   "description": "Support for writing Apama Streaming Analytics applications in EPL",
   "version": "2.1.2",
   "license": "Apache-2.0",
