@@ -28,6 +28,8 @@ To use all the functionality provided by this extension, you need a full install
 
 The extension can run on Linux. It can also be used on Windows, typically with WSL (Windows Subsystem for Linux)... or if using the older Apama 10.15 release which has a Windows installation package it can be used directly with a local Windows installation. The extension can also be used with a Development Container (DevContainer).
 
+If using on a Remote platform (i.e. WSL, SSH or DevContainers), the extension needs to be installed on the Remote Host.
+
 ### Using a Linux installation
 
 Many features of this extension require installing Apama, using one of the `dev` packages.
