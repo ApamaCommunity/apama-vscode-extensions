@@ -3,7 +3,7 @@
   "name": "apama-extensions",
   "displayName": "Apama Extension for Visual Studio Code",
   "description": "Support for writing Apama Streaming Analytics applications in EPL",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
