@@ -50,9 +50,10 @@ For Apama 26.x and higher there is no Windows installation package of Apama, so 
     * `wsl --install`
     * `wsl --install -d Debian`
 3. Once installed, open a Debian WSL terminal (for example by opening `Debian` from the Start Menu) and install Apama using the `dev` package for Linux using the instructions above. 
-4. Open VS Code, and install the [Visual Studio Code Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack), and the [Apama Extension for VS Code](https://marketplace.visualstudio.com/items?itemName=ApamaCommunity.apama-extensions).
+4. Open VS Code, and install the [Visual Studio Code Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack).
 5. Using the command palette (`Ctrl+Shift+P`), select `Connect to WSL`
-6. You can now create a new project, or clone an existing project from your version control system (e.g. Git). For WSL, it is recommended to use a location under your Linux home directory (`~`) to store your Apama projects (this provides faster performance than mounting locations such as `C:\` from the Windows file system; don't worry, the Linux file system can still be accessed from Windows - see the WSL documentation for details)
+6. Install the [Apama Extension for VS Code](https://marketplace.visualstudio.com/items?itemName=ApamaCommunity.apama-extensions). This is installed on the Remote VSCode instance, so will need to be installed for every remote host that you use this on.
+7. You can now create a new project, or clone an existing project from your version control system (e.g. Git). For WSL, it is recommended to use a location under your Linux home directory (`~`) to store your Apama projects (this provides faster performance than mounting locations such as `C:\` from the Windows file system; don't worry, the Linux file system can still be accessed from Windows - see the WSL documentation for details)
 
 ### Using a Development Container
 
