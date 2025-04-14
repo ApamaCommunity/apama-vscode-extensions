@@ -8,7 +8,7 @@ import {
   EventEmitter,
   Event,
   TreeView,
-  FileSystemWatcher,
+  FileSystemWatcher, RelativePattern,
   ExtensionContext,
   QuickPickItem,
   TextDocument,
@@ -43,8 +43,7 @@ export class ApamaProjectView
   // eslint-disable-next-line
   private treeView: TreeView<{}>;
 
-  private fsWatcher: FileSystemWatcher;
-  private delWatcher: FileSystemWatcher;
+  private watchers: Map<string, FileSystemWatcher> = new Map(); // Map workspace URI to watcher
   //
   // Added facilities for multiple workspaces - this will hopefully allow
   // ssh remote etc to work better later on, plus allows some extra organisational
@@ -58,30 +57,75 @@ export class ApamaProjectView
     //project commands
     this.registerCommands();
 
-    //this file is created/updated/deleted as projects come and go and depends on the "current" set of file systems
-    this.fsWatcher = workspace.createFileSystemWatcher("**/*.dependencies");
-    //but for deletions of the entire space we need
-    this.delWatcher = workspace.createFileSystemWatcher("**/*"); //if you delete a directory it will not trigger all contents
-    //handlers
-    this.fsWatcher.onDidCreate((_item) => {
-      this.refresh();
-    });
-    this.delWatcher.onDidDelete(() => {
-      this.refresh();
-    });
-    this.fsWatcher.onDidChange((_item) => {
-      this.refresh();
-    });
+    // Set up watchers for existing workspace folders and listen for changes
+    this.updateWatchers();
     
     // Listen for workspace folder changes (added or removed folders)
-    workspace.onDidChangeWorkspaceFolders(() => {
-      this.refresh();
-    });
+    workspace.onDidChangeWorkspaceFolders(() => this.updateWatchers());
 
     //the component
     this.treeView = window.createTreeView("apamaProjects", {
       treeDataProvider: this,
     });
+  }
+  /**
+   * Dispose of resources used by the view (specifically file watchers).
+   */
+  dispose(): void {
+    this.watchers.forEach(watcher => watcher.dispose());
+    this.watchers.clear();
+    this.logger.info("Disposed ApamaProjectView file watchers.");
+  }
+
+  /**
+   * Creates, updates, and removes file watchers based on the current workspace folders.
+   * Ensures watchers only monitor the root `.dependencies` file for each folder.
+   */
+  private updateWatchers(): void {
+    const currentFolders = new Set<string>();
+    (workspace.workspaceFolders || []).forEach(folder => currentFolders.add(folder.uri.toString()));
+
+    // Remove watchers for folders that no longer exist
+    this.watchers.forEach((watcher, uri) => {
+      if (!currentFolders.has(uri)) {
+        this.logger.info(`Disposing watcher for removed folder: ${uri}`);
+        watcher.dispose();
+        this.watchers.delete(uri);
+      }
+    });
+
+    // Add watchers for new folders
+    (workspace.workspaceFolders || []).forEach(folder => {
+      const uriString = folder.uri.toString();
+      if (!this.watchers.has(uriString)) {
+        this.logger.info(`Creating watcher for folder: ${uriString}`);
+        // Watch only the .dependencies file at the root of this specific folder
+        const watcher = workspace.createFileSystemWatcher(
+          new RelativePattern(folder, ".dependencies")
+        );
+
+        // Trigger refresh on create, change, or delete of the root .dependencies file
+        watcher.onDidCreate(() => {
+          this.logger.info(`.dependencies created in ${uriString}, refreshing projects.`);
+          this.refresh();
+        });
+        watcher.onDidChange(() => {
+          this.logger.info(`.dependencies changed in ${uriString}, refreshing projects.`);
+          this.refresh();
+        });
+        watcher.onDidDelete(() => {
+          this.logger.info(`.dependencies deleted from ${uriString}, refreshing projects.`);
+          this.refresh();
+        });
+
+        this.watchers.set(uriString, watcher);
+        // Note: We might need to add watcher to context.subscriptions if managing disposal there,
+        // but manual disposal in updateWatchers and dispose() is also fine.
+      }
+    });
+
+    // Initial refresh after updating watchers
+    this.refresh();
   }
 
   registerCommands(): void {
@@ -533,14 +577,18 @@ export class ApamaProjectView
     
     // Scan for projects in each workspace
     for (const ws of workspaceFolders) {
-      const workspaceProjects = await ApamaProject.scanProjects(
+      // Check this workspace folder for a project at its root
+      const project = await ApamaProject.scanProjects(
         this.logger,
         ws,
         apama_project,
         this.context.asAbsolutePath("resources")
       );
 
-      this.projects.push(...workspaceProjects);
+      // If a project was found (not undefined), add it to the list
+      if (project) {
+        this.projects.push(project);
+      }
     }
   }
 
