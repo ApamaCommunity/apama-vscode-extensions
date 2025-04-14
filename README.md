@@ -24,21 +24,20 @@ There are some known limitations:
 
 ## Getting started
 
-To use all the functionality provided by this extension, you need a full installation of Apama that includes the "dev"/"builder" tooling (it must include `bin/engine_deploy`). If Apama is not installed, basic syntax highlighting is available but most other features will not work. 
-It is strongly recommended to use the _latest_ version of Apama, and the minimum recommended version is **Apama 10.15.6.2**. The current extension version is not intended to be used with earlier versions of Apama. 
+To use all the functionality provided by this extension, you need a full installation of Apama that includes the "dev"/"builder" tooling (it must include `bin/engine_deploy`). If Apama is not installed, basic syntax highlighting is available but most other features will not work. It is strongly recommended to use the _latest_ version of Apama, and the minimum recommended version is **Apama 10.15.6.2**. The current extension version is not intended to be used with earlier versions of Apama. 
 
 The extension can run on Linux. It can also be used on Windows, typically with WSL (Windows Subsystem for Linux)... or if using the older Apama 10.15 release which has a Windows installation package it can be used directly with a local Windows installation. The extension can also be used with a Development Container (DevContainer).
 
 ### Using a Linux installation
 
-Many features of this extension require installing Apama, using the `dev` package.
+Many features of this extension require installing Apama, using one of the `dev` packages.
 
 For release 26.x and higher, install the `dev` (and optionally `apama-python`) Debian packages from the [Apama Repository](https://download.cumulocity.com/Apama/Debian/)
 
 For the 10.15 release:
-1. Identify the required package from the [download site](https://download.cumulocity.com/Apama/10.15), for example `apama-c8y-dev_10.15.*.*_amd64_linux.tar.gz`
+1. Identify the required package from the [download site](https://download.cumulocity.com/Apama/10.15), for example `apama-c8y-dev_10.15.*.*_amd64_linux.tar.gz` (or `apama-dev_10.15.*.*_amd64_linux.tar.gz` for non-Cumulocity applications)
 2. Download the package by passing this URL to `wget` (you may need to run `sudo apt install wget` first, if it is not yet installed)
-3. Then unpack it to the default directory using: `sudo mkdir -p /opt/cumulocity && sudo tar -xf apama-dev_10.15.*_amd64_linux.tar.gz -C /opt/cumulocity` (hint: if using WSL as described below, you will need to enter the password for the root account you created during WSL setup)
+3. Then unpack it to the default directory using: `sudo mkdir -p /opt/cumulocity && sudo tar -xf apama-*_amd64_linux.tar.gz -C /opt/cumulocity` (hint: if using WSL as described below, you will need to enter the password for the root account you created during WSL setup)
 
 ### Using a WSL installation on Windows
 
@@ -76,9 +75,9 @@ This is currently an x86 image.
 
 First ensure the Apama Extension for Visual Studio Code is installed, and that you have an installation of Apama. Where possible, ensure Apama is installed to the default installation directory `/opt/cumulocity/Apama`, so that the location can be detected automatically. If you use a different location, you will need to configure the location of Apama home in the Apama extension's settings.
 
-If you want to start with an **existing Apama project** you were already working on (or clone of a sample project), simply open the Apama project folder (that is, the directory with the `.project` and `.dependencies` files) in your VS Code workspace. Note that the Apama project files must be in the top level of that folder.
-
 If you want to **create a new project**, open the Command Palette and type `Apama: Create Project in New Folder` (alternatively you can create the empty folder outside of VS Code, add it to the workspace and click `Create Project` in the `Apama Projects` view). You can now use the `Apama Projects` view to add any bundles required for your project, whether product bundles (such as the Cumulocity bundle) or custom bundles (such as the [Analytics Builder Block SDK](https://github.com/Cumulocity-IoT/apama-analytics-builder-block-sdk) or [EPL Apps Tools](https://github.com/Cumulocity-IoT/apama-eplapps-tools)). Then use the main menu to create one or more `.mon` files for your EPL application. 
+
+If you want to start with an **existing Apama project** you were already working on (or a clone of a sample project), simply open the Apama project folder (that is, the directory with the `.project` file) in your VS Code workspace. Note that the Apama project files must be in the top level of that folder. If you do not yet have a `.project` file (to mark the folder as an Apama project), open the Command Palette and type `Apama: Create Project` to create the project files.
 
 ## License
 
