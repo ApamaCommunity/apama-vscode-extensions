@@ -342,53 +342,66 @@ export class ApamaProjectView
               }
             }
             
-            // Open file picker that only allows .bnd files
-            const fileUri = await window.showOpenDialog({
+            // Open file picker that allows selecting multiple .bnd files
+            const fileUris = await window.showOpenDialog({
               canSelectFiles: true,
               canSelectFolders: false,
-              canSelectMany: false,
+              canSelectMany: true,
               filters: {
                 'Bundle Files': ['bnd']
               },
-              title: 'Select a bundle (.bnd) file to add'
+              title: 'Select bundle (.bnd) files to add'
             });
             
             // If user cancelled the picker, return
-            if (!fileUri || fileUri.length === 0) {
+            if (!fileUris || fileUris.length === 0) {
               return;
             }
             
-            const selectedFile = fileUri[0];
-            
-            // Get the path relative to the project directory
-            let relativePath = workspace.asRelativePath(selectedFile);
-            
-            // If the path is still absolute (happens when file is outside workspace),
-            // we need to calculate the relative path manually
-            if (selectedFile.fsPath === relativePath) {
-              try {
-                // Calculate relative path from project directory to the selected file
-                relativePath = path.relative(project.fsDir, selectedFile.fsPath);
-              } catch (error) {
-                window.showErrorMessage(`Failed to determine relative path: ${error}`);
-                return;
+            // Process each selected file
+            const addBundlePromises = fileUris.map(async (selectedFile) => {
+              // Get the path relative to the project directory
+              let relativePath = workspace.asRelativePath(selectedFile);
+              
+              // If the path is still absolute (happens when file is outside workspace),
+              // we need to calculate the relative path manually
+              if (selectedFile.fsPath === relativePath) {
+                try {
+                  // Calculate relative path from project directory to the selected file
+                  relativePath = path.relative(project.fsDir, selectedFile.fsPath);
+                } catch (error) {
+                  window.showErrorMessage(`Failed to determine relative path for ${selectedFile.fsPath}: ${error}`);
+                  return Promise.reject(error);
+                }
               }
-            }
-            
-            this.logger.info(`Adding bundle from: ${relativePath}`);
-            
-            // Run the apama_project command with the relative path
-            apama_project
-              .run(project.fsDir, [
+              
+              this.logger.info(`Adding bundle from: ${relativePath}`);
+              
+              // Run the apama_project command with the relative path
+              return apama_project.run(project.fsDir, [
                 "add",
                 "bundle",
                 relativePath
-              ])
-              .then((result) => {
-                window.showInformationMessage(`Bundle added: ${result.stdout}`);
+              ]);
+            });
+            
+            // Execute all bundle additions and handle results
+            Promise.allSettled(addBundlePromises)
+              .then((results) => {
+                // Count successful and failed operations
+                const successful = results.filter(r => r.status === 'fulfilled').length;
+                const failed = results.filter(r => r.status === 'rejected').length;
+                
+                if (successful > 0) {
+                  window.showInformationMessage(`Successfully added ${successful} bundle${successful !== 1 ? 's' : ''}`);
+                }
+                
+                if (failed > 0) {
+                  window.showErrorMessage(`Failed to add ${failed} bundle${failed !== 1 ? 's' : ''}`);
+                }
               })
               .catch((err) => {
-                window.showErrorMessage(`Failed to add bundle: ${err.stderr}`);
+                window.showErrorMessage(`Failed to add bundles: ${err}`);
                 this.logger.error(err);
               });
           },
