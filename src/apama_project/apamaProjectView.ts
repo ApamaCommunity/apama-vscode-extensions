@@ -61,7 +61,7 @@ export class ApamaProjectView
     // Watch for changes to the `.dependencies` file, to refresh our project view.
     // Now, we are checking for all dependencies files: this is because we need to check /all/ open folders in the workspace, 
     // even if we only care about the root folder.
-    // The other alternative is to create seperate listeners for each workspace, where each listener would only
+    // The other alternative is to create seperate listeners for each workspace folder, where each listener would only
     // check the root `.dependencies` file, which feels like far too much effort.
     this.fsWatcher = workspace.createFileSystemWatcher("**/*.dependencies");
 
