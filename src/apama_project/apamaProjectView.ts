@@ -64,12 +64,11 @@ export class ApamaProjectView
     // The other alternative is to create seperate listeners for each workspace, where each listener would only
     // check the root `.dependencies` file, which feels like far too much effort.
     this.fsWatcher = workspace.createFileSystemWatcher("**/*.dependencies");
-    this.delWatcher = workspace.createFileSystemWatcher("**/*.dependencies"); 
 
     this.fsWatcher.onDidCreate((_item) => {
       this.refresh();
     });
-    this.delWatcher.onDidDelete(() => {
+    this.fsWatcher.onDidDelete(() => {
       this.refresh();
     });
     this.fsWatcher.onDidChange((_item) => {
