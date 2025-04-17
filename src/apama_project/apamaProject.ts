@@ -37,7 +37,7 @@ export class ApamaProject extends TreeItem implements ApamaTreeItem {
   instance = false;
 
   /**
-   * See if the given workspace is a project.
+   * See if the given folder is a project.
    * @param logger 
    * @param ws 
    * @param apama_project 
