@@ -3,7 +3,6 @@ import {
   TreeItemCollapsibleState,
   WorkspaceFolder,
   Uri,
-  RelativePattern,
   workspace,
 } from "vscode";
 import * as path from "path";
@@ -37,45 +36,47 @@ export class ApamaProject extends TreeItem implements ApamaTreeItem {
   contextValue = "project";
   instance = false;
 
-  //
-  // Find all the projects in a workspace
-  //
+  /**
+   * See if the given folder is a project.
+   * @param logger 
+   * @param ws 
+   * @param apama_project 
+   * @param resourceDir 
+   * @returns 
+   */
   static async scanProjects(
     logger: Logger,
     ws: WorkspaceFolder,
     apama_project: ApamaRunner,
     resourceDir: string
-  ): Promise<ApamaProject[]> {
-    const result: ApamaProject[] = [];
+  ): Promise<ApamaProject | undefined> {
+    // Check if .dependencies file exists directly in the root of the given workspace folder
+    const dependenciesPath = Uri.joinPath(ws.uri, ".dependencies");
 
-    //find .projects, but exclude anything with _deployed suffix
-    //also covers all roots of a multi root workspace
-    const projectsPattern: RelativePattern = new RelativePattern(
-      ws,
-      "**/.project",
-    );
-    const ignorePattern: RelativePattern = new RelativePattern(
-      ws,
-      "**/*_deployed/**",
-    );
-    const projectNames = await workspace.findFiles(
-      projectsPattern,
-      ignorePattern,
-    );
+    try {
+      await workspace.fs.stat(dependenciesPath); // Check if .dependencies exists in the root
+      logger.info(
+        `Found Apama project (.dependencies) in root of: ${ws.uri.fsPath}`,
+      );
 
-    for (let index = 0; index < projectNames.length; index++) {
-      const project: Uri = projectNames[index];
-      const current: ApamaProject = new ApamaProject(
+      // If stat succeeds, the file exists - create the project object for this workspace folder
+      const project = new ApamaProject(
         logger,
-        path.basename(path.dirname(project.fsPath)),
-        path.dirname(project.fsPath),
+        ws.name, // Use workspace folder name as project label
+        ws.uri.fsPath, // Use workspace folder path as project directory
         ws,
         apama_project,
         resourceDir,
       );
-      result.push(current);
+      return project; // Return the single project for this workspace
+
+    } catch {
+      // If stat fails (e.g., file not found), this workspace folder is not an Apama project root
+      logger.debug(
+        `No .dependencies file found in root of ${ws.uri.fsPath}. Not treating as Apama project.`,
+      );
+      return undefined; // Return undefined, indicating no project found for this workspace
     }
-    return result;
   }
 
   //

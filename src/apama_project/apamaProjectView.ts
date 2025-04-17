@@ -44,7 +44,6 @@ export class ApamaProjectView
   private treeView: TreeView<{}>;
 
   private fsWatcher: FileSystemWatcher;
-  private delWatcher: FileSystemWatcher;
   //
   // Added facilities for multiple workspaces - this will hopefully allow
   // ssh remote etc to work better later on, plus allows some extra organisational
@@ -58,15 +57,17 @@ export class ApamaProjectView
     //project commands
     this.registerCommands();
 
-    //this file is created/updated/deleted as projects come and go and depends on the "current" set of file systems
+    // Watch for changes to the `.dependencies` file, to refresh our project view.
+    // Now, we are checking for all dependencies files: this is because we need to check /all/ open folders in the workspace, 
+    // even if we only care about the root folder.
+    // The other alternative is to create seperate listeners for each workspace folder, where each listener would only
+    // check the root `.dependencies` file, which feels like far too much effort.
     this.fsWatcher = workspace.createFileSystemWatcher("**/*.dependencies");
-    //but for deletions of the entire space we need
-    this.delWatcher = workspace.createFileSystemWatcher("**/*"); //if you delete a directory it will not trigger all contents
-    //handlers
+
     this.fsWatcher.onDidCreate((_item) => {
       this.refresh();
     });
-    this.delWatcher.onDidDelete(() => {
+    this.fsWatcher.onDidDelete(() => {
       this.refresh();
     });
     this.fsWatcher.onDidChange((_item) => {
@@ -82,6 +83,13 @@ export class ApamaProjectView
     this.treeView = window.createTreeView("apamaProjects", {
       treeDataProvider: this,
     });
+  }
+
+  /**
+   * Clean up file system watchers.
+   */
+  dispose(): void {
+    this.fsWatcher.dispose();
   }
 
   registerCommands(): void {
@@ -533,14 +541,18 @@ export class ApamaProjectView
     
     // Scan for projects in each workspace
     for (const ws of workspaceFolders) {
-      const workspaceProjects = await ApamaProject.scanProjects(
+      // Check this workspace folder for a project at its root
+      const project = await ApamaProject.scanProjects(
         this.logger,
         ws,
         apama_project,
         this.context.asAbsolutePath("resources")
       );
 
-      this.projects.push(...workspaceProjects);
+      // If a project was found (not undefined), add it to the list
+      if (project) {
+        this.projects.push(project);
+      }
     }
   }
 
