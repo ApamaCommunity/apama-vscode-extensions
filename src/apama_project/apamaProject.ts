@@ -72,7 +72,7 @@ export class ApamaProject extends TreeItem implements ApamaTreeItem {
 
     } catch {
       // If stat fails (e.g., file not found), this workspace folder is not an Apama project root
-      logger.info(
+      logger.debug(
         `No .dependencies file found in root of ${ws.uri.fsPath}. Not treating as Apama project.`,
       );
       return undefined; // Return undefined, indicating no project found for this workspace
