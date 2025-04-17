@@ -1,5 +1,5 @@
 ## v2.2.0
-* The Apama Project view now only searches the top level directory in each workspace folder for projects. It no longer searches for projects nested under the top level workspace folder.
+* The "Apama Projects" view now only searches the top level directory in each workspace folder for projects. It no longer searches for projects nested under the top level workspace folder.
 
 ## v2.1.1
 * Fixed a bug where the default install location for Apama was never searched.
