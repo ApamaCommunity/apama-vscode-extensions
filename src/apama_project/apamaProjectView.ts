@@ -44,7 +44,6 @@ export class ApamaProjectView
   private treeView: TreeView<{}>;
 
   private fsWatcher: FileSystemWatcher;
-  private delWatcher: FileSystemWatcher;
   //
   // Added facilities for multiple workspaces - this will hopefully allow
   // ssh remote etc to work better later on, plus allows some extra organisational
@@ -91,7 +90,6 @@ export class ApamaProjectView
    */
   dispose(): void {
     this.fsWatcher.dispose();
-    this.delWatcher.dispose();
   }
 
   registerCommands(): void {
