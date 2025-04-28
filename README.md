@@ -8,14 +8,14 @@ For more information about Apama and EPL please visit the [Apama Community](http
 
 This extension is provided as-is and without warranty or support. It does not constitute part of any product. Users are free to use, fork and modify it, subject to the license agreement. We welcome contributions (though we may not include every contribution in the main project).
 
-## Features of the plugin
+## Features of the extension
 
+The extension supports:
 * Syntax highlighting
-* Error/warning messages in the `Problems` view
-* Inserting some common EPL code snippets - e.g. start typing `monitor`, `event` or `for` and you will be prompted to automatically insert the boilerplate code for a new monitor, event declaration or `for` loop
+* Inserting common EPL code snippets - e.g. start typing `monitor`, `event` or `for` and you will be prompted to automatically insert the boilerplate code for a new monitor, event declaration or `for` loop
 * Creating an "Apama project", and adding bundles to it from the `Apama Projects` view or the command palette. This can be used for both product EPL/connectivity bundles and custom bundles such as the Analytics Builder Block SDK
-* Displaying EPL monitors, events, actions and fields for the current file in the `Outline` view 
-* Jumping to the definition of any top-level EPL symbol (events, actions, monitors etc) by name. For example press `Ctrl+T` and begin typing the name of any action or event in the current workspace and you can quickly jump to the line and position where it is defined in the editor. This is a great way to quickly navigate around your codebase, and also to view the ApamaDoc for the EPL API you are using
+
+Content assistance features such as EPL errors in the `Problems` view, hovers, "go to definition" and the `Outline` view are available when a suitable version of Apama is installed. See the Visual Studio Code topic in the Apama product documentation for more details on what is provided in each version of Apama. 
 
 There are some known limitations:
 * Advanced content assist features such as completion proposals are not currently provided (except for basic snippet and history suggestions)
