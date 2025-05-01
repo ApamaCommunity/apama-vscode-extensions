@@ -1,3 +1,6 @@
+## v2.3.0
+* Fixed an issue with the extension not working in Apama installations without the `apama_env` script (i.e. a Docker development container). 
+
 ## v2.2.0
 * The "Apama Projects" view now only searches the top level directory in each workspace folder for projects. It no longer searches for projects nested under the top level workspace folder.
 
