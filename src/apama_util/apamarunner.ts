@@ -12,13 +12,13 @@ export class ApamaRunner {
 
   constructor(
     public name: string,
-    public command: string,
+    public command: string[],
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async run(workingDir: string, args: string[]): Promise<any> {
     //if fails returns promise.reject including err
-    return await exec(this.command + " " + args.join(" "), { cwd: workingDir });
+    return await exec(this.command.join(" ") + " " + args.join(" "), { cwd: workingDir });
   }
 }
 
