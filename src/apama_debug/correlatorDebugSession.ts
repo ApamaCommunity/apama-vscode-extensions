@@ -112,7 +112,7 @@ export class CorrelatorDebugSession extends DebugSession {
       "correlator",
       new vscode.ShellExecution(
         corrCmd.command,
-        corrCmd.args
+        [...corrCmd.args, ...localargs]
       ),
       [],
     );
