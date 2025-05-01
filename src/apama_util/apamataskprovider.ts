@@ -7,7 +7,7 @@ import {
   TaskGroup,
   TaskScope,
 } from "vscode";
-import { ApamaExecutables, getCommandLine } from "./apamaenvironment";
+import { ApamaExecutables, getCommandAsInterface } from "./apamaenvironment";
 import { Logger } from "../logger/logger";
 export class ApamaTaskProvider implements TaskProvider {
   constructor(
@@ -32,7 +32,9 @@ export class ApamaTaskProvider implements TaskProvider {
     }
 
     // Substitute the executable with the current known Apama executable.
-    const executable = await getCommandLine(cmdline);
+    const executable = await getCommandAsInterface(cmdline);
+
+    if (!executable) { return; }
 
     this.logger.appendLine("Running on port " + port);
     const finalTask = new Task(
@@ -40,7 +42,7 @@ export class ApamaTaskProvider implements TaskProvider {
       scope,
       task + "-" + port,
       "apama",
-      new ShellExecution(executable + [" -p", port].join(" ")),
+      new ShellExecution(executable.command, [...executable.args, "-p", port]),
       [],
     );
     return finalTask;

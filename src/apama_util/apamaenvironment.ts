@@ -54,11 +54,7 @@ async function getApamaExecutableCommand(command: ApamaExecutables, showError=tr
 export async function getCommandLine(command: ApamaExecutables, showError=true) {
   const apama_executable_command = await getApamaExecutableCommand(command, showError);
   if (apama_executable_command.isOk()) {
-    let command = `${apama_executable_command.value.command}`
-    // We do this rather than `args.join(" ")`, because then we don't introduce any 
-    // odd spaces. Also, I imagine this is optimized out at some level of the interpreter.
-    apama_executable_command.value.args.forEach((x) => command = command + x);
-    return command;
+    return [apama_executable_command.value.command, ...apama_executable_command.value.args];
   }
   return false;
 }
