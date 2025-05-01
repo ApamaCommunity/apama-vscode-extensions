@@ -42,7 +42,7 @@ export class ApamaTaskProvider implements TaskProvider {
       scope,
       task + "-" + port,
       "apama",
-      new ShellExecution(executable.command, [...executable.args, " -p", port]),
+      new ShellExecution(executable.command, [...executable.args, "-p", port]),
       [],
     );
     return finalTask;
