@@ -1,10 +1,10 @@
-import { ChildProcess, spawn } from "child_process";
-
-import { exec as execCallback } from "child_process";
-import { promisify } from "util";
+import { ChildProcess, spawn as spawnCallback, execFile as execFileCallback} from "child_process";
 import { Logger } from "../logger/logger";
+import { platform } from "os";
+import { promisify } from "util";
 
-const exec = promisify(execCallback);
+const spawn = promisify(spawnCallback);
+const execFile = promisify(execFileCallback);
 
 export class ApamaRunner {
   stdout = "";
@@ -18,7 +18,19 @@ export class ApamaRunner {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async run(workingDir: string, args: string[]): Promise<any> {
     //if fails returns promise.reject including err
-    return await exec(this.command.join(" ") + " " + args.join(" "), { cwd: workingDir });
+    if (platform() === "win32") {
+      return await spawn(
+        this.command[0],
+        [...args.slice(1), ...args],
+        {cwd: workingDir}
+      )
+    } else {
+      return await execFile(
+        this.command[0],
+        [...this.command.slice(1), ...args],
+        {cwd: workingDir}
+      )
+    }
   }
 }
 
@@ -53,7 +65,7 @@ export class ApamaAsyncRunner {
     }
 
     this.logger.appendLine("Starting " + this.name);
-    this.child = spawn(this.command + args.join(" "), {
+    this.child = spawnCallback(this.command[0], [...this.command.slice(1), ...args], {
       shell: withShell,
       stdio: ["pipe", "pipe", "pipe"],
     });
