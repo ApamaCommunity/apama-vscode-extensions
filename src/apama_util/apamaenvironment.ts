@@ -58,7 +58,7 @@ export async function getCommandLine(command: ApamaExecutables, showError=true) 
     if (apama_env.value.apama_env != false) {
       return `${apama_env.value.path} ${command}`;
     } else {
-      return `${apama_env.value.path}/command`;
+      return `${apama_env.value.path}/${command}`;
     }
 
   }
@@ -71,7 +71,7 @@ export async function getCommandAsInterface(command: ApamaExecutables, showError
     if (apama_env.value.apama_env != false) {
       return { command: apama_env.value.path, args: [command] };
     } else {
-      return { command: `${apama_env.value.path}/command`, args: [] }
+      return { command: `${apama_env.value.path}/${command}`, args: [] }
     }
   }
   return false;
