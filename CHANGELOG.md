@@ -1,5 +1,5 @@
 ## v2.2.1
-* Fixed an issue with the extension not locating the Apama installation when executed in a Docker development container. 
+* Fixed an issue with the extension not locating the Apama installation when executed in a Docker development container, and on Windows. 
 
 ## v2.2.0
 * The "Apama Projects" view now only searches the top level directory in each workspace folder for projects. It no longer searches for projects nested under the top level workspace folder.
