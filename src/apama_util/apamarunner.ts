@@ -2,6 +2,7 @@ import { ChildProcess, spawn as spawnCallback, execFile as execFileCallback} fro
 import { Logger } from "../logger/logger";
 import { platform } from "os";
 import { promisify } from "util";
+import { logger } from "../extension";
 
 const spawn = promisify(spawnCallback);
 const execFile = promisify(execFileCallback);
@@ -11,7 +12,9 @@ export class ApamaRunner {
   stderr = "";
 
   constructor(
+    /** Display name for this process */
     public name: string,
+    /** e.g. [XXX/apama_env, apama_project] or [XXX/apama_project] */
     public command: string[],
   ) {}
 
@@ -19,10 +22,14 @@ export class ApamaRunner {
   async run(workingDir: string, args: string[]): Promise<any> {
     //if fails returns promise.reject including err
     if (platform() === "win32") {
+      logger.info("Running command: " + this.command[0] + " " +  [...this.command.slice(1), ...args].join(" "));
       return await spawn(
         this.command[0],
-        [...args.slice(1), ...args],
-        {cwd: workingDir}
+        [...this.command.slice(1), ...args],
+        {cwd: workingDir, shell:true, 
+        // do not pipe stdin
+        stdio: ["ignore", "pipe", "pipe"]
+        }
       )
     } else {
       return await execFile(
