@@ -24,7 +24,7 @@ There are some known limitations:
 
 ## Getting started
 
-To use all the functionality provided by this extension, you need a full installation of Apama that includes the "dev"/"builder" tooling (it must include `bin/engine_deploy`). If Apama is not installed, basic syntax highlighting is available but most other features will not work. It is strongly recommended to use the _latest_ version of Apama, and the minimum recommended version is **Apama 10.15.6.2**. The current extension version is not intended to be used with earlier versions of Apama. 
+To use all the functionality provided by this extension, you need a full installation of Apama that includes the "dev"/"builder" tooling (it must include `bin/engine_deploy`). If Apama is not installed, basic syntax highlighting is available but most other features will not work. It is strongly recommended to use the _latest_ version of Apama, and the minimum recommended version is either **Apama 26** or **Apama 10.15.6.2**. The current extension version is not intended to be used with earlier versions of Apama. 
 
 The extension can run on Linux. It can also be used on Windows, typically with WSL (Windows Subsystem for Linux)... or if using the older Apama 10.15 release which has a Windows installation package it can be used directly with a local Windows installation. The extension can also be used with a Development Container (DevContainer).
 
@@ -34,9 +34,9 @@ If using on a Remote platform (i.e. WSL, SSH or DevContainers), the extension ne
 
 Many features of this extension require installing Apama, using one of the `dev` packages.
 
-For release 26.x and higher, install the `dev` (and optionally `apama-python`) Debian packages from the [Apama Repository](https://download.cumulocity.com/Apama/Debian/)
+For release **26.x and higher**, simply install the `dev` (and optionally `apama-python`) Debian packages from the [Apama Repository](https://download.cumulocity.com/Apama/Debian/) using the instructions given there. 
 
-For the 10.15 release:
+For the older 10.15 release:
 1. Identify the required package from the [download site](https://download.cumulocity.com/Apama/10.15), for example `apama-c8y-dev_10.15.*.*_amd64_linux.tar.gz` (or `apama-dev_10.15.*.*_amd64_linux.tar.gz` for non-Cumulocity applications)
 2. Download the package by passing this URL to `wget` (you may need to run `sudo apt install wget` first, if it is not yet installed)
 3. Then unpack it to the default directory using: `sudo mkdir -p /opt/cumulocity && sudo tar -xf apama-*_amd64_linux.tar.gz -C /opt/cumulocity` (hint: if using WSL as described below, you will need to enter the password for the root account you created during WSL setup)
