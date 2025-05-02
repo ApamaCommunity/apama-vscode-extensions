@@ -282,6 +282,7 @@ export class ApamaProjectView
               }
             }
 
+            // nb: in future we might use the --json output mode added instead of parsing the text output
             apama_project
               .run(project.fsDir, ["list", "bundles"])
               .then((result) => {
