@@ -70,11 +70,29 @@ The versions of Apama and the SDKs can be configured: see the DevContainer READM
 To use DevContainers, you will need a containerization environment on your computer. [Microsoft's VS Code documentation](https://code.visualstudio.com/remote/advancedcontainers/docker-options) should give you some guidance in that area.
 
 ### Using the extension on macOS
-For users on macOS (Intel or Apple Silicon), we recommend using the [colima](https://github.com/abiosoft/colima) container runtime. 
+#### Using Lima to create a virtual machine
+For users on macOS (Intel or Apple Silicon), we recommend using the [lima](https://github.com/lima-vm/lima) virtualization runtime. 
 
-Once the container runtime is installed, you should create a container with Debian as the base image. Then install Apama into the container as described in "Using a Linux installation" above. If using Apama 26.x, use Debian version 12, on native ARM64. For Apama 10.15 you need to use x86. 
+Once Lima has been installed, create a virtual machine with Debian as the image. If you are on 26.x and on an Apple Silicon machine, create an ARM64 VM. Otherwise, create an x86 VM.
 
-Use the [Visual Studio Code Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack) to connect to your Dev Container. 
+```bash
+# ARM64
+limactl create --name debian template://debian-12
+
+# x86
+limactl create --name debian-x86 --arch x86_64 --rosetta template://debian-12
+```
+
+Once you virtual machine has been created, start it up, and shell into it. Then install Apama using the instructions from "Using a Linux installation".
+
+Use the [Visual Studio Code Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack) to connect to your virtual machine.
+
+Tip: to show your Lima VMs in Remote-SSH, run `echo -e "\nInclude ${LIMA_HOME:-$HOME/.lima}/debian-x86/ssh.config" >> ~/.ssh/config` in a terminal ([source](https://github.com/lima-vm/lima/discussions/1890)).
+
+#### Dev Container
+Another possible approach is to use [colima](https://github.com/abiosoft/colima) and the Dev Container approach mentioned in "Using a Development Container".
+
+This is currently an x86 image.
 
 ### Opening your first Apama project
 
