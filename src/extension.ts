@@ -1,6 +1,7 @@
 "use_strict";
 
 import * as path from "path";
+import { platform } from "os";
 
 import {
   ExtensionContext,
@@ -36,7 +37,7 @@ import { ExecutableResolver } from "./settings/ExecutableResolver";
 /** VSCode clients for talking to each language server, keyed by workspace folder URI */
 const servers = new Map<string, LanguageClient>();
 
-const logger = new Logger("Apama Extension Client");
+export const logger = new Logger("Apama Extension Client");
 
 /** The ExtensionContext.globalState */
 let globalState: Memento;
@@ -190,6 +191,7 @@ async function startLanguageServers(
     transport: TransportKind.stdio, // passes the "--stdio" option implicitly
     command: eplBuddyCommand.command,
     args: [...eplBuddyCommand.args, "-s"], // "-s" is just for backwards compat with pre-10.15.6.2 eplbuddy
+    options: {shell: platform() === "win32"}
   };
 
   const initializationOptions = {
@@ -218,7 +220,6 @@ async function startLanguageServers(
         workspaceFolder: folder,
       };
 
-      // TODO: we should really reload this if the APAMA_HOME config changes
       const languageClient = new LanguageClient(
         "apamaLanguageClient",
         `Apama Lang Server [${folder.name}]`,
@@ -226,7 +227,12 @@ async function startLanguageServers(
         clientOptions,
       );
       servers.set(folder.uri.toString(), languageClient);
-      await languageClient.start();
+      try {
+        await languageClient.start();
+      } catch (e) {
+        logger.error(`Failed to start language server using "${serverOptions.command}" with args [${serverOptions.args}] : ${e}`);
+        throw e;
+      }
       serverVersion = languageClient.initializeResult?.serverInfo?.version;
     }
 

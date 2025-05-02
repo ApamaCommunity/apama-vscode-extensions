@@ -1,116 +1,58 @@
-import { ChildProcess, spawn as spawnCallback, execFile as execFileCallback} from "child_process";
-import { Logger } from "../logger/logger";
+import { exec, execFile} from "child_process";
 import { platform } from "os";
 import { promisify } from "util";
+import { logger } from "../extension";
+import {
+  ProgressLocation,
+  window
+} from "vscode";
 
-const spawn = promisify(spawnCallback);
-const execFile = promisify(execFileCallback);
+const execPromisify = promisify(exec);
+const execFilePromisify = promisify(execFile);
+
 
 export class ApamaRunner {
   stdout = "";
   stderr = "";
 
   constructor(
+    /** Display name for this process */
     public name: string,
+    /** e.g. [XXX/apama_env, apama_project] or [XXX/apama_project] */
     public command: string[],
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async run(workingDir: string, args: string[]): Promise<any> {
-    //if fails returns promise.reject including err
-    if (platform() === "win32") {
-      return await spawn(
-        this.command[0],
-        [...args.slice(1), ...args],
-        {cwd: workingDir}
-      )
-    } else {
-      return await execFile(
-        this.command[0],
-        [...this.command.slice(1), ...args],
-        {cwd: workingDir}
-      )
-    }
-  }
-}
-
-export class ApamaAsyncRunner {
-  stdout = "";
-  stderr = "";
-  child?: ChildProcess;
-
-  constructor(
-    public name: string,
-    public command: string,
-    private logger: Logger,
-  ) {}
-
-  //
-  // If you call this withShell = true it will run the command under that shell
-  // this means the process may need to be managed separately as it may get detached
-  // when you kill the parent (correlator behaves that way)
-  // I use engine_management to control the running correlator
-  //
-  // TODO: pipes configuration might be worth passing as an argument
-  //
-  public start(
-    args: string[],
-    withShell: boolean,
-    defaultHandlers: boolean,
-  ): ChildProcess {
-    //N.B. this potentially will leave the correlator running - future work required...
-    if (this.child && !this.child.killed) {
-      this.logger.appendLine(this.name + " already started, stopping...");
-      this.child.kill("SIGKILL");
-    }
-
-    this.logger.appendLine("Starting " + this.name);
-    this.child = spawnCallback(this.command[0], [...this.command.slice(1), ...args], {
-      shell: withShell,
-      stdio: ["pipe", "pipe", "pipe"],
-    });
-
-    //Running with process Id
-    this.logger.appendLine(this.name + " started, PID:" + this.child.pid);
-
-    //Notify the logger if it stopped....
-    this.child.once("exit", (exitCode) =>
-      this.logger.appendLine(this.name + " stopped, exit code: " + exitCode),
-    );
-
-    if (defaultHandlers) {
-      this.child.stdout?.setEncoding("utf8");
-      this.child.stdout?.on("data", (data: string) => {
-        if (this.logger) {
-          this.logger.appendLine(data);
-        }
-      });
-    }
-
-    return this.child;
-  }
-
-  public stop(): Promise<void> {
-    return new Promise((resolve) => {
-      if (this.child && !this.child.killed) {
-        this.child.once("exit", () => {
-          resolve();
-        });
-
-        this.logger.appendLine("Process " + this.name + " stopping...");
-        this.child.kill("SIGINT");
-        const attemptedToKill = this.child;
-        setTimeout(() => {
-          if (!attemptedToKill.killed) {
-            this.logger.appendLine(
-              "Failed to stop shell in 5 seconds, killing...",
+    return await window.withProgress(
+      {
+        // since sometimes (e.g. apama_project) the command takes a long time, giving a progress notification is helpful
+        location: ProgressLocation.Notification,
+        title: `Running ${this.name}...`,
+        cancellable: false,
+      },
+      async () => 
+      {
+        try {
+          if (platform() === "win32") {
+            logger.debug("Running command: " + this.command[0] + " " + [...this.command.slice(1), ...args].join(" "));
+            return await execPromisify([...this.command, ...args].join(" "), { cwd: workingDir });
+          } else {
+            return await execFilePromisify(
+              this.command[0],
+              [...this.command.slice(1), ...args],
+              { cwd: workingDir }
             );
-            attemptedToKill.kill("SIGKILL");
           }
-        }, 5000);
-      } else {
-        resolve();
+        } catch (error) {
+          const enhancedError = new Error(
+            `Error running command '${this.command[0]} ${[...this.command.slice(1), ...args].join(" ")}': ${error}`
+          );
+          if (error instanceof Error) enhancedError.stack = error.stack;
+          throw enhancedError;
+        }
       }
-    });
+    );
   }
 }
+

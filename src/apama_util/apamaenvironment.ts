@@ -41,7 +41,7 @@ async function getApamaExecutableCommand(command: ApamaExecutables, showError=tr
         return ok({command: `${apamaBin}/${command}`, args: []})
       }
     } else {
-      return ok({command: `${apamaBin}/apama_env.bat`, args: [command]});
+      return ok({command: `${apamaBin}\\apama_env.bat`, args: [command]});
     }
   }
 
