@@ -83,7 +83,7 @@ limactl create --name debian template://debian-12
 limactl create --name debian-x86 --arch x86_64 --rosetta template://debian-12
 ```
 
-Once you virtual machine has been created, start it up, and shell into it. Then install Apama using the instructions from "Using a Linux installation".
+Once your virtual machine is created, start it up, and shell into it. Then install Apama using the instructions from "Using a Linux installation".
 
 Use the [Visual Studio Code Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack) to connect to your virtual machine.
 
