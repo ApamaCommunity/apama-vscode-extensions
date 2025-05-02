@@ -45,7 +45,7 @@ For the older 10.15 release:
 
 For Apama 26.x and higher there is no Windows installation package of Apama, so we recommend using the VS Code [WSL](https://code.visualstudio.com/docs/remote/wsl) extension which allows VS Code running on Windows to use a Linux-based Apama installation package. 
 
-1. Install the latest version of [WSL](https://learn.microsoft.com/en-us/windows/wsl/install), using the **Debian** distribution of Linux. This may take some time and often requires a restart. See the WSL and also VS Code instructions for full details, but typical steps on a recent version of Windows would be:
+1. Install the latest version of [WSL](https://learn.microsoft.com/en-us/windows/wsl/install), and add the **Debian** distribution of Linux. This may take some time and often requires a restart. See the WSL and also VS Code instructions for full details, but typical steps on a recent version of Windows would be:
     * Open a PowerShell terminal "as Administrator"
     * `wsl --install`
     * `wsl --install -d Debian`
@@ -70,9 +70,11 @@ The versions of Apama and the SDKs can be configured: see the DevContainer READM
 To use DevContainers, you will need a containerization environment on your computer. [Microsoft's VS Code documentation](https://code.visualstudio.com/remote/advancedcontainers/docker-options) should give you some guidance in that area.
 
 ### Using the extension on macOS
-For users on macOS (Intel or Apple Silicon), we recommend using [colima](https://github.com/abiosoft/colima) and the DevContainer approach mentioned above.
+For users on macOS (Intel or Apple Silicon), we recommend using the [colima](https://github.com/abiosoft/colima) container runtime. 
 
-This is currently an x86 image.
+Once the container runtime is installed, you should create a container with Debian as the base image. Then install Apama into the container as described in "Using a Linux installation" above. If using Apama 26.x, use Debian version 12, on native ARM64. For Apama 10.15 you need to use x86. 
+
+Use the [Visual Studio Code Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack) to connect to your Dev Container. 
 
 ### Opening your first Apama project
 
