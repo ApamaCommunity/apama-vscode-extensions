@@ -127,6 +127,7 @@ async function getInjectionList(
     [...cmd.args, "--outputList", "stdout", workspaceFolderPath],
     {
       encoding: "utf8",
+      shell: true
     },
   );
 
