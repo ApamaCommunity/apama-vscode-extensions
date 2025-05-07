@@ -1,3 +1,6 @@
+## v2.3.0
+* Fixed a bug where adding bundles to a project did not work.
+
 ## v2.2.1
 * Fixed an issue with the extension not locating the Apama installation when executed in a Docker development container, and on Windows. 
 

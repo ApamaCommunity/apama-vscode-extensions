@@ -3,7 +3,7 @@
   "name": "apama-extensions",
   "displayName": "Apama",
   "description": "Support for writing Apama Streaming Analytics applications in EPL",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
