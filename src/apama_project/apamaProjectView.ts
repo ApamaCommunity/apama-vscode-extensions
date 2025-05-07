@@ -179,7 +179,7 @@ export class ApamaProjectView
                 this.logger.info(result);
               })
               .catch((err) => {
-                window.showErrorMessage(err.stderr);
+                window.showErrorMessage(err);
                 this.logger.error(err);
               });
           },
@@ -256,7 +256,7 @@ export class ApamaProjectView
                 });
               })
               .catch((err) => {
-                window.showErrorMessage(err.stderr);
+                window.showErrorMessage(err);
                 this.logger.error(err);
               });
           },
@@ -323,9 +323,16 @@ export class ApamaProjectView
                   .then((result) => {
                     window.showInformationMessage(`${result.stdout}`);
                   })
-                  .catch((err) => window.showErrorMessage(`${err.stderr}`));
+                  .catch((err) => {
+                    window.showErrorMessage(`${err}`);
+                    this.logger.error(err);
+                  } );
               })
-              .catch((err) => window.showErrorMessage(`${err.stderr}`));
+              .catch((err) => {
+                window.showErrorMessage(`${err}`);
+                this.logger.error(err);
+              }
+            );
           },
         ),
 
@@ -397,7 +404,7 @@ export class ApamaProjectView
                 window.showInformationMessage(`Bundle added: ${result.stdout}`);
               })
               .catch((err) => {
-                window.showErrorMessage(`Failed to add bundle: ${err.stderr}`);
+                window.showErrorMessage(`Failed to add bundle: ${err}`);
                 this.logger.error(err);
               });
           },
@@ -461,7 +468,7 @@ export class ApamaProjectView
               .then((result) => {
                 window.showInformationMessage(`${result.stdout}`);
               })
-              .catch((err) => window.showErrorMessage(`${err.stderr}`));
+              .catch((err) => window.showErrorMessage(`${err}`));
           },
         ),
         //
