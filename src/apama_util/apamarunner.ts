@@ -41,7 +41,7 @@ export class ApamaRunner {
             return await execFilePromisify(
               this.command[0],
               [...this.command.slice(1), ...args],
-              { cwd: workingDir }
+              { cwd: workingDir, shell: true }
             );
           }
         } catch (error) {
