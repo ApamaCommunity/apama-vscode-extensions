@@ -324,7 +324,7 @@ export class ApamaProjectView
                     window.showInformationMessage(`${result.stdout}`);
                   })
                   .catch((err) => {
-                    window.showErrorMessage(`${err}`);
+                    window.showErrorMessage(`Failed to add bundle: ${err}`);
                     this.logger.error(err);
                   } );
               })
