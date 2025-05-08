@@ -1,4 +1,4 @@
-## v2.3.0
+## v2.2.2
 * Fixed a bug where adding bundles to a project did not work.
 
 ## v2.2.1
