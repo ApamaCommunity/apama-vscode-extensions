@@ -18,7 +18,6 @@ The extension supports:
 Content assistance features such as EPL errors in the `Problems` view, hovers, "go to definition" and the `Outline` view are available when a suitable version of Apama is installed. See the Visual Studio Code topic in the Apama product documentation for more details on what is provided in each version of Apama. 
 
 There are some known limitations:
-* Advanced content assist features such as completion proposals are not currently provided (except for basic snippet and history suggestions)
 * Files with non-ASCII characters may not work correctly
 * No incremental builds - all EPL files are rebuilt every time there is a change (although there is caching of the parsing phase for files that did not change). This may result in slow problem markers (and high CPU utilization) when working on very large projects on a low-powered laptop, though performance is reasonable for most cases. Also note that each project opened in VS Code will likely consume a few hundred MB of memory
 
