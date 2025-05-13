@@ -600,17 +600,10 @@ export class ApamaProjectView
     }
   }
 
-  //
-  // interface requirement
-  //
+  /**
+   * Override of VSCode's getTreeItem.
+   */
   getTreeItem(element: BundleItem | ApamaProject): TreeItem {
-    //No string nodes in my tree so should never happen
-    if (typeof element === "string") {
-      //this.logger.appendLine("ERROR ???? getTreeItem -- " + element.toString());
-      return new TreeItem(element, TreeItemCollapsibleState.None);
-    }
-
-    //should just be the element clicked on
     return <TreeItem>element;
   }
 }

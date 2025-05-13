@@ -166,7 +166,7 @@ export class BundleItem extends TreeItem implements ApamaTreeItem {
     public apama_project: ApamaRunner,
     public resourceDir: string,
   ) {
-    super(label, TreeItemCollapsibleState.Collapsed);
+    super(label, TreeItemCollapsibleState.None);
   }
 
   items: BundleItem[] = [];
