@@ -604,11 +604,6 @@ export class ApamaProjectView
    * Override of VSCode's getTreeItem.
    */
   getTreeItem(element: BundleItem | ApamaProject): TreeItem {
-    if (element instanceof BundleItem) {
-      return new TreeItem(element, TreeItemCollapsibleState.None);
-    }
-
-    //should just be the element clicked on
     return <TreeItem>element;
   }
 }
