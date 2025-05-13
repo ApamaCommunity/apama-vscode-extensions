@@ -583,7 +583,7 @@ export class ApamaProjectView
     //if this is a bundle - then there are no children
     if (item && item.contextValue === "bundle") {
       if (item.items.length === 0) {
-        return Promise.resolve([]);
+        return Promise.resolve(undefined);
       } else {
         return Promise.resolve(item.items);
       }
@@ -605,7 +605,7 @@ export class ApamaProjectView
   //
   getTreeItem(element: BundleItem | ApamaProject): TreeItem {
     //No string nodes in my tree so should never happen
-    if (typeof element === "string") {
+    if (element instanceof BundleItem) {
       //this.logger.appendLine("ERROR ???? getTreeItem -- " + element.toString());
       return new TreeItem(element, TreeItemCollapsibleState.None);
     }
