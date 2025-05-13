@@ -583,7 +583,7 @@ export class ApamaProjectView
     //if this is a bundle - then there are no children
     if (item && item.contextValue === "bundle") {
       if (item.items.length === 0) {
-        return Promise.resolve(undefined);
+        return Promise.resolve([]);
       } else {
         return Promise.resolve(item.items);
       }
@@ -600,13 +600,11 @@ export class ApamaProjectView
     }
   }
 
-  //
-  // interface requirement
-  //
+  /**
+   * Override of VSCode's getTreeItem.
+   */
   getTreeItem(element: BundleItem | ApamaProject): TreeItem {
-    //No string nodes in my tree so should never happen
     if (element instanceof BundleItem) {
-      //this.logger.appendLine("ERROR ???? getTreeItem -- " + element.toString());
       return new TreeItem(element, TreeItemCollapsibleState.None);
     }
 
