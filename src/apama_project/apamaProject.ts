@@ -166,13 +166,12 @@ export class BundleItem extends TreeItem implements ApamaTreeItem {
     public apama_project: ApamaRunner,
     public resourceDir: string,
   ) {
-    super(label, TreeItemCollapsibleState.Collapsed);
+    super(label, TreeItemCollapsibleState.None);
   }
 
   items: BundleItem[] = [];
   contextValue = "bundle";
   instance = false;
-  collapsibleState: TreeItemCollapsibleState | undefined = TreeItemCollapsibleState.None;
 
   iconPath = {
     light: path.join(this.resourceDir, "light", "code.svg"),
