@@ -164,7 +164,7 @@
       {
         "command": "apama.engine_inject",
         "category": "Apama",
-        "title": "correlator: engine inject"
+        "title": "correlator: engine inject individual .mon file"
       },
       {
         "command": "apama.engine_send",
