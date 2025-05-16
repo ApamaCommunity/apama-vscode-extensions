@@ -11,8 +11,11 @@ import {
   workspace,
   WorkspaceConfiguration,
   Memento,
-  window
+  window,
+  Uri
 } from "vscode";
+import * as vscode from "vscode";
+
 
 import {
   Executable,
@@ -177,6 +180,17 @@ async function killLanguageServers() {
   servers.clear();
 }
 
+async function isApamaProjectDirectory(dir: Uri): Promise<boolean> {
+  try {
+    if (await workspace.fs.stat(Uri.file(path.join(dir.fsPath, ".apama-init-list"))).then(() => true, () => false)) return true;
+
+    const fileContent = await workspace.fs.readFile(Uri.file(path.join(dir.fsPath, ".dependencies")));
+    return fileContent.toString().includes("<apama-project>");
+  } catch {
+    return false;
+  }
+}
+
 /** Start language servers (eplbuddy) for each workspace folder */
 async function startLanguageServers(
   config: WorkspaceConfiguration,
@@ -204,6 +218,15 @@ async function startLanguageServers(
     let serverVersion = undefined;
     for (const folder of workspace.workspaceFolders)
     {
+      // For the advanced case of multiple workspace folders, don't start a server for non-Apama folders to avoid 
+      // confusion when there are files present in both a parent and a child folder
+      // (e.g. build failures for the same file in the non-project LSP whereas the project LSP did not find any error)
+      if (workspace.workspaceFolders.length > 1 && ! await isApamaProjectDirectory(folder.uri))
+      {
+        logger.info(`Skipping workspace folder "${folder.name}" as handling non-Apama project directories is not supported for multi-folder workspaces`);
+        continue;
+      }
+
       // These APIs aren't really documented, but what's going on here is we're creating an instance of 
       // the client from https://github.com/microsoft/vscode-languageserver-node/tree/main which 
       // uses the VSCode API to implement the client/glue to our language server executable
@@ -214,8 +237,9 @@ async function startLanguageServers(
         // If there's just one workspace (the common case), do not filter at all, which allows us to edit individual files from 
         // outside the workspace (e.g. testcase .mon files) and get semantic checking of them while the file is open 
         // (no way to make that work sanely with multiple roots, so don't bother)
-        documentSelector: [{language:"apamaepl", scheme:"file", pattern: 
-          workspace.workspaceFolders.length == 1 ? undefined :`${folder.uri.fsPath}/**/*`}],
+        documentSelector: workspace.workspaceFolders.length === 1
+          ? [{ language: "apamaepl", scheme: "file" }]
+          : [{ language: "apamaepl", scheme: "file", pattern: new vscode.RelativePattern(folder, "**").pattern }],
         initializationOptions: initializationOptions,
         workspaceFolder: folder,
       };
@@ -238,7 +262,7 @@ async function startLanguageServers(
 
     if (!serverVersion) serverVersion = "(unknown older version)";
 
-    logger.info(`Started ${workspace.workspaceFolders.length} language servers, using Apama v${serverVersion} at ${path.dirname(path.dirname(eplBuddyCommand.command))}`);
+    logger.info(`Started ${servers.size} language servers, using Apama v${serverVersion} at ${path.dirname(path.dirname(eplBuddyCommand.command))}`);
 
     // We won't keep incrementing this forever - this is to just nudge people towards the latest Apama version that has "decent" VSCode support 
     // to give the best impression of what this extension can do. 
