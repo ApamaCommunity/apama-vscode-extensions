@@ -169,7 +169,7 @@
       {
         "command": "apama.engine_send",
         "category": "Apama",
-        "title": "correlator: engine send"
+        "title": "correlator: engine send .evt file"
       },
       {
         "command": "apama.engine_delete",
