@@ -33,7 +33,7 @@ If using on a Remote platform (i.e. WSL, SSH or DevContainers), the extension ne
 
 Many features of this extension require installing Apama, using one of the `dev` packages.
 
-For release **26.x and higher**, simply install the `dev` (and optionally `apama-python`) Debian packages from the [Apama Repository](https://download.cumulocity.com/Apama/Debian/) using the instructions given there. 
+For release **26.x and higher**, simply install the `apama` (and optionally `apama-python`) Debian packages from the [Apama Repository](https://download.cumulocity.com/Apama/Debian/) using the instructions given there. Remember to `apt update` and `apt upgrade` to ensure you're on the latest version of Apama. 
 
 For the older 10.15 release:
 1. Identify the required package from the [download site](https://download.cumulocity.com/Apama/10.15), for example `apama-c8y-dev_10.15.*.*_amd64_linux.tar.gz` (or `apama-dev_10.15.*.*_amd64_linux.tar.gz` for non-Cumulocity applications)
@@ -48,7 +48,7 @@ For Apama 26.x and higher there is no Windows installation package of Apama, so 
     * Open a PowerShell terminal "as Administrator"
     * `wsl --install`
     * `wsl --install -d Debian`
-3. Once installed, open a Debian WSL terminal (for example by opening `Debian` from the Start Menu) and install Apama using the `dev` package for Linux using the instructions above. 
+3. Once installed, open a Debian WSL terminal (for example by opening `Debian` from the Start Menu) and install Apama using the `apama` package for Linux using the instructions above. 
 4. Open VS Code, and install the [Visual Studio Code Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack).
 5. Using the command palette (`Ctrl+Shift+P`), select `Connect to WSL`
 6. Install the [Apama Extension for VS Code](https://marketplace.visualstudio.com/items?itemName=ApamaCommunity.apama-extensions). This is installed on the Remote VSCode instance, so will need to be installed for every remote host that you use this on.
