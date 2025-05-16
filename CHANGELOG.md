@@ -1,3 +1,6 @@
+## v2.2.3
+* Fixed surprising problem reporting behavior when multiple nested folders are open in the same workspace, by only starting the EPL language server for folders that directly hold an Apama project. This reduces the chance of multiple language servers trying to handle the same file. 
+
 ## v2.2.2
 * Fixed a bug where adding bundles to a project did not work.
 
