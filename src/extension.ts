@@ -266,18 +266,19 @@ async function startLanguageServers(
 
     // We won't keep incrementing this forever - this is to just nudge people towards the latest Apama version that has "decent" VSCode support 
     // to give the best impression of what this extension can do. 
-    // Currently 10.15.6.3 is the best, and may be where we land
     // NB: the intention is to permit both 10.15 and later (26.x) versions without a warning, but if someone if using one of the really 
     // old versions that doesn't really work with this extension version then we should discourage them
     // We use a startsWith approach since the version numbers here are not semver, vary in length across major releases, and contain extra build number we don't want to check
-    if (serverVersion == "(unknown older version)" 
-      || serverVersion.startsWith("10.15.6.1") 
-      || serverVersion.startsWith("10.15.6.2") 
-    ) { 
+    const serverVersionParts = typeof serverVersion === "string" ? serverVersion.split(".") : [];
+    if (
+      serverVersion == "(unknown older version)"
+      || (serverVersion.startsWith("10.15.6.") && parseInt(serverVersionParts[3]) < 4) // check against the recommende latest fix version
+      || (serverVersion.startsWith("26.") && parseInt(serverVersionParts[1]) < 70) // 2nd digit gives build number
+    ) {
       logger.warn(`Old Apama version detected: ${serverVersion}`);
       if (globalState.get<string>("apama.alreadyShownNotification.oldApamaVersion") != serverVersion) {
-        globalState.update("apama.alreadyShownNotification.oldApamaVersion", serverVersion);
-        window.showWarningMessage("You are using an old version of Apama - please install the latest version to get a better experience with this extension");
+      globalState.update("apama.alreadyShownNotification.oldApamaVersion", serverVersion);
+      window.showWarningMessage("You are using an old version of Apama - please install the latest version to get a better experience with this extension");
       }
     }
   }
