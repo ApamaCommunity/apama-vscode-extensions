@@ -166,12 +166,12 @@
       {
         "command": "apama.engine_inject",
         "category": "Apama",
-        "title": "correlator: engine inject"
+        "title": "correlator: engine inject individual .mon file"
       },
       {
         "command": "apama.engine_send",
         "category": "Apama",
-        "title": "correlator: engine send"
+        "title": "correlator: engine send .evt file"
       },
       {
         "command": "apama.engine_delete",
