@@ -40,15 +40,39 @@ export class ApamaDebugConfigurationProvider
     return [
       {
         type: "apama",
-        name: "Debug Apama Application",
+        name: "Debug Apama application with local Correlator process",
         request: "launch",
         correlator: {
           port: config.get("debugPort"),
           host: config.get("debugHost"),
-          args: ["-g"],
+          args: this.getDefaultArgs(),
         },
       },
     ];
+  }
+
+  getDefaultArgs(): string[] {
+    return [
+            "-g", // nooptimize - to make debugging possible
+            "--logQueueSizePeriod", "60" // increase frequency of Status lines to once per minute to avoid spamming the output window
+    ];
+  }
+
+  async getCorrelatorHost(config: DebugConfiguration): Promise<string> 
+  {
+    if (config.correlator && typeof config.correlator.host === "string" && config.correlator.host.trim() !== "") {
+      return config.correlator.host;
+    }
+    const vscodeHost = workspace.getConfiguration("apama").get<string>("debugHost");
+    if (vscodeHost && vscodeHost.trim() !== "") {
+      return vscodeHost;
+    }
+    if (config.remote && config.remote.host && config.remote.host.startsWith("ssh-remote+")) {
+      // TODO: this doesn't work in all cases, e.g. behind a proxy. Would need to run a command (hostname, or grep the correlator output) 
+      // on the remote machine to get this accurately. Until then, users must workaround by setting it as a configuration setting
+      return config.remote.host.replace("ssh-remote+", "");
+    }
+    return "127.0.0.1";
   }
 
   /**
@@ -77,20 +101,25 @@ export class ApamaDebugConfigurationProvider
     // if launch.json is missing or empty
 
     if (!config.type && !config.request && !config.name) {
+      this.logger.info("Creating default debug configuration");
       config.type = "apama";
-      config.name = "Debug Apama Application";
+      config.name = "Debug Apama Correlator Application";
       config.request = "launch";
       config.injectionList = await getInjectionList(folder.uri.fsPath);
       config.correlator = {};
-      config.correlator.host = "127.0.0.1";
+      config.correlator.host = await this.getCorrelatorHost(config);
       config.correlator.port = workspace
         .getConfiguration("apama")
         .get("debugPort");
-      config.correlator.args = ["-g"];
+      config.correlator.args = this.getDefaultArgs();
+    } else if (config.correlator && config.correlator.host == "") {
+      config.correlator.host = await this.getCorrelatorHost(config); 
     }
 
+    this.logger.info(`Resolving debug config: ${config.correlator.host}:${config.correlator.port}`);
+
     if (!this._server) {
-      console.log("starting listening server");
+      console.log("Starting listening debug server");
       this._server = Net.createServer((socket) => {
         const session = new CorrelatorDebugSession(
           this.logger,

@@ -21,10 +21,11 @@
     "mon",
     "Cumulocity",
     "Apama",
-    "MonitorScript"
+    "MonitorScript", 
+    "Streaming Analytics"
   ],
   "qna": "https://techcommunity.cumulocity.com/tag/streaming-analytics-apama",
-  "activationEvents": [],
+  "activationEvents": ["onDebug"],
   "main": "./dist/extension",
   "contributes": {
     "configuration": {
@@ -39,12 +40,12 @@
         "apama.debugPort": {
           "type": "integer",
           "default": 15904,
-          "description": "Port for correlator debugging."
+          "description": "Default port for starting or connecting to correlator for debugging your application."
         },
         "apama.debugHost": {
           "type": "string",
-          "default": "127.0.0.1",
-          "description": "Host for correlator debugging."
+          "default": "",
+          "description": "Default host for correlator debugging (usually it's best to leave this blank, for automatic selection)."
         }
       }
     },
@@ -258,14 +259,15 @@
                   },
                   "host": {
                     "type": "string",
-                    "description": "the host on which the debug correlator will run",
-                    "default": "127.0.0.1"
+                    "description": "The host on which the debug correlator will run",
+                    "default": ""
                   },
                   "args": {
                     "type": "array",
-                    "description": "List of arguments and values to provide to the correlator",
+                    "description": "List of arguments to pass to the correlator, for example a YAML configuration file or directory",
                     "default": [
-                      "-g"
+                      "-g",
+                      "--logQueueSizePeriod", "60"
                     ]
                   }
                 }

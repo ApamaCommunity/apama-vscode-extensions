@@ -57,7 +57,7 @@ export class CorrelatorDebugSession extends DebugSession {
   ) {
     super();
 
-      console.log(
+      logger.info(
       "Correlator interface host: " +
         config.host.toString() +
         " port " +
@@ -94,7 +94,10 @@ export class CorrelatorDebugSession extends DebugSession {
     this.sendResponse(response);
   }
 
-  private async runCorrelator(extraargs: string[]): Promise<vscode.Task | false> {
+  /** A reference to the most recently started correlator, which may or may not currently be running */
+  private correlatorTask?: vscode.Task;
+
+  private async runCorrelator(extraargs: string[], folder: vscode.WorkspaceFolder | undefined): Promise<vscode.Task | false> {
     const corrCmd = await getCommandAsInterface(ApamaExecutables.CORRELATOR);
     if (!corrCmd) {return false;}
     let localargs: string[] = this.config.args.concat([
@@ -106,27 +109,31 @@ export class CorrelatorDebugSession extends DebugSession {
       localargs = localargs.concat(extraargs);
     }
     //console.log(localargs);
+    console.log("Starting correlator with args: ", localargs);
     const correlator = new vscode.Task(
       { type: "shell", task: "" },
-      "DebugCorrelator",
+      folder ? folder : vscode.TaskScope.Workspace,
+      "ApamaCorrelator",
       "correlator",
       new vscode.ShellExecution(
-        corrCmd.command,
-        [...corrCmd.args, ...localargs]
+      corrCmd.command,
+      [...corrCmd.args, ...localargs]
       ),
       [],
     );
+    this.correlatorTask = correlator;
+    
     // correlator.group = 'test';
     return correlator;
   }
   /**
-   * Frontend requested that the application be launched
+   * Frontend requested that the correlator application be launched
    */
   protected async launchRequest(
     response: DebugProtocol.LaunchResponse,
     _args: LaunchRequestArguments,
   ): Promise<void> {
-    let folder = undefined;
+    let folder: vscode.WorkspaceFolder | undefined = undefined;
     //check for a single workspace
     if (
       vscode.workspace.workspaceFolders &&
@@ -137,106 +144,131 @@ export class CorrelatorDebugSession extends DebugSession {
       folder = await vscode.window.showWorkspaceFolderPick();
     }
 
-    if (folder !== undefined) {
-      /* Disable this for the moment 
+    if (folder) this.logger.info("Starting correlator for folder: " + folder?.uri.fsPath);
+    /* Disable this for the moment 
 
-			// does workspace contain folders
-			// if yes - allow pick, check for deployed and then run
-			let ws_contents = await vscode.workspace.fs.readDirectory(folder.uri);
-			let deployed = ws_contents.filter( (curr) => {
-				if ( curr[1] === vscode.FileType.Directory && curr[0].indexOf('_deployed') >= 0 ){
-					return curr;
-				}
-			});
-			//determine if we are able to run a project or just files
-			let projectDebug = false;
-			let csm = true;
-			let csf = true;
-			let csd = false;
-			let ol = 'select monitor files';
-			let fil = {
-				'monitor files': ['mon']
-			};
+    // does workspace contain folders
+    // if yes - allow pick, check for deployed and then run
+    let ws_contents = await vscode.workspace.fs.readDirectory(folder.uri);
+    let deployed = ws_contents.filter( (curr) => {
+      if ( curr[1] === vscode.FileType.Directory && curr[0].indexOf('_deployed') >= 0 ){
+        return curr;
+      }
+    });
+    //determine if we are able to run a project or just files
+    let projectDebug = false;
+    let csm = true;
+    let csf = true;
+    let csd = false;
+    let ol = 'select monitor files';
+    let fil = {
+      'monitor files': ['mon']
+    };
 
-			if ( deployed.length > 0 ) {
-				//We have deployed project(s) we can run - is that whats required?
-				const result = await vscode.window.showQuickPick(['debug file(s)', 'debug deployed project'], {
-					placeHolder: 'debug file(s) or project'
-				});
+    if ( deployed.length > 0 ) {
+      //We have deployed project(s) we can run - is that whats required?
+      const result = await vscode.window.showQuickPick(['debug file(s)', 'debug deployed project'], {
+        placeHolder: 'debug file(s) or project'
+      });
 
-				console.log("CHOICE");
-				console.log(result);
-				
-				if(result && result.indexOf("project") >= 0) {
-					projectDebug = true;
-					csm = false;
-					csf = false;
-					csd = true;
-					let ol = 'select deployed project';
-					let fil = {
-						'Deployed projects': ['*_deployed']
-					};
-				}
-			}
+      console.log("CHOICE");
+      console.log(result);
+      
+      if(result && result.indexOf("project") >= 0) {
+        projectDebug = true;
+        csm = false;
+        csf = false;
+        csd = true;
+        let ol = 'select deployed project';
+        let fil = {
+          'Deployed projects': ['*_deployed']
+        };
+      }
+    }
 
-			//pick deployed 
-			const options: vscode.OpenDialogOptions = {
-				defaultUri: folder.uri,
-				canSelectMany: csm,
-				canSelectFiles: csf,
-				canSelectFolders: csd,
-				openLabel: ol,
-				filters: fil
-			};
-			
-			
+    //pick deployed 
+    const options: vscode.OpenDialogOptions = {
+      defaultUri: folder.uri,
+      canSelectMany: csm,
+      canSelectFiles: csf,
+      canSelectFolders: csd,
+      openLabel: ol,
+      filters: fil
+    };
+    
+    
 
-			let fileUri:vscode.Uri[]|undefined = await vscode.window.showOpenDialog(options);
+    let fileUri:vscode.Uri[]|undefined = await vscode.window.showOpenDialog(options);
 
-			*/
-      const projectDebug = false;
+    */
+    // const projectDebug = false;
 
-      if (projectDebug) {
-        //single file initially
-        //console.log("Project Debug started on host: " + this.config.host.toString() + " port " + this.config.port.toString());
-        //if (fileUri && fileUri[0]) {
-        //	console.log("Debug : " + fileUri[0].fsPath );
-        //	await vscode.tasks.executeTask(this.runCorrelator(['--config',fileUri[0].fsPath]));
-        //	await this.correlatorHttp.enableDebugging();
-        //	this.sendEvent(new InitializedEvent()); // We're ready to start recieving breakpoints
-        //	this.sendResponse(response);
-        //}
-      } else {
-        //single file initially
-        console.log(
-          "Debug started on host: " +
-            this.config.host.toString() +
-            " port " +
+    // if (projectDebug) {
+    //   //single file initially
+    //   //console.log("Project Debug started on host: " + this.config.host.toString() + " port " + this.config.port.toString());
+    //   //if (fileUri && fileUri[0]) {
+    //   //	console.log("Debug : " + fileUri[0].fsPath );
+    //   //	await vscode.tasks.executeTask(this.runCorrelator(['--config',fileUri[0].fsPath]));
+    //   //	await this.correlatorHttp.enableDebugging();
+    //   //	this.sendEvent(new InitializedEvent()); // We're ready to start recieving breakpoints
+    //   //	this.sendResponse(response);
+    //   //}
+    // } else {
+
+    console.log(
+        "Debug starting on host: " +
+          this.config.host.toString() +
+          " port " +
+          this.config.port.toString(),
+      );
+    try 
+    {
+      const task = await this.runCorrelator([], folder);
+      if (task == false) throw new Error("Cannot start correlator"); // hopefully never happens
+      this.logger.info("Starting correlator task");
+      await vscode.tasks.executeTask(task);
+      this.logger.info("Enabling debugging");
+      await this.correlatorHttp.enableDebugging();
+      if (folder) {
+        this.logger.info("Injecting Apama project from: " + folder.uri.fsPath);
+        const deployExe = await getCommandLine(ApamaExecutables.DEPLOY);
+        if (!deployExe) {return;}
+        const deployCmd = new ApamaRunner(ApamaExecutables.DEPLOY, deployExe);
+        await deployCmd.run(
+          folder.uri.fsPath,
+          [
+            "--inject",
+            this.config.host.toString(),
             this.config.port.toString(),
+          ].concat(folder.uri.fsPath),
         );
-        const task = await this.runCorrelator([]);
-        if (task == false) {
-          return;
-        }
-        await vscode.tasks.executeTask(task);
-        await this.correlatorHttp.enableDebugging();
-        if (folder.uri.fsPath) {
-          //console.log("Debug File(s) : " + folder.uri.fsPath );
-         const deployExe = await getCommandLine(ApamaExecutables.DEPLOY);
-         if (!deployExe) {return;}
-         const deployCmd = new ApamaRunner(ApamaExecutables.DEPLOY, deployExe);
-          await deployCmd.run(
-            ".",
-            [
-              "--inject",
-              this.config.host.toString(),
-              this.config.port.toString(),
-            ].concat(folder.uri.fsPath),
-          );
-          this.sendEvent(new InitializedEvent()); // We're ready to start recieving breakpoints
-          this.sendResponse(response);
+
+        // if correlator is no longer running, we failed
+        if (!vscode.tasks.taskExecutions.find(e => e.task === this.correlatorTask))
+          throw new Error("Correlator startup failed - check output for details");
+
+        this.sendEvent(new InitializedEvent()); // We're ready to start receiving breakpoints
+        this.sendResponse(response);
+      }
+    } catch (e) {
+      this.logger.warn("Failed to start and initialize correlator: " + e);
+      console.error("Error starting correlator: ", e);
+      if (this.correlatorTask) {
+        const exec = vscode.tasks.taskExecutions.find(e => e.task === this.correlatorTask);
+        if (exec) {
+          this.logger.warn("Stopping correlator task after failure");
+          await this.stopCorrelator();
         }
       }
+      this.sendErrorResponse(
+        response,
+        2000,
+        "Error starting correlator on port "+this.config.port.toString()+": " + e,
+      );
+      return;
+    }
+
+    // maybe: only do the following if we're in debug mode
 
       // Pause correlator while we wait for the configuration to finish, we want breakpoints to be set first
       await this.correlatorHttp.pause();
@@ -300,7 +332,7 @@ export class CorrelatorDebugSession extends DebugSession {
           }
         }
       });
-    }
+   this.logger.info("Correlator startup complete");
   }
 
   /**
@@ -423,18 +455,52 @@ export class CorrelatorDebugSession extends DebugSession {
       .then(() => this.waitForCorrelatorPause());
   }
 
-  protected async waitUntilTaskEnds(taskName: string): Promise<void> {
+  protected async waitUntilTaskEnds(): Promise<void> {
     await this.correlatorHttp.resume();
     await this.correlatorHttp.disableDebugging();
+    if (!this.correlatorTask) return;
     return new Promise<void>((resolve) => {
       const disposable = vscode.tasks.onDidEndTask((e) => {
         //console.log("TASK " + e.execution.task.name + " ended");
-        if (e.execution.task.name === taskName) {
+        if (e.execution.task === this.correlatorTask) {
           disposable.dispose();
           resolve();
         }
       });
     });
+  }
+
+  async stopCorrelator(): Promise<void> {
+      const exec = vscode.tasks.taskExecutions.find(e => e.task === this.correlatorTask);
+      if (!exec) {
+        this.logger.info("Not terminating correlator as it is already terminated");
+        return;
+      }
+
+      // TODO: do we need to use the remote host name?
+
+      try {
+        this.logger.info("Terminating correlator on " + this.config.host+":"+this.config.port.toString());
+
+        const managerExe = await getCommandLine(ApamaExecutables.MANAGEMENT);
+        if (!managerExe) {return;}
+        const manager = new ApamaRunner(ApamaExecutables.MANAGEMENT, managerExe);
+        await manager.run(".", [
+          "-s",
+          "Shutdown requested by VSCode client",
+          "-p",
+          this.config.port.toString(),
+          "--hostname",
+          this.config.host,
+        ]);
+      } catch (e) {
+        console.error("Error stopping correlator cleanly, will try to kill the process: ", e);
+        exec.terminate();       
+      }
+      await this.waitUntilTaskEnds();
+      this.correlatorTask = undefined;
+      this.logger.info("Correlator has terminated");
+      //console.log("STOPPED " + this.config.port.toString());
   }
 
   /**
@@ -445,20 +511,15 @@ export class CorrelatorDebugSession extends DebugSession {
     _args: DebugProtocol.DisconnectArguments,
   ): Promise<void> {
     try {
-      this.logger.info("Stop requested to port " + this.config.port.toString());
-      const managerExe = await getCommandLine(ApamaExecutables.MANAGEMENT);
-      if (!managerExe) {return;}
-      const manager = new ApamaRunner(ApamaExecutables.MANAGEMENT, managerExe);
-      manager.run(".", [
-        "-s",
-        "debug_stop",
-        "-p",
-        this.config.port.toString(),
-      ]);
-      await this.waitUntilTaskEnds("DebugCorrelator");
-      //console.log("STOPPED " + this.config.port.toString());
+      await this.stopCorrelator();
     } catch (e) {
-      //ignore
+      console.error("Error stopping correlator: ", e);
+      this.sendErrorResponse(
+        response,
+        2000,
+        "Error stopping correlator on port "+this.config.port.toString()+": " + e,
+      );
+      return;
     }
     this.sendResponse(response);
   }
