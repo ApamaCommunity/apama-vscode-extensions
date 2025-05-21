@@ -12,7 +12,7 @@ This extension is provided as-is and without warranty or support. It does not co
 
 The extension supports:
 * Syntax highlighting.
-* Content assistance features such as EPL errors in the `Problems` view, hovers, "go to definition" and the `Outline` view - when a suitable version of Apama is installed. See the Visual Studio Code topic in the Apama product documentation for more details on what is provided in each version of Apama. 
+* Content assistance features such as completion proposals, hovers, EPL errors in the `Problems` view, "Go to definition", and an `Outline` view. These are available when a suitable version of Apama is installed; See the Visual Studio Code topic in the Apama product documentation for more details about what is provided in the version of Apama you are using. 
 * Creating an "Apama project", and adding bundles to it from the `Apama Projects` view or the command palette (`F1`). This can be used for both product EPL/connectivity bundles and custom bundles such as the Analytics Builder Block SDK.
 * Inserting common EPL code snippets. For example, start typing `monitor`, `event` or `for` and you will be prompted to automatically insert the boilerplate code for a new monitor, event declaration or `for` loop.
 
@@ -29,7 +29,7 @@ On **Windows**:
   2. It is recommended to install a container engine such as [Rancher Desktop](https://docs.rancherdesktop.io/getting-started/installation/) so you can use the simple "Dev Container" approach. If you don't wish to do this, the alternative is to install Apama locally (inside a WSL Debian container); see below for details.
   3. Make sure the container engine is configured for use with WSL. If you use Rancher Desktop, you should go to the WSL integration preferences page in Rancher and configure it to to expose Rancher Desktop's Docker socket to WSL. You should also ensure it is using the `dockerd` (moby) container engine, and optionally configure it to automatically start at login. 
 
-On **macOS**, you can install [colima](https://github.com/abiosoft/colima) so you can run (x86) dev container images.
+On **macOS**, you can install [colima](https://github.com/abiosoft/colima) to run Dev Container images (x86 images only).
 
 On **Linux**, follow your distribution's instructions to install a container engine and docker-compatible command line. Alternatively, you can use a local install of Apama using the instructions below. 
 
@@ -39,11 +39,11 @@ For more detailed installation notes, see later on this page.
 
 ## Opening your first Apama project as a Dev Container
 
-If you have a Docker-compatible [container engine](https://code.visualstudio.com/remote/advancedcontainers/docker-options) installed on your machine, you can easily open any Apama project that has a `.devcontainer` configuration. 
+If you have a Docker-compliant [container engine](https://code.visualstudio.com/remote/advancedcontainers/docker-options) installed on your machine, you can easily open any Apama project that has a `.devcontainer` configuration. 
 
 To get started, go to the [Streaming Analytics Sample Repository Template](https://github.com/Cumulocity-IoT/streaming-analytics-sample-repo-template), and click the button to "Use this template" to "Create a new repository" for your own application. 
 
-Then open the VS Code command palette (`F1`), run `Dev Containers: Clone Repository in Container Volume` and then enter the HTTPS link to your GitHub repository. This will download the Apama "builder" image, and clone the latest version of the [EPL Apps Tools](https://github.com/Cumulocity-IoT/apama-eplapps-tools) and [Block SDK](https://github.com/Cumulocity-IoT/apama-analytics-builder-block-sdk). 
+Then open the VS Code command palette (`F1`), run `Dev Containers: Clone Repository in Container Volume` and then enter the `https://` link to your GitHub repository. This will download the Apama "builder" image, and clone the latest version of the [EPL Apps Tools](https://github.com/Cumulocity-IoT/apama-eplapps-tools) and [Block SDK](https://github.com/Cumulocity-IoT/apama-analytics-builder-block-sdk). 
 
 You can immediately open up any of the EPL files under `src/` to experiment with developing Blocks and EPL apps. 
 
@@ -53,7 +53,7 @@ If you have an existing project, you can add support for Dev Containers by simpl
 
 First ensure the [Apama Extension for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=ApamaCommunity.apama-extensions) is installed, and that you have an installation of Apama. Where possible, Apama should be installed to the default installation directory `/opt/cumulocity/Apama`, so that the location can be detected automatically. If you use a different location, you will need to configure the location of Apama home in the Apama extension's settings.
 
-If you want to **create a new project**, open the Command Palette and type `Apama: Create Project in New Folder` (alternatively you can create the empty folder outside of VS Code, add it to the workspace and click `Create Project` in the `Apama Projects` view). You can now use the `Apama Projects` view to add any bundles required for your project, whether product bundles (such as the Cumulocity bundle) or custom bundles (such as the [Analytics Builder Block SDK](https://github.com/Cumulocity-IoT/apama-analytics-builder-block-sdk) or [EPL Apps Tools](https://github.com/Cumulocity-IoT/apama-eplapps-tools)). Then use the main menu to create one or more `.mon` files for your EPL application. 
+If you want to **create a new project**, we recommend creating a new repository from the [Streaming Analytics Sample Repository Template](https://github.com/Cumulocity-IoT/streaming-analytics-sample-repo-template) and then cloning it to a local directory. If you prefer to start from scratch, open the Command Palette and type `Apama: Create Project in New Folder` (alternatively you can create the empty folder outside of VS Code, add it to the workspace and click `Create Project` in the `Apama Projects` view). You can now use the `Apama Projects` view to add any bundles required for your project, whether product bundles (such as the Cumulocity bundle) or custom bundles (such as the [Analytics Builder Block SDK](https://github.com/Cumulocity-IoT/apama-analytics-builder-block-sdk) or [EPL Apps Tools](https://github.com/Cumulocity-IoT/apama-eplapps-tools)). Then use the main menu to create one or more `.mon` files for your EPL application. 
 
 If you want to start with an **existing Apama project** you were already working on (or a clone of a sample project), simply open the Apama project folder (that is, the directory with the `.project` file) in your VS Code workspace. Note that the Apama project files (including `.dependencies`) must be in the top level of that folder. If you do not yet have a `.project` file (to mark the folder as an Apama project), open the Command Palette and type `Apama: Create Project` to create the project files.
 
