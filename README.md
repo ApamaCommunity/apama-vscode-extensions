@@ -28,7 +28,7 @@ Then the simplest way to get started is to run Apama inside a [Dev Container](ht
 
 On **Windows**:
     * Install [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) by running `wsl --install` from an Administrator terminal. (NB: This is required for the latest Apama versions, but optional if using the older 10.15 release)
-    * Either install a container engine such as [Rancher Desktop](https://docs.rancherdesktop.io/getting-started/installation/), or install Apama locally inside a WSL Debian container (see below for details). Installing a container engine is recommended, since otherwise there is a bit more setup to clone the SDKs. 
+    * Either install a container engine such as [Rancher Desktop](https://docs.rancherdesktop.io/getting-started/installation/), or install Apama locally inside a WSL Debian container (see below for details). Installing a container engine is recommended especially for 26.x onwards, since otherwise there is a bit more setup to clone the SDKs. 
     * If you choose to use Rancher Desktop, you should go to the WSL integration preferences page in Rancher and configure it to to expose Rancher Desktop's Docker socket to WSL. You should also ensure it is using the `dockerd` (moby) container engine, and optionally configure it to automatically start at login. 
 
 On **macOS**, you can install [colima](https://github.com/abiosoft/colima) so you can run (x86) dev container images.
@@ -53,7 +53,7 @@ If you have an existing project, you can add support for Dev Containers by simpl
 
 ## Opening your first Apama project without a dev container
 
-First ensure the Apama Extension for Visual Studio Code is installed, and that you have an installation of Apama. Where possible, Apama should be installed to the default installation directory `/opt/cumulocity/Apama`, so that the location can be detected automatically. If you use a different location, you will need to configure the location of Apama home in the Apama extension's settings.
+First ensure the [Apama Extension for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=ApamaCommunity.apama-extensions) is installed, and that you have an installation of Apama. Where possible, Apama should be installed to the default installation directory `/opt/cumulocity/Apama`, so that the location can be detected automatically. If you use a different location, you will need to configure the location of Apama home in the Apama extension's settings.
 
 If you want to **create a new project**, open the Command Palette and type `Apama: Create Project in New Folder` (alternatively you can create the empty folder outside of VS Code, add it to the workspace and click `Create Project` in the `Apama Projects` view). You can now use the `Apama Projects` view to add any bundles required for your project, whether product bundles (such as the Cumulocity bundle) or custom bundles (such as the [Analytics Builder Block SDK](https://github.com/Cumulocity-IoT/apama-analytics-builder-block-sdk) or [EPL Apps Tools](https://github.com/Cumulocity-IoT/apama-eplapps-tools)). Then use the main menu to create one or more `.mon` files for your EPL application. 
 
@@ -65,7 +65,7 @@ To use all the functionality provided by this extension, you need a full install
 
 The extension can run on Linux. It can also be used on Windows, typically with WSL (Windows Subsystem for Linux). If using the older Apama 10.15 release (which has a Windows installation package) it can be used directly with a local Windows installation. The extension can also be used with a Dev Container.
 
-If using on a Remote platform (i.e. WSL, SSH or DevContainers), the Apama extension needs to be installed on the Remote Host.
+If using on a Remote platform (i.e. WSL, SSH or DevContainers), the [Apama extension](https://marketplace.visualstudio.com/items?itemName=ApamaCommunity.apama-extensions) needs to be installed on the Remote Host.
 
 Note: if using a container with a locally installed Docker, you may find the default memory allocated by your containerization tool needs to be increased from the default. We advise having a minimum of 4GB of memory for local development.
 
@@ -79,6 +79,8 @@ For the older 10.15 release:
 1. Identify the required package from the [download site](https://download.cumulocity.com/Apama/10.15), for example `apama-c8y-dev_10.15.*.*_amd64_linux.tar.gz` (or `apama-dev_10.15.*.*_amd64_linux.tar.gz` for non-Cumulocity applications)
 2. Download the package by passing this URL to `wget` (you may need to run `sudo apt install wget` first, if it is not yet installed)
 3. Then unpack it to the default directory using: `sudo mkdir -p /opt/cumulocity && sudo tar -xf apama-*_amd64_linux.tar.gz -C /opt/cumulocity` (hint: if using WSL as described below, you will need to enter the password for the root account you created during WSL setup)
+
+Then make sure you've installed the [Apama extension](https://marketplace.visualstudio.com/items?itemName=ApamaCommunity.apama-extensions) into VS Code.
 
 ### Details - local installation of Apama into WSL on Windows
 
