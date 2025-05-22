@@ -27,9 +27,9 @@ First, install VS Code and the [Remote Development Extension Pack](https://marke
 Then the simplest way to get started is to run Apama inside a [Dev Container](https://code.visualstudio.com/docs/devcontainers/containers) (although it is also possible to use a local installation of Apama if you prefer). See the [Microsoft VS Code documentation](https://code.visualstudio.com/remote/advancedcontainers/docker-options) for more details, but the steps below can help to get started quickly:
 
 On **Windows**:
-    * Install [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) by running `wsl --install` from an Administrator terminal. (NB: This is required for the latest Apama versions, but optional if using the older 10.15 release)
-    * Either install a container engine such as [Rancher Desktop](https://docs.rancherdesktop.io/getting-started/installation/), or install Apama locally inside a WSL Debian container (see below for details). Installing a container engine is recommended especially for 26.x onwards, since otherwise there is a bit more setup to clone the SDKs. 
-    * If you choose to use Rancher Desktop, you should go to the WSL integration preferences page in Rancher and configure it to to expose Rancher Desktop's Docker socket to WSL. You should also ensure it is using the `dockerd` (moby) container engine, and optionally configure it to automatically start at login. 
+  1. Install [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) by running `wsl --install` from an Administrator terminal. (NB: This is required for the latest Apama versions, but optional if using the older 10.15 release)
+  2. Either install a container engine such as [Rancher Desktop](https://docs.rancherdesktop.io/getting-started/installation/), or install Apama locally inside a WSL Debian container (see below for details). Installing a container engine is recommended especially for 26.x onwards, since otherwise there is a bit more setup to clone the SDKs. 
+  3. If you choose to use Rancher Desktop, you should go to the WSL integration preferences page in Rancher and configure it to to expose Rancher Desktop's Docker socket to WSL. You should also ensure it is using the `dockerd` (moby) container engine, and optionally configure it to automatically start at login. 
 
 On **macOS**, you can install [colima](https://github.com/abiosoft/colima) so you can run (x86) dev container images.
 
