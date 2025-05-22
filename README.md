@@ -28,8 +28,8 @@ Then the simplest way to get started is to run Apama inside a [Dev Container](ht
 
 On **Windows**:
   1. Install [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) by running `wsl --install` from an Administrator terminal. (NB: This is required for the latest Apama versions, but optional if using the older 10.15 release)
-  2. Either install a container engine such as [Rancher Desktop](https://docs.rancherdesktop.io/getting-started/installation/), or install Apama locally inside a WSL Debian container (see below for details). Installing a container engine is recommended especially for 26.x onwards, since otherwise there is a bit more setup to clone the SDKs. 
-  3. If you choose to use Rancher Desktop, you should go to the WSL integration preferences page in Rancher and configure it to to expose Rancher Desktop's Docker socket to WSL. You should also ensure it is using the `dockerd` (moby) container engine, and optionally configure it to automatically start at login. 
+  2. It is recommended to install a container engine such as [Rancher Desktop](https://docs.rancherdesktop.io/getting-started/installation/) so you can use the simple "Dev Container" approach. If you don't wish to do this, the alternative is to install Apama locally (inside a WSL Debian container); see below for details.
+  3. Make sure the container engine is configured for use with WSL. If you use Rancher Desktop, you should go to the WSL integration preferences page in Rancher and configure it to to expose Rancher Desktop's Docker socket to WSL. You should also ensure it is using the `dockerd` (moby) container engine, and optionally configure it to automatically start at login. 
 
 On **macOS**, you can install [colima](https://github.com/abiosoft/colima) so you can run (x86) dev container images.
 
