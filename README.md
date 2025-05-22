@@ -20,11 +20,9 @@ There are some known limitations; the main one is that problem markers and assis
 
 ## Installation quick-start
 
-To use all the functionality provided by this extension, you need two things - a Visual Studio Code client with the Apama extension, and an appropriate installation of Apama. 
-
 First, install VS Code and the [Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack). 
 
-Then the simplest way to get started is to run Apama inside a [Dev Container](https://code.visualstudio.com/docs/devcontainers/containers) (although it is also possible to use a local installation of Apama if you prefer). See the [Microsoft VS Code documentation](https://code.visualstudio.com/remote/advancedcontainers/docker-options) for more details, but the steps below can help to get started quickly:
+Then the simplest way to get started is to run Apama inside a [Dev Container](https://code.visualstudio.com/docs/devcontainers/containers) which avoids the need to install Apama and the SDKs yourself (although it is possible to use a local installation of Apama instead if you prefer). See the [Microsoft VS Code documentation](https://code.visualstudio.com/remote/advancedcontainers/docker-options) for more details, but the steps below can help to get started quickly:
 
 On **Windows**:
   1. Install [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) by running `wsl --install` from an Administrator terminal. (NB: This is required for the latest Apama versions, but optional if using the older 10.15 release)
