@@ -12,7 +12,7 @@ This extension is provided as-is and without warranty or support. It does not co
 
 The extension supports:
 * Syntax highlighting.
-* Content assistance features such as completion proposals, hovers, EPL errors in the `Problems` view, "Go to definition", and an `Outline` view. These are available when a suitable version of Apama is installed; See the Visual Studio Code topic in the Apama product documentation for more details about what is provided in the version of Apama you are using. 
+* Content assistance features such as completion proposals, hovers, EPL errors in the `Problems` view, "Go to definition", and an `Outline` view. These are available when using a container or installation with a suitable version of Apama. See the Visual Studio Code topic in the Apama product documentation for more details about what is provided in the version of Apama you are using. 
 * Creating an "Apama project", and adding bundles to it from the `Apama Projects` view or the command palette (`F1`). This can be used for both product EPL/connectivity bundles and custom bundles such as the Analytics Builder Block SDK.
 * Inserting common EPL code snippets. For example, start typing `monitor`, `event` or `for` and you will be prompted to automatically insert the boilerplate code for a new monitor, event declaration or `for` loop.
 
@@ -22,7 +22,9 @@ There are some known limitations; the main one is that problem markers and assis
 
 First, install VS Code and the [Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack). 
 
-Then the simplest way to get started is to run Apama inside a [Dev Container](https://code.visualstudio.com/docs/devcontainers/containers) which avoids the need to install Apama and the SDKs yourself (although it is possible to use a local installation of Apama instead if you prefer). See the [Microsoft VS Code documentation](https://code.visualstudio.com/remote/advancedcontainers/docker-options) for more details, but the steps below can help to get started quickly:
+The simplest way to get started is to store your Apama project in a Git repository with a `.devcontainer` directory (copied from the [Streaming Analytics Sample Repository Template](https://github.com/Cumulocity-IoT/streaming-analytics-sample-repo-template)). This allows VS Code to open your repository in a [Dev Container](https://code.visualstudio.com/docs/devcontainers/containers) that has Apama and the EPL Apps and block SDK automatically installed. Is possible to use a local installation of Apama instead if you prefer, though there are a few more steps required with that approach. 
+
+Full instructions for setting up VS Code to use Dev Containers are in the [Microsoft VS Code documentation](https://code.visualstudio.com/remote/advancedcontainers/docker-options). However here is a quick summary of the steps to get started quickly:
 
 On **Windows**:
   1. Install [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) by running `wsl --install` from an Administrator terminal. (NB: This is required for the latest Apama versions, but optional if using the older 10.15 release)
@@ -56,6 +58,15 @@ First ensure the [Apama Extension for Visual Studio Code](https://marketplace.vi
 If you want to **create a new project**, we recommend creating a new repository from the [Streaming Analytics Sample Repository Template](https://github.com/Cumulocity-IoT/streaming-analytics-sample-repo-template) and then cloning it to a local directory. If you prefer to start from scratch, open the Command Palette and type `Apama: Create Project in New Folder` (alternatively you can create the empty folder outside of VS Code, add it to the workspace and click `Create Project` in the `Apama Projects` view). You can now use the `Apama Projects` view to add any bundles required for your project, whether product bundles (such as the Cumulocity bundle) or custom bundles (such as the [Analytics Builder Block SDK](https://github.com/Cumulocity-IoT/apama-analytics-builder-block-sdk) or [EPL Apps Tools](https://github.com/Cumulocity-IoT/apama-eplapps-tools)). Then use the main menu to create one or more `.mon` files for your EPL application. 
 
 If you want to start with an **existing Apama project** you were already working on (or a clone of a sample project), simply open the Apama project folder (that is, the directory with the `.project` file) in your VS Code workspace. Note that the Apama project files (including `.dependencies`) must be in the top level of that folder. If you do not yet have a `.project` file (to mark the folder as an Apama project), open the Command Palette and type `Apama: Create Project` to create the project files.
+
+## Running your application locally during development
+
+The most convenient way to run your application is to create automated tests using PySys. For an example see the `tests/` directory in [Streaming Analytics Sample Repository Template](https://github.com/Cumulocity-IoT/streaming-analytics-sample-repo-template). 
+
+However it is also possible to run a correlator manually from VS Code. To do this:
+* Open a Terminal window and run the `correlator`. If you need any connectivity plug-ins or other configuration, pass them on the command line e.g. `--config connectivity.yaml`. If using a Dev Container the `correlator` executable is on your path already; if not you need to specify the location where you installed it. 
+* Open in a separate Terminal, run `engine_deploy --inject localhost PORT PROJECTDIR` where _PORT_ is the port the correlator was started on, and _PROJECTDIR_ is the path of the project (e.g. `.`). 
+* When you are done or want to restart, terminate the correlator using `Ctrl+C`. 
 
 ## More details on installation options
 
@@ -113,6 +124,13 @@ Once your virtual machine is created, start it up, and shell into it. Then insta
 Use the [Visual Studio Code Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack) to connect to your virtual machine.
 
 Tip: to show your Lima VMs in Remote-SSH, run `echo -e "\nInclude ${LIMA_HOME:-$HOME/.lima}/debian-x86/ssh.config" >> ~/.ssh/config` in a terminal ([source](https://github.com/lima-vm/lima/discussions/1890)).
+
+## Troubleshooting the extension
+
+If you have any problems with the extension, go to the "Output" tab and select "Apama Extension Client" to view the diagnostic output from the extension. 
+
+For more advanced troubleshooting, add `"apama.languageServer": {"logLevels":["DEBUG"]}` to your VS Code preferences JSON, 
+then look under "Output" tab for "Apama Lang Server". This will show the output from the language support provided by the Apama installation. 
 
 ## License
 
